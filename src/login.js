@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./login.css";
 
 export default function login() {
@@ -65,8 +66,9 @@ export default function login() {
           </div>
 
           <p className="register">
-            Don’t have an account? <a href="#">Create Account</a>
+            Don’t have an account? <Link to="/register">Create Account</Link>
           </p>
+
 
           <p className="policy">
             By signing in, you agree to our{" "}
