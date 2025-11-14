@@ -1,35 +1,83 @@
-// frontend/src/App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './App.css'; 
+import './App.css';
 
-// Import all components
-import Login from './pages/Login/login'; 
-import Registration from './pages/Registration/registration'; 
-import Dashboard from './pages/Dashboard/dashboard'; 
+// Import layout
+import MainLayout from './layout/MainLayout';
+
+// Import pages
+import Login from './pages/Login/login';
+import Registration from './pages/Registration/registration';
+import Dashboard from './pages/Dashboard/dashboard';
+import SettingsPage from './pages/Settings/Settings';
+import Messages from './pages/Messages/Messages'; // <-- 1. IMPORTED MESSAGES PAGE
 
 function App() {
-  // NOTE: In a real app, you would check for a session token here.
-  // const isAuthenticated = checkAuthStatus();
-  const isAuthenticated = true; // Set to true for dashboard testing
+  // TEMP authentication (replace later)
+  const isAuthenticated = true;
 
   return (
     <Router>
       <Routes>
-        {/* Redirects root to dashboard if logged in, otherwise to login */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
 
-        {/* Public Routes */}
+        {/* Redirect root route */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated
+              ? <Navigate to="/dashboard" replace />
+              : <Navigate to="/login" replace />
+          }
+        />
+
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
-        
-        {/* Dashboard Route (Protected) */}
-        <Route 
-          path="/dashboard" 
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+
+        {/* Protected Dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? (
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
         />
-        
+
+        {/* Protected Settings */}
+        <Route
+          path="/settings"
+          element={
+            isAuthenticated ? (
+              <MainLayout>
+                <SettingsPage />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* 2. ADDED PROTECTED MESSAGES ROUTE */}
+        <Route
+          path="/messages"
+          element={
+            isAuthenticated ? (
+              <MainLayout>
+                <Messages />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* You can add more routes here, like /my-listings, /sell, etc. */}
+
       </Routes>
     </Router>
   );

@@ -13,13 +13,12 @@
     --light-text: #888;
     --sidebar-bg: #fff;
     --grid-bg: #f8f8f8;
-    
-    /* Tag colors based on image */
-    --tag-like-new: #4a148c; /* Purple */
-    --tag-excellent: #A61B1B; /* Dark Red */
-    --tag-very-good: #c85a11; /* Orange */
-    --tag-good: #3f7c4e; /* Green */
-    --discount-color: #3F7C4E; /* Green */
+
+    --tag-like-new: #4a148c;
+    --tag-excellent: #A61B1B;
+    --tag-very-good: #c85a11;
+    --tag-good: #3f7c4e;
+    --discount-color: #3F7C4E;
 }
 
 * {
@@ -69,47 +68,13 @@
 .logo-text {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--text-color); 
+    color: var(--text-color);
 }
 
 .merge-color {
-    color: var(--primary-color); 
+    color: var(--primary-color);
 }
 
-/* Search Bar */
-.search-bar {
-    display: flex;
-    align-items: center;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    padding: 10px 16px;
-    flex-grow: 1;
-    max-width: 450px;
-    margin: 0 25px;
-    border: 1px solid #e8e8e8;
-}
-
-.search-bar input {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 0.95rem;
-    color: var(--text-color);
-    flex-grow: 1;
-    padding-left: 8px;
-}
-
-.search-bar input::placeholder {
-    color: #aaa;
-}
-
-.search-icon { 
-    color: #999; 
-    font-size: 1.1rem; 
-}
-
-
-/* Navigation */
 .header-nav {
     display: flex;
     gap: 28px;
@@ -120,7 +85,7 @@
     color: var(--text-color);
     font-weight: 500;
     font-size: 0.95rem;
-    padding: 5px 0;
+    padding: 10px 0;
     transition: color 0.2s;
 }
 
@@ -151,21 +116,21 @@
     color: var(--primary-color);
 }
 
-
-/* --- Main Content Area --- */
+/* FULL WIDTH FIX */
 .main-content-area {
     display: flex;
     flex-grow: 1;
     padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
     width: 100%;
+    max-width: 100%;
+    margin: 0;
+    gap: 25px;
 }
 
 /* --- Sidebar (Filters) --- */
 .sidebar {
     width: 260px;
-    padding: 0;
+    padding: 10px;
     background-color: var(--sidebar-bg);
     margin-right: 25px;
     align-self: flex-start;
@@ -242,22 +207,21 @@
 
 .filter-item.active-category {
     background-color: var(--sidebar-active-bg);
-    color: white;
+    color: white !important;
     font-weight: 600;
 }
 
 .filter-item.active-category .filter-count {
-    color: white;
-    font-weight: 600;
+    color: white !important;
 }
 
-.filter-count {
-    color: #999;
-    font-size: 0.85rem;
-    font-weight: 500;
+/* FIX: prevent hover lightening on active category */
+.filter-item.active-category:hover {
+    background-color: var(--sidebar-active-bg) !important;
+    color: white !important;
 }
 
-/* Price Range Inputs */
+/* Price Range */
 .price-inputs {
     display: flex;
     justify-content: space-between;
@@ -267,15 +231,17 @@
     color: var(--sidebar-text);
     font-weight: 600;
 }
+
 .price-inputs .price-label {
-    padding: 5px 8px; 
+    padding: 5px 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 80px; 
+    width: 80px;
     text-align: center;
 }
+
 .range-slider-placeholder {
-    height: 10px; 
+    height: 10px;
     margin-top: 15px;
     background: #e0e0e0;
     border-radius: 5px;
@@ -303,12 +269,17 @@
 
 .condition-item.active-condition {
     background-color: var(--sidebar-active-bg);
-    color: white;
-    font-weight: 600;
+    color: white !important;
+    font-weight: 800;
 }
 
+/* FIX: prevent hover lightening on active condition */
+.condition-item.active-condition:hover {
+    background-color: var(--sidebar-active-bg) !important;
+    color: white !important;
+}
 
-/* --- Marketplace Grid --- */
+/* Marketplace Grid */
 .marketplace-grid-container {
     flex-grow: 1;
     background-color: white;
@@ -340,18 +311,18 @@
 .sort-controls {
     display: flex;
     align-items: center;
-    gap: 5px; 
+    gap: 5px;
 }
 
 .display-toggle {
     padding: 8px 12px;
     border: 1px solid #ccc;
-    background-color: white;
+    background-color: var(--grid-bg);
     cursor: pointer;
     font-size: 1rem;
     border-radius: 4px;
-    background-color: var(--grid-bg); 
 }
+
 .sort-dropdown {
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -362,8 +333,6 @@
     font-weight: 500;
 }
 
-
-/* --- Product Cards Grid --- */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -394,7 +363,6 @@
     position: relative;
 }
 
-/* Tags */
 .card-tag {
     position: absolute;
     top: 12px;
@@ -431,9 +399,7 @@
 .card-title {
     font-size: 2rem;
     font-weight: 900;
-    line-height: 0.95;
     color: white;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-body {

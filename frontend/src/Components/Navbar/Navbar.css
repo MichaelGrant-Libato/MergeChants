@@ -1,0 +1,145 @@
+/* =========================================
+   NAVBAR WRAPPER — FIXED VERSION
+   (NO STICKY, NO DOUBLE SCROLL, NO OFFSET)
+========================================= */
+.mc-navbar {
+  width: 100%;
+  height: 80px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 2rem;
+  box-sizing: border-box;
+
+  position: relative; /* IMPORTANT FIX */
+  z-index: 20;
+}
+
+
+/* =========================================
+   LOGO SECTION
+========================================= */
+.mc-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mc-logo-icon {
+  background: #8d0133;
+  color: #ffffff;
+  width: 45px;
+  height: 45px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.mc-logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.mc-logo-merge {
+  color: #8d0133;
+}
+
+/* =========================================
+   SEARCH BAR
+========================================= */
+.mc-search-bar {
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+
+  width: 320px;
+}
+
+.mc-search-icon {
+  opacity: 0.6;
+}
+
+.mc-search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+/* =========================================
+   NAVIGATION LINKS
+========================================= */
+.mc-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.mc-nav-item {
+  font-size: 1rem;
+  text-decoration: none;
+  color: #374151;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.mc-nav-item:hover {
+  color: #8d0133;
+}
+
+/* =========================================
+   RIGHT ICONS
+========================================= */
+.mc-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mc-icon {
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #333;
+}
+
+.mc-icon:hover {
+  color: #8d0133;
+}
+
+.settings {
+  text-decoration: none;
+}
+
+/* =========================================
+   RESPONSIVE BEHAVIOR
+========================================= */
+@media (max-width: 1100px) {
+  .mc-search-bar {
+    width: 260px;
+  }
+}
+
+@media (max-width: 900px) {
+  .mc-search-bar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mc-nav-links {
+    display: none;
+  }
+}
