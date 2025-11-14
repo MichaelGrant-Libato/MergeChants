@@ -1,0 +1,320 @@
+/* =========================================
+   FULL-PAGE WRAPPER UNDER NAVBAR
+========================================= */
+.settings-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  background-color: #6b0f1a;
+
+  display: flex;
+  flex-direction: row;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible !important;
+}
+
+/* =========================================
+   SIDEBAR EXACT LOOK (CIT-U STYLE)
+========================================= */
+.settings-sidebar {
+  width: 320px;
+  background-color: #8a1c27;
+  padding-top: 2rem;
+  padding-left: 2.5rem;
+  padding-right: 2rem;
+  padding-bottom: 3rem;
+}
+
+.sidebar-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 2rem;
+}
+
+.sidebar-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: #facc15;
+  color: #000;
+}
+
+/* =========================================
+   CONTENT AREA
+========================================= */
+.settings-content {
+  flex: 1;
+  background-color: #9a1e2a;
+  padding-top: 2rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  padding-bottom: 3rem;
+
+  overflow: visible !important;
+}
+
+.content-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 0.25rem;
+}
+
+.content-subtitle {
+  color: #ffd7dc;
+  margin-bottom: 1.5rem;
+}
+
+/* =========================================
+   WHITE CARD
+========================================= */
+.settings-card {
+  background-color: #ffffff;
+  width: 95%;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-top: 0.5rem;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* =========================================
+   PERSONAL INFO GRID
+========================================= */
+.pi-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2rem;
+
+  overflow: visible !important;
+}
+
+.pi-photo-circle {
+  width: 230px;
+  height: 230px;
+  background-color: #e5e5e5;
+  border-radius: 999px;
+  border: 4px solid #8a1c27;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pi-btn {
+  width: 150px;
+  margin-top: 1rem;
+}
+
+/* Inputs */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.3rem;
+}
+
+.input-grid label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.input-grid input,
+.input-grid textarea {
+  width: 100%;
+  border: 1px solid #cfcfcf;
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+}
+
+.col-span-2 {
+  grid-column: span 2;
+}
+
+/* =========================================
+   NOTIFICATIONS / SECURITY SECTIONS
+========================================= */
+.card-section {
+  padding-bottom: 1.2rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid #e5e5e5;
+
+  overflow: visible !important;
+}
+
+.card-section:last-child {
+  border-bottom: none;
+}
+
+.card-subheader {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #8a1c27;
+  margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   TOGGLES
+========================================= */
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  overflow: visible !important;
+}
+
+.toggle-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.toggle-description {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Switch */
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+
+.toggle-bg {
+  width: 2.8rem;
+  height: 1.6rem;
+  background-color: #ccc;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+  transition: 0.2s;
+}
+
+.toggle-dot {
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: #ffffff;
+  border-radius: 999px;
+  transition: 0.2s;
+}
+
+/* Active */
+.toggle-checkbox:checked + .toggle-bg {
+  background-color: #22c55e;
+}
+
+.toggle-checkbox:checked + .toggle-bg .toggle-dot {
+  transform: translateX(1.2rem);
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+.btn {
+  padding: 0.75rem 1.7rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background-color: #8a1c27;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #6b0f1a;
+}
+
+.btn-secondary {
+  background-color: #dddddd;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #c7c7c7;
+}
+
+.card-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 992px) {
+  .pi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-sidebar {
+    width: 100%;
+  }
+
+  .settings-wrapper {
+    flex-direction: column;
+  }
+
+  .settings-card {
+    width: 100%;
+  }
+
+  .settings-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* =========================================
+   FINAL OVERRIDE — REMOVE INNER SCROLL
+========================================= */
+.settings-wrapper,
+.settings-content,
+.settings-card,
+.pi-grid,
+.card-section,
+.main-content,
+body,
+html {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
