@@ -4,11 +4,12 @@ import "./MainLayout.css";
 
 export default function MainLayout({ children }) {
   return (
-    <div className="main-layout">
-      <Navbar />
-      <main className="main-content">
+    <>
+      <Navbar />   {}
+      <div className="main-wrapper">
         {children}
-      </main>
-    </div>
+      </div>
+    </>
   );
 }
+ 

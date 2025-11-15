@@ -2,31 +2,30 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
-// Import layout
+// Layout
 import MainLayout from './layout/MainLayout';
 
-// Import pages
+// Pages
 import Login from './pages/Login/login';
 import Registration from './pages/Registration/registration';
 import Dashboard from './pages/Dashboard/dashboard';
 import SettingsPage from './pages/Settings/Settings';
-import Messages from './pages/Messages/Messages'; // <-- 1. IMPORTED MESSAGES PAGE
+import Messages from './pages/Messages/Messages';
 
 import MyListings from "./pages/MyListings";
 import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History";
 import Report from "./pages/Report";
 
-
 function App() {
-  // TEMP authentication (replace later)
-  const isAuthenticated = true;
 
+  const isAuthenticated = true; // TEMP
+ 
   return (
     <Router>
       <Routes>
-
-        {/* Redirect root route */}
+        
+        {/* ROOT REDIRECT */}
         <Route
           path="/"
           element={
@@ -36,60 +35,76 @@ function App() {
           }
         />
 
-        {/* Public routes */}
+        {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
 
-        {/* Protected Dashboard */}
+        {/* PROTECTED MAIN ROUTES */}
         <Route
           path="/dashboard"
           element={
-            isAuthenticated ? (
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
           }
         />
 
-        {/* Protected Settings */}
         <Route
           path="/settings"
           element={
-            isAuthenticated ? (
-              <MainLayout>
-                <SettingsPage />
-              </MainLayout>
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <MainLayout>
+              <SettingsPage />
+            </MainLayout>
           }
         />
 
-        {/* 2. ADDED PROTECTED MESSAGES ROUTE */}
         <Route
           path="/messages"
           element={
-            isAuthenticated ? (
-              <MainLayout>
-                <Messages />
-              </MainLayout>
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <MainLayout>
+              <Messages />
+            </MainLayout>
           }
         />
 
-        {/* You can add more routes here, like /my-listings, /sell, etc. */}
+        {/* 🔥 NEW PAGES YOU ADDED */}
+        <Route
+          path="/mylistings"
+          element={
+            <MainLayout>
+              <MyListings />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/sell"
+          element={
+            <MainLayout>
+              <Sell />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/history"
+          element={
+            <MainLayout>
+              <HistoryPage />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/report"
+          element={
+            <MainLayout>
+              <Report />
+            </MainLayout>
+          }
+        />
 
       </Routes>
-      <Route path="/mylistings" element={<MyListings />} />
-      <Route path="/sell" element={<Sell />} />
-      <Route path="/history" element={<HistoryPage />} />
-      <Route path="/report" element={<Report />} />
-
     </Router>
   );
 }
