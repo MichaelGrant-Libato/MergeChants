@@ -12,6 +12,12 @@ import Dashboard from './pages/Dashboard/dashboard';
 import SettingsPage from './pages/Settings/Settings';
 import Messages from './pages/Messages/Messages'; // <-- 1. IMPORTED MESSAGES PAGE
 
+import MyListings from "./pages/MyListings";
+import Sell from "./pages/Sell";
+import HistoryPage from "./pages/History";
+import Report from "./pages/Report";
+
+
 function App() {
   // TEMP authentication (replace later)
   const isAuthenticated = true;
@@ -79,6 +85,11 @@ function App() {
         {/* You can add more routes here, like /my-listings, /sell, etc. */}
 
       </Routes>
+      <Route path="/mylistings" element={<MyListings />} />
+      <Route path="/sell" element={<Sell />} />
+      <Route path="/history" element={<HistoryPage />} />
+      <Route path="/report" element={<Report />} />
+
     </Router>
   );
 }

@@ -31,6 +31,11 @@ export default function Navbar() {
         <a href="/sell" className="mc-nav-item">Sell Item</a>
         <a href="/history" className="mc-nav-item">History</a>
         <a href="/report" className="mc-nav-item">Report</a>
+        <Link to="/mylistings">My Listings</Link>
+<Link to="/sell">Sell Item</Link>
+<Link to="/history">History</Link>
+<Link to="/report">Report</Link>
+
       </nav>
 
       {/* RIGHTMOST ACTIONS */}
