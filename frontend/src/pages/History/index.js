@@ -2,12 +2,12 @@ import React from "react";
 import "./style.css";
 import MainLayout from "../../layout/MainLayout";
 
-export default function Sell() {
+export default function HistoryPage() {
   return (
     <MainLayout>
       <div className="mc-page-container">
-        <h1 className="mc-title">Sell an Item</h1>
-        <p className="mc-description">Form to post a new listing will go here.</p>
+        <h1 className="mc-title">Transaction History</h1>
+        <p className="mc-description">Your previous purchases and sales will appear here.</p>
       </div>
     </MainLayout>
   );
