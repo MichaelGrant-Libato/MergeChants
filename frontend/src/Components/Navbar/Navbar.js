@@ -1,10 +1,11 @@
 import React from "react";
 import "./Navbar.css";
+import { Link } from "react-router-dom";   // ✅ REQUIRED IMPORT
 
 export default function Navbar() {
   return (
     <header className="mc-navbar">
-      
+
       {/* LEFT: LOGO */}
       <div className="mc-logo-area">
         <div className="mc-logo-icon">M</div>
@@ -25,25 +26,21 @@ export default function Navbar() {
 
       {/* RIGHT: NAVIGATION */}
       <nav className="mc-nav-links">
-        <a href="/dashboard" className="mc-nav-item">Marketplace</a>
-        <a href="/my-listings" className="mc-nav-item">My Listings</a>
-        <a href="/messages" className="mc-nav-item">Messages</a>
-        <a href="/sell" className="mc-nav-item">Sell Item</a>
-        <a href="/history" className="mc-nav-item">History</a>
-        <a href="/report" className="mc-nav-item">Report</a>
-        <Link to="/mylistings">My Listings</Link>
-<Link to="/sell">Sell Item</Link>
-<Link to="/history">History</Link>
-<Link to="/report">Report</Link>
-
+        <Link to="/dashboard" className="mc-nav-item">Marketplace</Link>
+        <Link to="/mylistings" className="mc-nav-item">My Listings</Link>
+        <Link to="/messages" className="mc-nav-item">Messages</Link>
+        <Link to="/sell" className="mc-nav-item">Sell Item</Link>
+        <Link to="/history" className="mc-nav-item">History</Link>
+        <Link to="/report" className="mc-nav-item">Report</Link>
       </nav>
 
       {/* RIGHTMOST ACTIONS */}
       <div className="mc-nav-actions">
         <div className="mc-icon">🔔</div>
-        <a href="/settings" className="mc-icon settings">⚙️</a>
+        <Link to="/settings" className="mc-icon settings">⚙️</Link>
       </div>
 
     </header>
   );
 }
+ 
