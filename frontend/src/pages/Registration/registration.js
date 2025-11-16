@@ -127,15 +127,51 @@ export default function Registration() {
 
     // --- Submission Handler ---
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => { // ADDED 'async'
         e.preventDefault();
-        if (validate()) {
-            console.log("Registration successful:", formData);
+        if (!validate()) {
+            console.log("Validation failed", errors);
+            return;
+        }
+
+        // 🔑 API Configuration (Matches your Spring Boot setup)
+        const registerUrl = 'http://localhost:8080/api/auth/register'; 
+
+        try {
+            console.log("Attempting registration for:", formData.studentNumber);
+
+            // 📞 Send POST request to Spring Boot
+            const response = await fetch(registerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // Send ALL required fields to the RegisterRequest DTO
+                body: JSON.stringify(formData), 
+            });
+
+            // Check for non-2xx status codes (e.g., 400 Bad Request)
+            if (!response.ok) {
+                let errorMessage = `Registration failed. Status: ${response.status}`;
+                try {
+                    // Try to read the error message returned by the Spring Boot controller
+                    const errorText = await response.text(); 
+                    errorMessage = errorText || errorMessage;
+                } catch (e) {
+                    // Ignore if body is not readable text
+                }
+                throw new Error(errorMessage);
+            }
+
+            // Success (201 Created)
             alert("Registration Successful! Please log in with your new account.");
             // ➡️ REDIRECT to the login page after success
             navigate("/login"); 
-        } else {
-            console.log("Validation failed", errors);
+
+        } catch (err) {
+            console.error("Registration Error:", err.message);
+            // Display the friendly error message to the user
+            alert(`Registration Failed: ${err.message}`); 
         }
     };
 

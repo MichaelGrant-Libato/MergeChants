@@ -1,41 +1,46 @@
-// backend/src/main/java/com/project/mergechants/backend/controller/AuthController.java
 package com.project.mergechants.backend.controller;
 
-import com.project.mergechants.backend.controller.request.LoginRequest;
-import com.project.mergechants.backend.service.AuthenticationService; 
+import com.project.mergechants.backend.dto.AuthResponse;
+import com.project.mergechants.backend.dto.LoginRequest;
+import com.project.mergechants.backend.dto.RegisterRequest;
+import com.project.mergechants.backend.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
 @RestController
-@RequestMapping("/api/auth") // Base URL: http://localhost:8080/api/auth
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
-    private final AuthenticationService authService;
+  private final AuthService authService;
 
-    
-    public AuthController(AuthenticationService authService) {
-        this.authService = authService;
-    }
+  @Autowired
+  public AuthController(AuthService authService) {
+    this.authService = authService;
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            Object loginResponse = authService.authenticateUser(
-                loginRequest.getStudentId(), 
-                loginRequest.getPassword()
-            );
-            
-            
-            return ResponseEntity.ok(loginResponse);
-            
-        } catch (RuntimeException e) {
-            return ResponseEntity
-                .status(401)
-                .body(e.getMessage());
-        }
+  @PostMapping("/register")
+  public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
+    try {
+      authService.registerStudent(registerRequest);
+      return new ResponseEntity<>("User Registration Successful!", HttpStatus.CREATED);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
-    
-  
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+    try {
+      String token = authService.authenticateUser(loginRequest);
+      return ResponseEntity.ok()
+          .body(new AuthResponse(loginRequest.getStudentId(), token));
+
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("{\"message\": \"Invalid student ID or password.\"}");
+    }
+  }
 }

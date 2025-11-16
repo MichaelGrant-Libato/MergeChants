@@ -1,10 +1,10 @@
-package com.project.mergechants.marketplace;
+package com.project.mergechants.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MarketplaceApplicationTests {
+class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {
