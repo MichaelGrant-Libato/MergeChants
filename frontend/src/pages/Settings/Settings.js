@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { User, Bell, Shield } from "lucide-react";
 import "./Settings.css";
 
-/* ================================
-   Toggle Component
-================================ */
+
 const ToggleItem = ({ title, description, enabled = false }) => {
   const [isOn, setIsOn] = useState(enabled);
 
@@ -30,9 +28,7 @@ const ToggleItem = ({ title, description, enabled = false }) => {
   );
 };
 
-/* ================================
-   PERSONAL INFO
-================================ */
+
 const PersonalInformation = () => (
   <>
     <h2 className="content-title">Personal Information</h2>
@@ -43,7 +39,7 @@ const PersonalInformation = () => (
     <div className="settings-card">
       <div className="pi-grid">
         <div className="pi-photo-col">
-          <div className="pi-photo-circle">
+          <div className="pi-photo-circle"> 
             <User size={90} color="#333" />
           </div>
           <button className="btn btn-primary pi-btn">Change Photo</button>
@@ -90,9 +86,7 @@ const PersonalInformation = () => (
   </>
 );
 
-/* ================================
-   NOTIFICATIONS
-================================ */
+
 const NotificationSettings = () => (
   <>
     <h2 className="content-title">Notification Settings</h2>
@@ -129,9 +123,7 @@ const NotificationSettings = () => (
   </>
 );
 
-/* ================================
-   SECURITY & PRIVACY
-================================ */
+
 const SecuritySettings = () => (
   <>
     <h2 className="content-title">Security and Privacy</h2>
@@ -165,9 +157,7 @@ const SecuritySettings = () => (
   </>
 );
 
-/* ================================
-   MAIN SETTINGS PAGE
-================================ */
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
 

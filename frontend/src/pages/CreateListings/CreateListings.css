@@ -1,0 +1,620 @@
+.create-listing-page {
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+.listing-header {
+    background-color: white;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #2d2d2d;
+}
+
+.header-content p {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: white;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.step.active .step-circle {
+    background-color: #5d172e;
+    color: white;
+}
+
+.step.completed .step-circle {
+    background-color: #5d172e;
+    color: white;
+}
+
+.step span {
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.step.active span {
+    color: #5d172e;
+    font-weight: 600;
+}
+
+.step-line {
+    width: 100px;
+    height: 2px;
+    background-color: #e0e0e0;
+    margin: 0 10px;
+}
+
+.form-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-step h2 {
+    font-size: 22px;
+    margin-bottom: 30px;
+    color: #2d2d2d;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #5d172e;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.category-grid,
+.condition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.category-btn,
+.condition-btn {
+    padding: 12px 20px;
+    border: 2px solid #e0e0e0;
+    background-color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.category-btn:hover,
+.condition-btn:hover {
+    border-color: #5d172e;
+    background-color: #fef5f8;
+}
+
+.category-btn.selected,
+.condition-btn.selected {
+    border-color: #5d172e;
+    background-color: #5d172e;
+    color: white;
+}
+
+.next-btn,
+.publish-btn {
+    background-color: #5d172e;
+    color: white;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    float: right;
+}
+
+.next-btn:hover,
+.publish-btn:hover {
+    background-color: #7a1e3c;
+}
+
+.back-btn-step {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-btn-step:hover {
+    background-color: #e0e0e0;
+}
+
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    clear: both;
+}
+
+/* Step 2 - Two Column Layout */
+.two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.availability-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.image-upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background-color: #fafafa;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-icon {
+    font-size: 48px;
+}
+
+.browse-btn {
+    background-color: #5d172e;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.upload-note {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+}
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.image-preview {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.image-preview img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.add-tag-btn {
+    background-color: white;
+    border: 2px solid #5d172e;
+    color: #5d172e;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.tag-label {
+    font-size: 13px;
+    color: #666;
+    margin-right: 5px;
+}
+
+.tag-chip {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tag-chip:hover {
+    background-color: #e8e8e8;
+}
+
+.tag-chip.selected {
+    background-color: #5d172e;
+    color: white;
+    border-color: #5d172e;
+}
+
+/* Step 3 - Review Layout */
+.review-layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+}
+
+.listing-preview h3,
+.terms-section h4 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #2d2d2d;
+}
+
+.preview-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.preview-image {
+    width: 100%;
+    height: 250px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    color: #999;
+    font-size: 16px;
+}
+
+.preview-details {
+    padding: 20px;
+}
+
+.preview-details h4 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #2d2d2d;
+}
+
+.preview-category {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 15px 0;
+}
+
+.preview-description {
+    color: #444;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 15px 0;
+}
+
+.preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.preview-tag {
+    background-color: #f0f0f0;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #666;
+}
+
+.preview-availability {
+    font-size: 13px;
+    color: #888;
+    margin: 0;
+}
+
+.listing-details-section {
+    background-color: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 14px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span:first-child {
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-row span:last-child {
+    color: #2d2d2d;
+    font-weight: 600;
+}
+
+.safety-guidelines {
+    background-color: #fff9e6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.safety-guidelines ul {
+    margin: 15px 0 0 0;
+    padding-left: 20px;
+}
+
+.safety-guidelines li {
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.terms-conditions {
+    background-color: #f5f9ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.terms-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.terms-checkboxes .checkbox-label {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #444;
+}
+
+.important-notice {
+    background-color: #fff0f0;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #5d172e;
+}
+
+.important-notice h4 {
+    margin-top: 0;
+    color: #5d172e;
+}
+
+.important-notice p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #666;
+    margin: 10px 0 0 0;
+}
+
+.message {
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .listing-header {
+        padding: 15px 20px;
+    }
+
+    .step-indicator {
+        padding: 30px 10px;
+    }
+
+    .step-circle {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .step span {
+        font-size: 11px;
+    }
+
+    .step-line {
+        width: 40px;
+    }
+
+    .form-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .category-grid,
+    .condition-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .two-column-layout,
+    .review-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .image-preview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .button-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .next-btn,
+    .publish-btn,
+    .back-btn-step {
+        width: 100%;
+        float: none;
+    }
+}
