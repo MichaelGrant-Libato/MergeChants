@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import "./style.css"; // We will add this CSS next
+import "./style.css"; 
+import { useNavigate } from "react-router-dom"; 
 
 export default function MyListings() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate(); 
+ 
   // 1. Get the current user's ID
   const studentId = localStorage.getItem("studentId");
 
@@ -55,7 +57,7 @@ export default function MyListings() {
         <h1>My Listings</h1>
         <button className="create-btn" onClick={() => window.location.href='/createListings'}>+ Create New</button>
       </div>
-      
+       
       {listings.length === 0 ? (
         <div className="empty-state">
           <p>You haven't listed anything yet.</p>
@@ -75,7 +77,10 @@ export default function MyListings() {
                 <span className={`status-badge ${item.status.toLowerCase()}`}>{item.status}</span>
                 
                 <div className="card-actions">
-                  <button className="edit-btn">Edit</button>
+                  <button 
+                      className="edit-btn" 
+                    onClick={() => navigate(`/edit/${item.id}`)}
+                  >Edit</button>
                   <button className="delete-btn" onClick={() => handleDelete(item.id)}>Delete</button>
                 </div>
               </div>

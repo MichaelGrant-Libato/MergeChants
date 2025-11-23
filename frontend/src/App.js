@@ -114,9 +114,20 @@ function App() {
           }
         />
 
+        {/* EDIT LISTING ROUTE - Reuses the Create Page */}
+        <Route
+          path="/edit/:id"
+          element={
+            <MainLayout>
+              <CreateListings />
+            </MainLayout>
+          }
+        />
       </Routes>
     </Router>
   );
 }
+
+
 
 export default App;

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import './CreateListings.css';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateListings() {
+    const navigate = useNavigate();
+    const { id } = useParams(); 
+    const isEditing = Boolean(id); 
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         seller: localStorage.getItem('studentId') || 'TechStudent',
@@ -30,7 +34,37 @@ export default function CreateListings() {
         termsOfService: false,
         misleadingInfo: false
     });
-
+    
+    useEffect(() => {
+        if (isEditing) {
+            fetch(`http://localhost:8080/api/listings/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Fill the form with backend data
+                    setFormData({
+                        seller: data.seller,
+                        name: data.name,
+                        subTitle: data.subTitle || '',
+                        category: data.category,
+                        condition: data.condition,
+                        price: data.price,
+                        originalPrice: data.originalPrice,
+                        campus: data.campus,
+                        description: data.description,
+                        preferredLocation: data.preferredLocation,
+                        availableFrom: data.availableFrom,
+                        availableUntil: data.availableUntil,
+                        meetingPreferences: data.meetingPreferences ? JSON.parse(data.meetingPreferences) : {
+                            onCampus: false, publicPlace: false, deliveryAvailable: false
+                        },
+                        tags: data.tags ? data.tags.split(',') : [],
+                        images: [] // Keeping images empty for now to avoid complexity
+                    });
+                })
+                .catch(err => console.error("Error loading listing:", err));
+        }
+    }, [id, isEditing]);
+   
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         
@@ -133,9 +167,16 @@ export default function CreateListings() {
         };
 
 
-        try {
-            const response = await fetch('http://localhost:8080/api/listings', {
-                method: 'POST',
+try {
+            // DYNAMIC URL AND METHOD
+            const url = isEditing 
+                ? `http://localhost:8080/api/listings/${id}` 
+                : 'http://localhost:8080/api/listings';
+                
+            const method = isEditing ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -143,17 +184,21 @@ export default function CreateListings() {
             });
 
             if (response.ok) {
-                const newListing = await response.json();
-                setMessage(`Listing "${newListing.name}" created successfully! ID: ${newListing.id}`);
+                const result = await response.json();
+                const action = isEditing ? "Updated" : "Created";
+                setMessage(`Listing "${result.name}" ${action} successfully!`);
+                
                 setTimeout(() => {
-                    window.location.href = '/dashboard';
+                    // Redirect to My Listings so they can see the change
+                    window.location.href = '/mylistings'; 
                 }, 2000);
             } else {
-                setMessage('Error creating listing. Status: ' + response.status);
+                setMessage('Error saving listing. Status: ' + response.status);
             }
         } catch (error) {
             setMessage('Network error: ' + error.message);
         }
+        // =======================================================
     };
 
     const categories = ['Electronics', 'Textbooks', 'Clothing', 'Furniture', 'Sports & Fitness', 'Other'];
@@ -553,7 +598,7 @@ export default function CreateListings() {
                                     Back
                                 </button>
                                 <button type="submit" className="publish-btn">
-                                    Publish Listing
+                                    {isEditing ? 'Update Listing' : 'Publish Listing'}
                                 </button>
                             </div>
                         </div>
