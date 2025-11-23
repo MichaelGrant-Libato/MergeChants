@@ -1,87 +1,151 @@
-// frontend/src/pages/Dashboard/dashboard.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 
 
-// --- Dummy Data ---
 const CARD_COLOR = "#8D0133";
 
-const DUMMY_PRODUCTS = [
-  { id: 1, name: "MacBook", subTitle: "MacBook Pro 13-inch M2", category: "Electronics", price: 899, originalPrice: 1299, condition: "Like New", rating: 4.9, reviews: 127, seller: "TechStudent", campus: "Campus North", tags: ["Verified"], time: "2h ago", style: "Like New" },
-  { id: 2, name: "Books", subTitle: "Calculus Textbook Bundle", category: "Textbooks", price: 85, originalPrice: 250, condition: "Good", rating: 4.7, reviews: 43, seller: "MathMajor2024", campus: "Library District", tags: ["Verified"], time: "4h ago", style: "Good" },
-  { id: 3, name: "Hoodie", subTitle: "University Hoodie - Large", category: "Clothing", price: 25, originalPrice: 65, condition: "Excellent", rating: 4.8, reviews: 85, seller: "CampusStyle", campus: "Student Center", tags: [], time: "1d ago", style: "Excellent" },
-  { id: 4, name: "Chair", subTitle: "Gaming Chair - Ergonomic", category: "Furniture", price: 120, originalPrice: 200, condition: "Very Good", rating: 4.6, reviews: 67, seller: "DormDeals", campus: "East Campus", tags: ["Verified"], time: "3h ago", style: "Very Good" },
-  { id: 5, name: "iPhone", subTitle: "iPhone 14 Pro - 128GB", category: "Electronics", price: 650, originalPrice: 999, condition: "Excellent", rating: 4.9, reviews: 156, seller: "PhonePro", campus: "Tech Hub", tags: ["Verified"], time: "3h ago", style: "Excellent" },
-  { id: 6, name: "Lamp", subTitle: "Desk Lamp - LED", category: "Furniture", price: 15, originalPrice: 35, condition: "Good", rating: 4.5, reviews: 23, seller: "StudySpace", campus: "Dorm Area", tags: [], time: "6h ago", style: "Good" },
-];
 
-// --- Components ---
 const CardTag = ({ style }) => {
   let tagClass = "";
   if (style === "Excellent") tagClass = "tag-excellent";
   else if (style === "Very Good") tagClass = "tag-very-good";
   else if (style === "Good") tagClass = "tag-good";
   else if (style === "Like New") tagClass = "tag-like-new";
+  else if (style === "New") tagClass = "tag-new";
+  else if (style === "Fair") tagClass = "tag-fair";
 
   return <span className={`card-tag ${tagClass}`}>{style}</span>;
 };
 
-const ProductCard = ({ product }) => (
-  <div className="product-card">
-    <div className="card-header" style={{ backgroundColor: CARD_COLOR }}>
-      <CardTag style={product.style} />
-      {product.tags.includes("Verified") && (
-        <span className="verified-badge">✓ Verified</span>
-      )}
-      <h2 className="card-title">{product.name}</h2>
-    </div>
+const ProductCard = ({ product }) => {
+  const getTimeAgo = (timestamp) => {
+    if (!timestamp) return "Recently";
+    
+    const now = new Date();
+    const productTime = new Date(timestamp);
+    const diffMs = now - productTime;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  };
 
-    <div className="card-body">
-      <p className="card-subtitle">{product.subTitle}</p>
+  return (
+    <div className="product-card">
+      <div className="card-header" style={{ backgroundColor: CARD_COLOR }}>
+        <CardTag style={product.condition} />
+        {product.tags && product.tags.split(',').includes("Verified") && (
+          <span className="verified-badge">✓ Verified</span>
+        )}
+        <h2 className="card-title">{product.name}</h2>
+      </div>
 
-      <p className="price-info">
-        <span className="current-price">${product.price}</span>
-        <span className="original-price">${product.originalPrice}</span>
-        <span className="discount">
-          {Math.round(
-            ((product.originalPrice - product.price) / product.originalPrice) *
-              100
+      <div className="card-body">
+        <p className="card-subtitle">{product.subTitle}</p>
+
+        <p className="price-info">
+          <span className="current-price">₱{product.price.toFixed(2)}</span>
+          {product.originalPrice && product.originalPrice > product.price && (
+            <>
+              <span className="original-price">₱{product.originalPrice.toFixed(2)}</span>
+              <span className="discount">
+                {Math.round(
+                  ((product.originalPrice - product.price) / product.originalPrice) * 100
+                )}% off
+              </span>
+            </>
           )}
-          % off
-        </span>
-      </p>
+        </p>
 
-      <p className="seller-info">
-        <span className="seller-name">👤 {product.seller}</span>
-        <span className="rating">
-          ★ {product.rating} ({product.reviews})
-        </span>
-      </p>
+        <p className="seller-info">
+          <span className="seller-name">👤 {product.seller}</span>
+          <span className="rating">
+            ★ {product.ratings.toFixed(1)} ({product.reviews})
+          </span>
+        </p>
 
-      <p className="campus-info">📍 {product.campus}</p>
+        <p className="campus-info">📍 {product.campus}</p>
+      </div>
+
+      <div className="card-footer">
+        <button className="contact-btn">Contact Seller</button>
+        <span className="share-icon">↗</span>
+        <span className="time-ago">{getTimeAgo(product.time)}</span>
+      </div>
     </div>
-
-    <div className="card-footer">
-      <button className="contact-btn">Contact Seller</button>
-      <span className="share-icon">↗</span>
-      <span className="time-ago">{product.time}</span>
-    </div>
-  </div>
-);
+  );
+};
 
 // --- Main Dashboard ---
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
   const [priceRange] = useState({ min: 0, max: 1000 });
 
+  // Fetch products from backend
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8080/api/listings');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch listings');
+      }
+      
+      const data = await response.json();
+      setProducts(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate category counts dynamically
+  const getCategoryCounts = () => {
+    const counts = {
+      "All Categories": products.length,
+      "Electronics": 0,
+      "Textbooks": 0,
+      "Clothing": 0,
+      "Furniture": 0,
+      "Sports & Fitness": 0,
+      "Other": 0
+    };
+
+    products.forEach(product => {
+      if (counts.hasOwnProperty(product.category)) {
+        counts[product.category]++;
+      } else {
+        counts["Other"]++;
+      }
+    });
+
+    return counts;
+  };
+
+  const categoryCounts = getCategoryCounts();
   const categories = [
-    { name: "All Categories", count: 1247 },
-    { name: "Electronics", count: 342 },
-    { name: "Textbooks", count: 189 },
-    { name: "Clothing", count: 156 },
-    { name: "Furniture", count: 98 },
-    { name: "Sports & Fitness", count: 67 },
+    { name: "All Categories", count: categoryCounts["All Categories"] },
+    { name: "Electronics", count: categoryCounts["Electronics"] },
+    { name: "Textbooks", count: categoryCounts["Textbooks"] },
+    { name: "Clothing", count: categoryCounts["Clothing"] },
+    { name: "Furniture", count: categoryCounts["Furniture"] },
+    { name: "Sports & Fitness", count: categoryCounts["Sports & Fitness"] },
   ];
 
   const conditions = [
@@ -91,21 +155,35 @@ export default function Dashboard() {
     "Excellent",
     "Very Good",
     "Good",
+    "Fair"
   ];
 
-  const filteredProducts = DUMMY_PRODUCTS;
+  // Filter products based on selected filters
+  const filteredProducts = products.filter(product => {
+    const categoryMatch = selectedCategory === "All Categories" || product.category === selectedCategory;
+    const conditionMatch = selectedCondition === "All Conditions" || product.condition === selectedCondition;
+    const priceMatch = product.price >= priceRange.min && product.price <= priceRange.max;
+    
+    return categoryMatch && conditionMatch && priceMatch;
+  });
+
+  const handleCreateListing = () => {
+    navigate('/createListings');
+  };
+
+  const clearFilters = () => {
+    setSelectedCategory("All Categories");
+    setSelectedCondition("All Conditions");
+  };
 
   return (
     <div className="dashboard-container">
-      {/* Global Navbar */}
-      
-
       <div className="main-content-area">
         {/* Sidebar */}
         <aside className="sidebar">
           <div className="sidebar-header">
             <h2>Filters</h2>
-            <button className="clear-all-btn">Clear All</button>
+            <button className="clear-all-btn" onClick={clearFilters}>Clear All</button>
           </div>
 
           <div className="filter-section categories-filter">
@@ -127,8 +205,8 @@ export default function Dashboard() {
           <div className="filter-section">
             <h3>Price Range</h3>
             <div className="price-inputs">
-              <span className="price-label">${priceRange.min}</span>
-              <span className="price-label">${priceRange.max}</span>
+              <span className="price-label">₱{priceRange.min}</span>
+              <span className="price-label">₱{priceRange.max}</span>
             </div>
             <div className="range-slider-placeholder"></div>
           </div>
@@ -168,13 +246,48 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="product-grid">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="loading-state">
+              <p>Loading listings...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="error-state">
+              <p>Error: {error}</p>
+              <button onClick={fetchProducts} className="retry-btn">Retry</button>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && filteredProducts.length === 0 && (
+            <div className="empty-state">
+              <p>No listings found matching your filters.</p>
+              <button onClick={clearFilters} className="clear-filters-btn">Clear Filters</button>
+            </div>
+          )}
+
+          {/* Product Grid */}
+          {!loading && !error && filteredProducts.length > 0 && (
+            <div className="product-grid">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </main>
       </div>
+
+      {/* Floating Action Button - Create Listing */}
+      <button 
+        className="fab-create-listing" 
+        onClick={handleCreateListing}
+        title="Create New Listing"
+      >
+        <span className="fab-icon">+</span>
+      </button>
     </div>
   );
 }

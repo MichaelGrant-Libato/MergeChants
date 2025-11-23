@@ -1,7 +1,7 @@
-/* frontend/src/pages/Login/login.css */
+/*login.css*/
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap"); 
 
-/* --- Global Reset and Container Setup --- */
+
 body {
     margin: 0;
     font-family: "Poppins", sans-serif;
@@ -19,7 +19,7 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Left Panel (Marketplace Info) --- */
+/* (Marketplace Info)*/
 .left-panel {
     flex: 1;
     position: relative;
@@ -30,8 +30,6 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    
-    /* 🔑 CRITICAL FIX: Set background to a neutral value. */
     background: transparent; 
 }
 
@@ -42,7 +40,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(146, 50, 75, 0.85); /* Dark red/pink overlay */
+    background: rgba(146, 50, 75, 0.85); 
 }
 
 .left-panel * {
@@ -81,7 +79,7 @@ body {
     backdrop-filter: blur(2px);
 }
 
-/* --- Right Panel (Login Form) --- */
+/*Right Panel (Login Form)*/
 .right-panel {
     flex: 1;
     background-color: white;
@@ -179,7 +177,7 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 5px; /* Adjust spacing after error message */
+    margin-top: 5px; 
     margin-bottom: 20px;
     transition: background-color 0.3s;
 }

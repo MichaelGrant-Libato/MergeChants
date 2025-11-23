@@ -1,43 +1,36 @@
-// frontend/src/pages/Login/login.js
+//login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
 
-// Assuming you have access to Font Awesome icons or use a similar setup 
-// In a real project, you would import specific icons:
-// import { FaGoogle, FaFacebookF } from 'react-icons/fa'; 
-
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    studentId: '', // Matches the form input name
+    studentId: '', 
     password: '',
   });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // State for loading/button disabling
+  const [isLoading, setIsLoading] = useState(false); 
 
-  // Path string used for inline style
+  
   const backgroundImageURL = '/cit-u_background_img.jpg';
 
   const handleChange = (e) => {
-    // Trim only the studentId value on change, not the password
     const value = e.target.name === 'studentId' ? e.target.value.trim() : e.target.value;
     
     setFormData({ ...formData, [e.target.name]: value });
-    setError(''); // Clear error on new input
+    setError(''); 
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true); // Start loading
+    setIsLoading(true); 
 
-    // Use a clean copy for validation and API call
     const cleanStudentId = formData.studentId.trim();
     const { password } = formData;
 
-    // --- Client-Side Validation ---
-    // Update: Validate Student ID format (e.g., 20-0000-001)
+    
     if (!/^\d{2}-\d{4}-\d{3}$/.test(cleanStudentId)) {
       setError("Please enter the Student ID in XX-XXXX-XXX format (e.g., 20-0000-001).");
       setIsLoading(false);
@@ -50,32 +43,29 @@ export default function Login() {
       return;
     }
 
-    // 🔑 API Configuration (Matches your Spring Boot setup)
+    // API Configuration (Matches your Spring Boot setup)
     const loginUrl = 'http://localhost:8080/api/auth/login'; 
 
     try {
-      // 📞 Send POST request to Spring Boot
+      // Send POST request to Spring Boot
       const response = await fetch(loginUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          studentId: cleanStudentId, // Send the clean/trimmed ID
+          studentId: cleanStudentId, 
           password: password,
         }),
       });
 
-      // Check for non-200/non-success status codes (e.g., 401 Unauthorized)
+      // Check for non-success status codes 
       if (!response.ok) {
-        // Attempt to read the error response body from the server
         let errorMessage = `Login failed. Status: ${response.status}`;
         try {
             const errorBody = await response.json(); 
-            // Assuming the backend sends a JSON object with a 'message' field on error
             errorMessage = errorBody.message || errorBody.error || errorMessage;
         } catch (e) {
-            // If the body isn't JSON, use the status message
             const errorText = await response.text();
             errorMessage = errorText || errorMessage;
         }
@@ -83,29 +73,25 @@ export default function Login() {
         throw new Error(errorMessage);
       }
 
-      // Process successful response (Expecting a JWT Token and perhaps user data)
+      // Process successful response 
       const data = await response.json();
       
       console.log("Login successful. Data:", data);
 
       // Store authentication token and user ID
-      // NOTE: Ensure your backend response object has a 'token' property
       localStorage.setItem('authToken', data.token); 
       localStorage.setItem('userId', cleanStudentId);
-      // OPTIONAL: Store user role if available
-      // localStorage.setItem('userRole', data.role);
+      
 
-      // Redirect upon success
       alert("Login successful! Redirecting to Dashboard.");
       navigate("/dashboard"); 
 
     } catch (err) {
       console.error("Login Error:", err.message);
-      // Display the friendly error message to the user
       setError(err.message.includes("failed to fetch") ? "Could not connect to the server." : err.message); 
 
     } finally {
-      setIsLoading(false); // Stop loading, regardless of outcome
+      setIsLoading(false); 
     }
   };
 
@@ -168,7 +154,7 @@ export default function Login() {
             name="studentId"
             value={formData.studentId}
             onChange={handleChange}
-            // Fix placeholder to be consistent with client-side validation
+            
             placeholder="Enter your Student ID (e.g., 20-0000-001)" 
             // Apply error class only if error is present
             className={error ? 'input-error' : ''} 

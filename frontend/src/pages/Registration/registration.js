@@ -1,4 +1,4 @@
-// frontend/src/pages/Registration/registration.js
+//registration.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./registration.css";
@@ -70,7 +70,6 @@ export default function Registration() {
     const [errors, setErrors] = useState({});
     const [progress, setProgress] = useState(0);
 
-    // FIX: Static string path pointing to the public folder root
     const backgroundImageURL = '/cit-u_background_img.jpg'; 
 
     const handleChange = (e) => {
@@ -86,7 +85,7 @@ export default function Registration() {
     }, [formData]);
 
 
-    // --- Validation Logic (Full) ---
+    // Validation Logic 
 
     const validate = () => {
         let newErrors = {};
@@ -94,7 +93,7 @@ export default function Registration() {
             studentNumber, firstName, middleInitial, lastName, yearLevel, course, password, confirmPassword
         } = formData;
 
-        // 🎯 UPDATED VALIDATION for xx-xxxx-xxx format (e.g., 20-0000-001)
+        // Validation format (e.g., 20-0000-001)
         if (!studentNumber.trim()) { 
             newErrors.studentNumber = "Student Number is required."; 
         } else if (!/^\d{2}-\d{4}-\d{3}$/.test(studentNumber.trim())) { 
@@ -103,7 +102,7 @@ export default function Registration() {
 
         if (!firstName.trim()) { newErrors.firstName = "First Name is required."; }
         
-        // ✅ ESLINT FIX: Removed unnecessary escape character before the dot
+        // Removed unnecessary escape character before the dot
         if (middleInitial.trim() && !/^[A-Za-z.\s]{1,3}$/.test(middleInitial.trim())) { 
             newErrors.middleInitial = "Middle Initial is invalid."; 
         }
@@ -125,22 +124,22 @@ export default function Registration() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // --- Submission Handler ---
+    //Submission Handler
 
-    const handleSubmit = async (e) => { // ADDED 'async'
+    const handleSubmit = async (e) => { 
         e.preventDefault();
         if (!validate()) {
             console.log("Validation failed", errors);
             return;
         }
 
-        // 🔑 API Configuration (Matches your Spring Boot setup)
+        // API Configuration (Matches your Spring Boot setup)
         const registerUrl = 'http://localhost:8080/api/auth/register'; 
 
         try {
             console.log("Attempting registration for:", formData.studentNumber);
 
-            // 📞 Send POST request to Spring Boot
+            // Send POST request to Spring Boot
             const response = await fetch(registerUrl, {
                 method: 'POST',
                 headers: {
@@ -154,7 +153,6 @@ export default function Registration() {
             if (!response.ok) {
                 let errorMessage = `Registration failed. Status: ${response.status}`;
                 try {
-                    // Try to read the error message returned by the Spring Boot controller
                     const errorText = await response.text(); 
                     errorMessage = errorText || errorMessage;
                 } catch (e) {
@@ -162,23 +160,19 @@ export default function Registration() {
                 }
                 throw new Error(errorMessage);
             }
-
-            // Success (201 Created)
+        
             alert("Registration Successful! Please log in with your new account.");
-            // ➡️ REDIRECT to the login page after success
             navigate("/login"); 
 
         } catch (err) {
             console.error("Registration Error:", err.message);
-            // Display the friendly error message to the user
             alert(`Registration Failed: ${err.message}`); 
         }
     };
 
-    // --- Render ---
+    // Render 
 
     return (
-        // FIX: Set background properties inline to bypass CSS loader error
         <div 
             className="registration-bg"
             style={{ 

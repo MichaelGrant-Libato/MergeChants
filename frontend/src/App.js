@@ -11,11 +11,11 @@ import Registration from './pages/Registration/registration';
 import Dashboard from './pages/Dashboard/dashboard';
 import SettingsPage from './pages/Settings/Settings';
 import Messages from './pages/Messages/Messages';
-
 import MyListings from "./pages/MyListings";
 import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History";
 import Report from "./pages/Report";
+import CreateListings from './pages/CreateListings/CreateListings';
 
 function App() {
 
@@ -67,7 +67,17 @@ function App() {
           }
         />
 
-        {/* 🔥 NEW PAGES YOU ADDED */}
+        {/* CREATE LISTING ROUTE */}
+        <Route
+          path="/createListings"
+          element={
+            <MainLayout>
+              <CreateListings />
+            </MainLayout>
+          }
+        />
+
+        {/* OTHER PAGES */}
         <Route
           path="/mylistings"
           element={

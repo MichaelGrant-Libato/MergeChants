@@ -1,4 +1,4 @@
-/* frontend/src/pages/Registration/registration.css */
+/*registration.css */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 * {
@@ -17,9 +17,6 @@ body, html {
 .registration-bg {
     position: relative;
     min-height: 100vh;
-    
-    /* 🔑 CRITICAL FIX: Set background to a neutral value. 
-       Image properties (size, attachment, etc.) are moved to inline style in registration.js */
     background: transparent;
 
     display: flex;

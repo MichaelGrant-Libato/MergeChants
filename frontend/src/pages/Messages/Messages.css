@@ -1,31 +1,22 @@
-/* =========================================
-   GLOBAL VARIABLES (based on your Navbar)
-========================================= */
 :root {
   --mc-primary: #8d0133;
   --mc-seller-yellow: #facc15; /* Using a vibrant yellow from your avatar list */
-  --mc-recipient-bg: var(--mc-primary); /* Buyer (recipient) is red/maroon */
-  --mc-sender-bg: var(--mc-seller-yellow); /* Seller (me) is yellow */
+  --mc-recipient-bg: var(--mc-primary); /* Buyer is red/maroon */
+  --mc-sender-bg: var(--mc-seller-yellow); /* Seller is yellow */
   --mc-border-color: #e5e7eb;
   --mc-light-gray-bg: #f3f4f6;
   --mc-text-dark: #111827;
   --mc-text-light: #6b7280;
 }
 
-/* =========================================
-   MAIN PAGE LAYOUT
-========================================= */
 .messages-page {
   display: flex;
-  /* Fills the viewport height, minus the 80px Navbar */
   height: calc(100vh - 80px);
   width: 100%;
   background: #ffffff;
 }
 
-/* =========================================
-   SIDEBAR (LEFT)
-========================================= */
+
 .messages-sidebar {
   width: 360px;
   border-right: 1px solid var(--mc-border-color);
@@ -65,9 +56,7 @@
   overflow-y: auto;
 }
 
-/* =========================================
-   CONVERSATION ITEM
-========================================= */
+
 .conversation-item {
   display: flex;
   gap: 0.75rem;
@@ -99,7 +88,7 @@
 
 .convo-details {
   flex-grow: 1;
-  overflow: hidden; /* Important for text ellipsis */
+  overflow: hidden;
 }
 
 .convo-header {
@@ -129,7 +118,6 @@
 }
 
 .convo-message span {
-  /* Prevents long messages from wrapping and breaking layout */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,20 +132,15 @@
   margin-left: 0.5rem;
 }
 
-/* =========================================
-   CHAT AREA (RIGHT)
-========================================= */
+
 .chat-area {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  /* This is key for the chat body to scroll */
   overflow: hidden;
 }
 
-/* =========================================
-   CHAT HEADER
-========================================= */
+
 .chat-header {
   height: 70px;
   border-bottom: 1px solid var(--mc-border-color);
@@ -229,9 +212,7 @@
   cursor: pointer;
 }
 
-/* =========================================
-   CHAT BODY (MESSAGES)
-========================================= */
+
 .chat-body {
   flex-grow: 1;
   overflow-y: auto;
@@ -258,14 +239,13 @@
 
 .message-bubble.sender {
   background: var(--mc-sender-bg);
-  color: #1f2937; /* Changed to dark text for yellow background */
+  color: #1f2937; 
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
 
 .message-time {
   font-size: 0.75rem;
-  /* Note: This color is now dynamic based on parent */
   margin-top: 0.25rem;
   text-align: right;
 }
@@ -274,14 +254,12 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Added rule for sender time color */
+
 .message-bubble.sender .message-time {
   color: rgba(0, 0, 0, 0.6);
 }
 
-/* =========================================
-   CHAT INPUT AREA
-========================================= */
+
 .chat-input-area {
   height: 80px;
   border-top: 1px solid var(--mc-border-color);
