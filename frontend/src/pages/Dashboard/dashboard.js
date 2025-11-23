@@ -19,9 +19,12 @@ const CardTag = ({ style }) => {
 };
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate(); 
+  const currentStudentId = localStorage.getItem("studentId"); // 1. Get who is logged in
+  const isOwner = product.seller === currentStudentId;        // 2. Am I the seller?
+
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return "Recently";
-    
     const now = new Date();
     const productTime = new Date(timestamp);
     const diffMs = now - productTime;
@@ -34,45 +37,83 @@ const ProductCard = ({ product }) => {
     return `${diffDays}d ago`;
   };
 
+  const getFirstImage = () => {
+    if (!product.images) return null;
+    return product.images.split(',')[0];
+  };
+
+  const displayImage = getFirstImage();
+
+  const goToDetails = () => {
+    navigate(`/listing/${product.id}`);
+  };
+
   return (
     <div className="product-card">
-      <div className="card-header" style={{ backgroundColor: CARD_COLOR }}>
+      <div 
+        className="card-header" 
+        style={{ backgroundColor: CARD_COLOR, cursor: 'pointer' }}
+        onClick={goToDetails}
+      >
+        {displayImage ? (
+           <div className="card-image-preview">
+              <span style={{color:'white'}}>Has Image</span> 
+           </div>
+        ) : null}
+
         <CardTag style={product.condition} />
         {product.tags && product.tags.split(',').includes("Verified") && (
           <span className="verified-badge">✓ Verified</span>
         )}
-        <h2 className="card-title">{product.name}</h2>
       </div>
 
       <div className="card-body">
+        <h2 
+            className="card-title" 
+            style={{cursor: 'pointer'}}
+            onClick={goToDetails}
+        >
+            {product.name}
+        </h2>
+        
         <p className="card-subtitle">{product.subTitle}</p>
 
         <p className="price-info">
           <span className="current-price">₱{product.price.toFixed(2)}</span>
-          {product.originalPrice && product.originalPrice > product.price && (
-            <>
-              <span className="original-price">₱{product.originalPrice.toFixed(2)}</span>
-              <span className="discount">
-                {Math.round(
-                  ((product.originalPrice - product.price) / product.originalPrice) * 100
-                )}% off
-              </span>
-            </>
-          )}
         </p>
 
         <p className="seller-info">
           <span className="seller-name">👤 {product.seller}</span>
-          <span className="rating">
-            ★ {product.ratings.toFixed(1)} ({product.reviews})
-          </span>
         </p>
 
         <p className="campus-info">📍 {product.campus}</p>
       </div>
 
       <div className="card-footer">
-        <button className="contact-btn">Contact Seller</button>
+        {/* 3. CONDITIONAL BUTTON LOGIC */}
+        {isOwner ? (
+            <button 
+                className="contact-btn" 
+                style={{ backgroundColor: '#333' }} // Make it grey to differentiate
+                onClick={(e) => {
+                    e.stopPropagation(); // Don't open details, just go to edit
+                    navigate(`/edit/${product.id}`);
+                }}
+            >
+                Edit Listing
+            </button>
+        ) : (
+            <button 
+                className="contact-btn" 
+                onClick={(e) => {
+                    e.stopPropagation(); // Prevent double-click issues
+                    goToDetails();
+                }}
+            >
+                Contact Seller
+            </button>
+        )}
+        
         <span className="share-icon">↗</span>
         <span className="time-ago">{getTimeAgo(product.time)}</span>
       </div>

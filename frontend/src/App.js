@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-
 // Layout
 import MainLayout from './layout/MainLayout';
 
@@ -16,6 +15,7 @@ import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History";
 import Report from "./pages/Report";
 import CreateListings from './pages/CreateListings/CreateListings';
+import ProductDetails from './pages/ProductDetails/ProductDetails';
 
 function App() {
 
@@ -123,6 +123,18 @@ function App() {
             </MainLayout>
           }
         />
+
+        {/* PRODUCT DETAILS ROUTE */}
+        <Route
+          path="/listing/:id"
+          element={
+            <MainLayout>
+              <ProductDetails />
+            </MainLayout>
+          }
+        />
+
+        
       </Routes>
     </Router>
   );
