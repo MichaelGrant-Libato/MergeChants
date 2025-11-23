@@ -1,70 +1,92 @@
-# Getting Started with Create React App
+# MergeChants – Campus Marketplace Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![React](https://img.shields.io/badge/Frontend-React-blue) ![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-green) ![MySQL](https://img.shields.io/badge/Database-MySQL-orange) ![JWT](https://img.shields.io/badge/Auth-JWT-black)
 
-## Available Scripts
+**MergeChants** is a university marketplace platform designed for the safe buying, selling, and trading of items within the campus community. It facilitates secure interactions between students using a protected hub.
 
-In the project directory, you can run:
+### Architecture
+* **Frontend:** React (Create React App)
+* **Backend:** Java & Spring Boot (REST APIs)
+* **Database:** MySQL
+* **Authentication:** JWT (JSON Web Tokens)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+##  Getting Started
+Follow these instructions to get the project up and running on your local machine.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Backend Configuration (Spring Boot)
+Before running the client, ensure your backend and database are ready.
 
-### `npm test`
+**Prerequisites:**
+* Java JDK
+* Maven
+* MySQL Server
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Database Setup:**
+Configure your `application.properties` file located in the backend resources folder:
 
-### `npm run build`
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/mergechants_db
+spring.datasource.username=YOUR_USERNAME
+spring.datasource.password=YOUR_PASSWORD
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+jwt.secret=YOUR_JWT_SECRET
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Run the Server:** Navigate to the backend directory and run the application:
+cd backend
+mvn clean install
+mvn spring-boot:run
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**The backend will start on http://localhost:8080**
 
-### `npm run eject`
+### 2. Frontend Setup (React)
+In the frontend project directory, you can run the following scripts:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**Install Dependencies & Start:**
+cd frontend
+npm install
+npm start
+**The frontend will start on http://localhost:3000**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Project Features
+## Core Marketplace
+Listings: Create listings and view marketplace items.
+Filtering: Filter items by category, condition, and price.
+Seller Profiles: View seller profiles and browse reviews.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Interaction
+Messaging: Buyer–seller messaging system.
+Negotiations: Send purchase offers and negotiate prices.
+Escrow: Escrow agreement display for safer transactions.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Transactions
+Status: Track confirmed transactions and completed sales.
+History: Full transaction history log.
+Receipts: Generate digital receipts.
 
-## Learn More
+## User Management
+Access: Login & registration with JWT authentication.
+Settings: Profile settings, notification preferences, and privacy controls.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Safety
+Moderation: User reporting and evidence submission.
+Verification: Verified account tracking.
+Agreements: Escrow agreement summaries.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+#### Documentation & Resources
+## Frontend Tools
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+React Documentation
 
-### Analyzing the Bundle Size
+Create React App Docs
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Backend Tools
 
-### Making a Progressive Web App
+Spring Boot Documentation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+MySQL Documentation
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+JWT Introduction
