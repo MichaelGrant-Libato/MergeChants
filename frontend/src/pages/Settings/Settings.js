@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { User, Bell, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // 1. Import Navigation Hook
+import { User, Bell, Shield, LogOut } from "lucide-react"; // 2. Import LogOut Icon
 import "./Settings.css";
-
 
 const ToggleItem = ({ title, description, enabled = false }) => {
   const [isOn, setIsOn] = useState(enabled);
@@ -27,7 +27,6 @@ const ToggleItem = ({ title, description, enabled = false }) => {
     </div>
   );
 };
-
 
 const PersonalInformation = () => (
   <>
@@ -86,7 +85,6 @@ const PersonalInformation = () => (
   </>
 );
 
-
 const NotificationSettings = () => (
   <>
     <h2 className="content-title">Notification Settings</h2>
@@ -123,7 +121,6 @@ const NotificationSettings = () => (
   </>
 );
 
-
 const SecuritySettings = () => (
   <>
     <h2 className="content-title">Security and Privacy</h2>
@@ -157,9 +154,21 @@ const SecuritySettings = () => (
   </>
 );
 
-
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
+  const navigate = useNavigate(); // 3. Initialize Hook
+
+  // 4. Logout Function
+  const handleLogout = () => {
+    // Clear all auth keys we identified earlier
+    localStorage.removeItem("studentId");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userId");
+    localStorage.clear(); // Safety clear
+
+    // Redirect to login
+    navigate("/login");
+  };
 
   return (
     <div className="settings-wrapper">
@@ -177,6 +186,17 @@ export default function SettingsPage() {
         <button className={`sidebar-item ${activeTab === "security" ? "active" : ""}`} onClick={() => setActiveTab("security")}>
           <Shield size={20} /> Security and Privacy
         </button>
+
+        {/* 5. Added Logout Button to Sidebar */}
+        <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid #eee' }}>
+            <button 
+                className="sidebar-item" 
+                onClick={handleLogout}
+                style={{ color: '#dc3545', fontWeight: 'bold' }} // Red color for danger action
+            >
+            <LogOut size={20} /> Log Out
+            </button>
+        </div>
       </aside>
 
       <main className="settings-content">
