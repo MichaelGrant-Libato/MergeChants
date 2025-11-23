@@ -4,7 +4,7 @@ import './CreateListings.css';
 export default function CreateListings() {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
-        seller: 'TechStudent',
+        seller: localStorage.getItem('studentId') || 'TechStudent',
         name: '',
         subTitle: '',
         category: '',
@@ -146,7 +146,7 @@ export default function CreateListings() {
                 const newListing = await response.json();
                 setMessage(`Listing "${newListing.name}" created successfully! ID: ${newListing.id}`);
                 setTimeout(() => {
-                    window.location.href = '/marketplace';
+                    window.location.href = '/dashboard';
                 }, 2000);
             } else {
                 setMessage('Error creating listing. Status: ' + response.status);

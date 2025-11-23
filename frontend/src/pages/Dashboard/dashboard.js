@@ -88,7 +88,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
-  const [priceRange] = useState({ min: 0, max: 1000 });
+  const [priceRange] = useState({ min: 0, max: 100000 });
 
   // Fetch products from backend
   useEffect(() => {

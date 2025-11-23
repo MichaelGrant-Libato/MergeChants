@@ -80,7 +80,7 @@ export default function Login() {
 
       // Store authentication token and user ID
       localStorage.setItem('authToken', data.token); 
-      localStorage.setItem('userId', cleanStudentId);
+      localStorage.setItem('studentId', cleanStudentId);
       
 
       alert("Login successful! Redirecting to Dashboard.");
