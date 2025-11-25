@@ -26,12 +26,14 @@ export default function ProductDetails() {
 
     const isOwner = currentStudentId === listing.seller;
 
-    const handleContact = () => {
-        // This is where we will eventually redirect to the Chat System
-        alert(`Starting chat with ${listing.seller}... (Feature coming soon)`);
-        // navigate(`/messages?seller=${listing.seller}&item=${listing.id}`);
-    };
+            const handleContact = () => {
+            // Redirect to messages page with the seller selected
+            navigate(`/messages?user=${listing.seller}`);
+            };
 
+
+
+            
     return (
         <div className="details-container">
             <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
