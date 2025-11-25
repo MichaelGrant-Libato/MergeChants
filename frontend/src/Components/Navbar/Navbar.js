@@ -1,46 +1,74 @@
-import React from "react";
-import "./Navbar.css";
-import { Link } from "react-router-dom";   // ✅ REQUIRED IMPORT
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css"; // We will update CSS next
+import { User, Bell, Settings } from "lucide-react"; // Using lucide-react for consistency
 
-export default function Navbar() {
+const Navbar = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const studentId = localStorage.getItem("studentId");
+
+  // 1. Fetch User Data when Navbar loads
+  useEffect(() => {
+    if (studentId) {
+      fetch(`http://localhost:8080/api/students/${studentId}`)
+        .then((res) => res.json())
+        .then((data) => setUserData(data))
+        .catch((err) => console.error("Failed to load navbar profile:", err));
+    }
+  }, [studentId]);
+
   return (
-    <header className="mc-navbar">
+    <nav className="navbar">
+      <div className="navbar-container">
+        {/* Logo Section */}
+        <div className="navbar-logo" onClick={() => navigate("/dashboard")}>
+          <div className="logo-circle">M</div>
+          <span className="logo-text">MergeChants</span>
+        </div>
 
-      {/* LEFT: LOGO */}
-      <div className="mc-logo-area">
-        <div className="mc-logo-icon">M</div>
-        <div className="mc-logo-text">
-          <span className="mc-logo-merge">Merge</span>Chants
+        {/* Search Bar (Optional - keep if you have it) */}
+        <div className="navbar-search">
+          <input type="text" placeholder="Search for items..." />
+        </div>
+
+        {/* Navigation Links */}
+        <div className="navbar-links">
+          <Link to="/dashboard">Marketplace</Link>
+          <Link to="/mylistings">My Listings</Link>
+          <Link to="/messages">Messages</Link>
+          <Link to="/createListings">Sell Item</Link>
+          <Link to="/history">History</Link>
+          <Link to="/report">Report</Link>
+        </div>
+
+        {/* Right Side: Dynamic Profile Section */}
+        <div className="navbar-profile-section">
+          <button className="icon-btn">
+            <Bell size={20} color="#f1c40f" /> {/* Yellow Bell */}
+          </button>
+
+          {userData ? (
+            // IF LOGGED IN: Show Name and ID
+            <div className="user-profile-chip" onClick={() => navigate("/settings")}>
+              <div className="chip-info">
+                <span className="chip-name">{userData.firstName}</span>
+                <span className="chip-id">{userData.studentNumber}</span>
+              </div>
+              <div className="chip-avatar">
+                <User size={20} color="#555" />
+              </div>
+            </div>
+          ) : (
+            // IF NOT LOGGED IN: Show Cog only (or Login button)
+            <button className="icon-btn" onClick={() => navigate("/settings")}>
+              <Settings size={20} color="#999" />
+            </button>
+          )}
         </div>
       </div>
-
-      {/* CENTER: SEARCH BAR */}
-      <div className="mc-search-bar">
-        <span className="mc-search-icon">🔍</span>
-        <input 
-          type="text" 
-          placeholder="Search for items..." 
-          className="mc-search-input"
-        />
-      </div>
-
-      {/* RIGHT: NAVIGATION */}
-      <nav className="mc-nav-links">
-        <Link to="/dashboard" className="mc-nav-item">Marketplace</Link>
-        <Link to="/mylistings" className="mc-nav-item">My Listings</Link>
-        <Link to="/messages" className="mc-nav-item">Messages</Link>
-        <Link to="/sell" className="mc-nav-item">Sell Item</Link>
-        <Link to="/history" className="mc-nav-item">History</Link>
-        <Link to="/report" className="mc-nav-item">Report</Link>
-      </nav>
-
-      {/* RIGHTMOST ACTIONS */}
-      <div className="mc-nav-actions">
-        <div className="mc-icon">🔔</div>
-        <Link to="/settings" className="mc-icon settings">⚙️</Link>
-      </div>
-
-    </header>
+    </nav>
   );
-}
- 
+};
+
+export default Navbar;
