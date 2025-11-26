@@ -1,39 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // 1. Import Navigation Hook
 import { User, Bell, Shield, LogOut } from "lucide-react"; // 2. Import LogOut Icon
 import "./Settings.css";
 
 const ToggleItem = ({ title, description, enabled = false }) => {
   const [isOn, setIsOn] = useState(enabled);
-
   return (
     <div className="toggle-item">
       <div>
         <h4 className="toggle-title">{title}</h4>
         <p className="toggle-description">{description}</p>
       </div>
-
       <label className="toggle-switch">
-        <input
-          type="checkbox"
-          checked={isOn}
-          onChange={() => setIsOn(!isOn)}
-          className="toggle-checkbox"
-        />
-        <div className="toggle-bg">
-          <span className="toggle-dot" />
-        </div>
+        <input type="checkbox" checked={isOn} onChange={() => setIsOn(!isOn)} className="toggle-checkbox" />
+        <div className="toggle-bg"><span className="toggle-dot" /></div>
       </label>
     </div>
   );
 };
 
-const PersonalInformation = () => (
+// Note: Passing 'userData' prop to pre-fill the form
+const PersonalInformation = ({ userData }) => (
   <>
     <h2 className="content-title">Personal Information</h2>
-    <p className="content-subtitle">
-      Update your personal details and profile information
-    </p>
+    <p className="content-subtitle">Update your personal details and profile information</p>
 
     <div className="settings-card">
       <div className="pi-grid">
@@ -48,35 +38,27 @@ const PersonalInformation = () => (
           <div className="input-grid">
             <div>
               <label>First Name</label>
-              <input type="text" defaultValue="Ralph Keane" />
+              <input type="text" defaultValue={userData.firstName || ""} />
             </div>
-
             <div>
               <label>Last Name</label>
-              <input type="text" defaultValue="Maestrado" />
+              <input type="text" defaultValue={userData.lastName || ""} />
             </div>
-
             <div className="col-span-2">
-              <label>Email Address</label>
-              <input type="email" defaultValue="maestradoralphkeane@gmail.com" />
+              <label>Student ID</label>
+              <input type="text" value={userData.studentNumber || ""} disabled className="disabled-input"/>
             </div>
-
             <div className="col-span-2">
-              <label>Contact Number</label>
-              <input type="tel" defaultValue="0916-726-9581" />
+              <label>Course / Department</label>
+              <input type="text" defaultValue={userData.course || ""} />
             </div>
-
             <div className="col-span-2">
               <label>About Me</label>
-              <textarea
-                rows="5"
-                defaultValue="I am a 3rd-year Bachelor of Science in Information Technology student at Cebu Institute of Technology – University. Passionate about technology, innovation, and community-driven solutions, I strive to create projects that improve student life and promote collaboration. With my background in software development and problem-solving, I aim to use my skills to design systems that are practical, user-friendly, and impactful."
-              />
+              <textarea rows="5" placeholder="Tell us about yourself..." />
             </div>
           </div>
         </div>
       </div>
-
       <div className="card-actions">
         <button className="btn btn-secondary">Cancel</button>
         <button className="btn btn-primary">Save Changes</button>
@@ -84,6 +66,13 @@ const PersonalInformation = () => (
     </div>
   </>
 );
+
+
+
+
+
+
+
 
 const NotificationSettings = () => (
   <>
@@ -121,6 +110,14 @@ const NotificationSettings = () => (
   </>
 );
 
+
+
+
+
+
+
+
+
 const SecuritySettings = () => (
   <>
     <h2 className="content-title">Security and Privacy</h2>
@@ -154,26 +151,47 @@ const SecuritySettings = () => (
   </>
 );
 
+
+
+
+
+
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
-  const navigate = useNavigate(); // 3. Initialize Hook
+  const [userData, setUserData] = useState({}); // Store fetched user data
+  const navigate = useNavigate();
 
-  // 4. Logout Function
+  const studentId = localStorage.getItem("studentId");
+
+  // 1. FETCH USER DATA ON LOAD
+  useEffect(() => {
+    if(studentId) {
+        fetch(`http://localhost:8080/api/students/${studentId}`)
+            .then(res => res.json())
+            .then(data => setUserData(data))
+            .catch(err => console.error("Failed to load profile:", err));
+    }
+  }, [studentId]);
+
   const handleLogout = () => {
-    // Clear all auth keys we identified earlier
-    localStorage.removeItem("studentId");
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userId");
-    localStorage.clear(); // Safety clear
-
-    // Redirect to login
+    localStorage.clear();
     navigate("/login");
   };
 
   return (
     <div className="settings-wrapper">
       <aside className="settings-sidebar">
-        <h1 className="sidebar-title">Settings</h1>
+        
+        {/* 2. NEW: SIDEBAR PROFILE HEADER (The "Header type thing") */}
+        <div className="sidebar-profile-header" style={{ padding: '20px', borderBottom: '1px solid #eee', marginBottom: '10px', textAlign: 'center' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#ddd', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={30} color="#555" />
+            </div>
+            <h3 style={{ fontSize: '16px', margin: '0', fontWeight: 'bold' }}>{userData.firstName ? `${userData.firstName} ${userData.lastName}` : "Loading..."}</h3>
+            <p style={{ fontSize: '12px', color: '#777', margin: '5px 0 0' }}>{userData.studentNumber}</p>
+        </div>
+        {/* ------------------------------------------------------- */}
 
         <button className={`sidebar-item ${activeTab === "personal" ? "active" : ""}`} onClick={() => setActiveTab("personal")}>
           <User size={20} /> Personal Information
@@ -187,12 +205,11 @@ export default function SettingsPage() {
           <Shield size={20} /> Security and Privacy
         </button>
 
-        {/* 5. Added Logout Button to Sidebar */}
         <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid #eee' }}>
             <button 
                 className="sidebar-item" 
                 onClick={handleLogout}
-                style={{ color: '#dc3545', fontWeight: 'bold' }} // Red color for danger action
+                style={{ color: '#dc3545', fontWeight: 'bold' }}
             >
             <LogOut size={20} /> Log Out
             </button>
@@ -200,7 +217,8 @@ export default function SettingsPage() {
       </aside>
 
       <main className="settings-content">
-        {activeTab === "personal" && <PersonalInformation />}
+        {/* Pass userData to the form */}
+        {activeTab === "personal" && <PersonalInformation userData={userData} />}
         {activeTab === "notifications" && <NotificationSettings />}
         {activeTab === "security" && <SecuritySettings />}
       </main>

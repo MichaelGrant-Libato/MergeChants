@@ -399,7 +399,7 @@
 .card-title {
     font-size: 2rem;
     font-weight: 900;
-    color: white;
+    color: rgba(5, 5, 5, 0.747);
 }
 
 .card-body {

@@ -20,8 +20,8 @@ const CardTag = ({ style }) => {
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate(); 
-  const currentStudentId = localStorage.getItem("studentId"); // 1. Get who is logged in
-  const isOwner = product.seller === currentStudentId;        // 2. Am I the seller?
+  const currentStudentId = localStorage.getItem("studentId"); 
+  const isOwner = product.seller === currentStudentId;       
 
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return "Recently";
@@ -135,6 +135,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchProducts();
   }, []);
+
 
   const fetchProducts = async () => {
     try {
