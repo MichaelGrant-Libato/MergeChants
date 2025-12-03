@@ -1,5 +1,5 @@
 /* FULL PAGE LAYOUT */
-.main-layout {
+.main-layout{
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -7,11 +7,17 @@
 }
 
 /* CONTENT RIGHT BELOW NAVBAR */
-.main-content {
+.main-content{
   flex: 1;
   width: 100%;
-  min-height: calc(100vh - 80px); /* navbar height fix */
+  min-height: calc(100vh - 80px); /* match navbar height */
   margin: 0;
   padding: 0;
-  background-color: #f8f8f8; /* or page-specific background */
+
+  /* IMPORTANT: don't force a light background globally
+     because Settings needs maroon full-bleed */
+  background: transparent;
+
+  /* prevents sideways stretching / weird overflow on zoom */
+  overflow-x: hidden;
 }

@@ -3,7 +3,6 @@ package com.appdevg4.mergemasters.mergechants.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 
 import java.nio.file.*;
@@ -12,7 +11,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = "http://localhost:3000")   // 👈 ADD THIS
+@CrossOrigin(origins = "http://localhost:3000") // 👈 ADD THIS
 public class FileUploadController {
 
     private final Path root = Paths.get("uploads");
@@ -32,7 +31,7 @@ public class FileUploadController {
                     StringUtils.cleanPath(file.getOriginalFilename());
 
             Files.copy(file.getInputStream(), root.resolve(filename),
-                       StandardCopyOption.REPLACE_EXISTING);
+                    StandardCopyOption.REPLACE_EXISTING);
 
             // URL that React will later use
             urls.add("/uploads/" + filename);
@@ -41,4 +40,3 @@ public class FileUploadController {
         return ResponseEntity.ok(urls);
     }
 }
-
