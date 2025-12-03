@@ -10,7 +10,7 @@ import Registration from './pages/Registration/registration';
 import Dashboard from './pages/Dashboard/dashboard';
 import SettingsPage from './pages/Settings/Settings';
 import Messages from './pages/Messages/Messages';
-import MyListings from "./pages/MyListings";
+import MyListings from "./pages/MyListings/myListings";
 import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History";
 import Report from "./pages/Report";

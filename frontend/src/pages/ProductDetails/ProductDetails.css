@@ -1,78 +1,135 @@
 .details-container {
-    max-width: 1000px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
 .back-btn {
-    background: none;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-bottom: 1rem;
-    color: #666;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  color: #666;
 }
 
 .details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
 }
 
-.img-placeholder-large, .no-image-large {
-    width: 100%;
-    height: 400px;
-    background-color: #f0f0f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-weight: bold;
-    color: #888;
+.img-placeholder-large,
+.no-image-large {
+  width: 100%;
+  height: 400px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: bold;
+  color: #888;
 }
 
 .category-tag {
-    background: #eee;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    color: #555;
+  background: #eee;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #555;
 }
 
 .price {
-    font-size: 2rem;
-    color: #8D0133; /* Your Theme Color */
-    margin: 10px 0 20px 0;
+  font-size: 2rem;
+  color: #8d0133;
+  margin: 10px 0 20px 0;
 }
 
 .seller-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px;
-    background: #fafafa;
-    border-radius: 8px;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
-.seller-avatar { font-size: 1.5rem; }
-.seller-name { font-weight: bold; margin: 0; }
-.seller-sub { font-size: 0.8rem; color: #666; margin: 0; }
-
-.contact-btn-large, .edit-btn-large {
-    width: 100%;
-    padding: 15px;
-    background-color: #8D0133;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    font-weight: bold;
+.seller-avatar {
+  font-size: 1.5rem;
+}
+.seller-name {
+  font-weight: bold;
+  margin: 0;
+}
+.seller-sub {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
 }
 
-.edit-btn-large { background-color: #333; }
+.contact-btn-large,
+.edit-btn-large {
+  width: 100%;
+  padding: 15px;
+  background-color: #8d0133;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-.details-block { margin-top: 2rem; }
-.details-list { list-style: none; padding: 0; }
-.details-list li { margin-bottom: 0.5rem; }
+.edit-btn-large {
+  background-color: #333;
+}
+
+.details-block {
+  margin-top: 2rem;
+}
+.details-list {
+  list-style: none;
+  padding: 0;
+}
+.details-list li {
+  margin-bottom: 0.5rem;
+}
+
+/* === NEW: carousel image styling === */
+.img-placeholder-large {
+  position: relative;
+  overflow: hidden;
+}
+
+.details-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.details-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.details-carousel-btn.prev {
+  left: 10px;
+}
+
+.details-carousel-btn.next {
+  right: 10px;
+}
