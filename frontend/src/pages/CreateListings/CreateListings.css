@@ -618,3 +618,41 @@
         float: none;
     }
 }
+
+/* Availability days layout */
+.availability-days-grid {
+  display: grid;
+  grid-template-columns: repeat(4, auto); /* Mon Tue Wed Thu in first row */
+  column-gap: 2rem;                       /* space between columns */
+  row-gap: 0.5rem;                        /* space between rows */
+  align-items: center;
+}
+
+.availability-days-grid .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border: 1.5px solid #e53935;
+  box-shadow: 0 0 0 1px rgba(229, 57, 53, 0.12);
+}
+
+/* Buttons / blocks that can error */
+.category-btn.error,
+.condition-btn.error,
+.image-upload-area.error,
+.terms-conditions.error {
+  border: 1.5px solid #e53935;
+}
+
+/* Error helper text under inputs */
+.error-text {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: #e53935;
+}

@@ -1,10 +1,27 @@
+// frontend/src/pages/Dashboard/Dashboard.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 
-
 const CARD_COLOR = "#8D0133";
 
+// 🔹 SAME helper as in MyListings
+const getFirstImageUrl = (images) => {
+  if (!images) return null;
+
+  const first = images.split(",")[0].trim();
+  if (!first) return null;
+
+  if (first.startsWith("http://") || first.startsWith("https://")) {
+    return first;
+  }
+
+  if (first.startsWith("/uploads/")) {
+    return `http://localhost:8080${first}`;
+  }
+
+  return `http://localhost:8080/uploads/${first}`;
+};
 
 const CardTag = ({ style }) => {
   let tagClass = "";
@@ -19,9 +36,9 @@ const CardTag = ({ style }) => {
 };
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate(); 
-  const currentStudentId = localStorage.getItem("studentId"); 
-  const isOwner = product.seller === currentStudentId;       
+  const navigate = useNavigate();
+  const currentStudentId = localStorage.getItem("studentId");
+  const isOwner = product.seller === currentStudentId;
 
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return "Recently";
@@ -31,18 +48,13 @@ const ProductCard = ({ product }) => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     return `${diffDays}d ago`;
   };
 
-  const getFirstImage = () => {
-    if (!product.images) return null;
-    return product.images.split(',')[0];
-  };
-
-  const displayImage = getFirstImage();
+  const displayImage = getFirstImageUrl(product.images);
 
   const goToDetails = () => {
     navigate(`/listing/${product.id}`);
@@ -50,36 +62,42 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className="product-card">
-      <div 
-        className="card-header" 
-        style={{ backgroundColor: CARD_COLOR, cursor: 'pointer' }}
+      <div
+        className="card-header"
+        style={{ backgroundColor: CARD_COLOR, cursor: "pointer" }}
         onClick={goToDetails}
       >
-        {displayImage ? (
-           <div className="card-image-preview">
-              <span style={{color:'white'}}>Has Image</span> 
-           </div>
-        ) : null}
+        {displayImage && (
+          <div className="card-image-preview">
+            <img
+              src={displayImage}
+              alt={product.name}
+              className="card-image-tag"
+            />
+          </div>
+        )}
 
         <CardTag style={product.condition} />
-        {product.tags && product.tags.split(',').includes("Verified") && (
+        {product.tags && product.tags.split(",").includes("Verified") && (
           <span className="verified-badge">✓ Verified</span>
         )}
       </div>
 
       <div className="card-body">
-        <h2 
-            className="card-title" 
-            style={{cursor: 'pointer'}}
-            onClick={goToDetails}
+        <h2
+          className="card-title"
+          style={{ cursor: "pointer" }}
+          onClick={goToDetails}
         >
-            {product.name}
+          {product.name}
         </h2>
-        
+
         <p className="card-subtitle">{product.subTitle}</p>
 
         <p className="price-info">
-          <span className="current-price">₱{product.price.toFixed(2)}</span>
+          <span className="current-price">
+            ₱{Number(product.price).toFixed(2)}
+          </span>
         </p>
 
         <p className="seller-info">
@@ -90,30 +108,29 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="card-footer">
-        {/* 3. CONDITIONAL BUTTON LOGIC */}
         {isOwner ? (
-            <button 
-                className="contact-btn" 
-                style={{ backgroundColor: '#333' }} // Make it grey to differentiate
-                onClick={(e) => {
-                    e.stopPropagation(); // Don't open details, just go to edit
-                    navigate(`/edit/${product.id}`);
-                }}
-            >
-                Edit Listing
-            </button>
+          <button
+            className="contact-btn"
+            style={{ backgroundColor: "#333" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/edit/${product.id}`);
+            }}
+          >
+            Edit Listing
+          </button>
         ) : (
-            <button 
-                className="contact-btn" 
-                onClick={(e) => {
-                    e.stopPropagation(); // Prevent double-click issues
-                    goToDetails();
-                }}
-            >
-                Contact Seller
-            </button>
+          <button
+            className="contact-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              goToDetails();
+            }}
+          >
+            Contact Seller
+          </button>
         )}
-        
+
         <span className="share-icon">↗</span>
         <span className="time-ago">{getTimeAgo(product.time)}</span>
       </div>
@@ -121,7 +138,6 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- Main Dashboard ---
 export default function Dashboard() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -131,45 +147,42 @@ export default function Dashboard() {
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
   const [priceRange] = useState({ min: 0, max: 100000 });
 
-  // Fetch products from backend
   useEffect(() => {
     fetchProducts();
   }, []);
 
-
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8080/api/listings');
-      
+      const response = await fetch("http://localhost:8080/api/listings");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch listings');
+        throw new Error("Failed to fetch listings");
       }
-      
+
       const data = await response.json();
       setProducts(data);
       setError(null);
     } catch (err) {
       setError(err.message);
-      console.error('Error fetching products:', err);
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate category counts dynamically
   const getCategoryCounts = () => {
     const counts = {
       "All Categories": products.length,
-      "Electronics": 0,
-      "Textbooks": 0,
-      "Clothing": 0,
-      "Furniture": 0,
+      Electronics: 0,
+      Textbooks: 0,
+      Clothing: 0,
+      Furniture: 0,
       "Sports & Fitness": 0,
-      "Other": 0
+      Other: 0,
     };
 
-    products.forEach(product => {
+    products.forEach((product) => {
       if (counts.hasOwnProperty(product.category)) {
         counts[product.category]++;
       } else {
@@ -197,20 +210,24 @@ export default function Dashboard() {
     "Excellent",
     "Very Good",
     "Good",
-    "Fair"
+    "Fair",
   ];
 
-  // Filter products based on selected filters
-  const filteredProducts = products.filter(product => {
-    const categoryMatch = selectedCategory === "All Categories" || product.category === selectedCategory;
-    const conditionMatch = selectedCondition === "All Conditions" || product.condition === selectedCondition;
-    const priceMatch = product.price >= priceRange.min && product.price <= priceRange.max;
-    
+  const filteredProducts = products.filter((product) => {
+    const categoryMatch =
+      selectedCategory === "All Categories" ||
+      product.category === selectedCategory;
+    const conditionMatch =
+      selectedCondition === "All Conditions" ||
+      product.condition === selectedCondition;
+    const priceMatch =
+      product.price >= priceRange.min && product.price <= priceRange.max;
+
     return categoryMatch && conditionMatch && priceMatch;
   });
 
   const handleCreateListing = () => {
-    navigate('/createListings');
+    navigate("/createListings");
   };
 
   const clearFilters = () => {
@@ -225,7 +242,9 @@ export default function Dashboard() {
         <aside className="sidebar">
           <div className="sidebar-header">
             <h2>Filters</h2>
-            <button className="clear-all-btn" onClick={clearFilters}>Clear All</button>
+            <button className="clear-all-btn" onClick={clearFilters}>
+              Clear All
+            </button>
           </div>
 
           <div className="filter-section categories-filter">
@@ -273,7 +292,9 @@ export default function Dashboard() {
         <main className="marketplace-grid-container">
           <div className="marketplace-header">
             <h1 className="marketplace-title">MARKETPLACE</h1>
-            <span className="item-count">{filteredProducts.length} items found</span>
+            <span className="item-count">
+              {filteredProducts.length} items found
+            </span>
 
             <div className="sort-controls">
               <button className="display-toggle">
@@ -288,30 +309,30 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Loading State */}
           {loading && (
             <div className="loading-state">
               <p>Loading listings...</p>
             </div>
           )}
 
-          {/* Error State */}
           {error && (
             <div className="error-state">
               <p>Error: {error}</p>
-              <button onClick={fetchProducts} className="retry-btn">Retry</button>
+              <button onClick={fetchProducts} className="retry-btn">
+                Retry
+              </button>
             </div>
           )}
 
-          {/* Empty State */}
           {!loading && !error && filteredProducts.length === 0 && (
             <div className="empty-state">
               <p>No listings found matching your filters.</p>
-              <button onClick={clearFilters} className="clear-filters-btn">Clear Filters</button>
+              <button onClick={clearFilters} className="clear-filters-btn">
+                Clear Filters
+              </button>
             </div>
           )}
 
-          {/* Product Grid */}
           {!loading && !error && filteredProducts.length > 0 && (
             <div className="product-grid">
               {filteredProducts.map((product) => (
@@ -322,9 +343,9 @@ export default function Dashboard() {
         </main>
       </div>
 
-      {/* Floating Action Button - Create Listing */}
-      <button 
-        className="fab-create-listing" 
+      {/* FAB */}
+      <button
+        className="fab-create-listing"
         onClick={handleCreateListing}
         title="Create New Listing"
       >
