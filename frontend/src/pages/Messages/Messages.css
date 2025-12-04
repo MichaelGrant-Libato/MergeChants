@@ -274,3 +274,79 @@
     background: #f9f9f9;
     box-sizing: border-box; /* Prevents overflow */
 }
+
+/* ===== CHAT HEADER ===== */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.chat-header > div {
+  min-width: 0;
+}
+
+.chat-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.chat-subtitle {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ===== MARK AS SOLD BUTTON (Messages seller side) ===== */
+.mark-sold-btn {
+  background-color: #8D0133;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.mark-sold-btn:hover:not(:disabled) {
+  background-color: #a1043f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mark-sold-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.mark-sold-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Small screens – keep header tidy */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mark-sold-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
