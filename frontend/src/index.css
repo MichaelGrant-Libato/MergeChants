@@ -5,6 +5,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Fix scrollbar twitching by ensuring scrollbar is always present */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 code {
