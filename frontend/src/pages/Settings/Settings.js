@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+// src/pages/Settings/Settings.js
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Bell, Shield, LogOut } from "lucide-react";
 import "./Settings.css";
@@ -42,6 +44,8 @@ const PersonalInformation = ({
   onCancel,
   saving,
 }) => {
+  const studentNumber = userData?.studentNumber || "";
+
   return (
     <>
       <header className="mc-settings__header">
@@ -64,6 +68,11 @@ const PersonalInformation = ({
           <button className="mc-btn mc-btn--primary" type="button">
             Change Photo
           </button>
+
+          <div className="mc-studentIdBlock">
+            <div className="mc-studentIdLabel">Student ID</div>
+            <div className="mc-studentIdValue">{studentNumber || "—"}</div>
+          </div>
         </div>
 
         <form
@@ -96,16 +105,6 @@ const PersonalInformation = ({
           </div>
 
           <div className="mc-field">
-            <label className="mc-label">Student ID</label>
-            <input
-              className="mc-input mc-input--disabled"
-              type="text"
-              value={userData.studentNumber || ""}
-              disabled
-            />
-          </div>
-
-          <div className="mc-field">
             <label className="mc-label">Course / Department</label>
             <input
               className="mc-input"
@@ -130,7 +129,12 @@ const PersonalInformation = ({
             <button className="mc-btn mc-btn--save" type="submit" disabled={saving}>
               {saving ? "Saving..." : "Save Changes"}
             </button>
-            <button className="mc-btn mc-btn--cancel" type="button" onClick={onCancel} disabled={saving}>
+            <button
+              className="mc-btn mc-btn--cancel"
+              type="button"
+              onClick={onCancel}
+              disabled={saving}
+            >
               Cancel
             </button>
           </div>
@@ -179,7 +183,9 @@ const SecuritySettings = () => (
   <>
     <header className="mc-settings__header">
       <h1 className="mc-settings__heading">Security and Privacy</h1>
-      <p className="mc-settings__subheading">Manage your security settings and privacy preferences</p>
+      <p className="mc-settings__subheading">
+        Manage your security settings and privacy preferences
+      </p>
     </header>
 
     <section className="mc-genericCard">
@@ -212,19 +218,8 @@ const SecuritySettings = () => (
   </>
 );
 
-async function readErrorMessage(res) {
-  const text = await res.text();
-  try {
-    const j = JSON.parse(text);
-    return j.message || j.error || text;
-  } catch {
-    return text || "Request failed";
-  }
-}
-
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
-
   const [userData, setUserData] = useState({});
   const [profileId, setProfileId] = useState(null);
 
@@ -238,58 +233,35 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const studentId = localStorage.getItem("studentId");
 
-  const extractedEmail = useMemo(() => {
-    return (
-      userData.email ||
-      userData.studentEmail ||
-      userData.userEmail ||
-      userData.accountEmail ||
-      ""
-    );
-  }, [userData]);
-
   const resetToLoadedValues = async () => {
     if (!studentId) return;
 
     try {
-      // 1) Load student
-      const resStudent = await fetch(`${API_BASE}/api/students/${studentId}`);
-      if (!resStudent.ok) throw new Error(await readErrorMessage(resStudent));
+      const resStudent = await fetch(`${API_BASE}/api/students/${encodeURIComponent(studentId)}`);
+      if (!resStudent.ok) {
+        const text = await resStudent.text();
+        throw new Error(text || "Failed to load student data");
+      }
       const student = await resStudent.json();
       setUserData(student);
 
-      // Always set from student initially
       setFirstName(student.firstName || "");
       setLastName(student.lastName || "");
       setCourse(student.course || "");
       setAbout("");
 
-      const studentNumber = student.studentNumber || "";
-      const email =
-        student.email ||
-        student.studentEmail ||
-        student.userEmail ||
-        student.accountEmail ||
-        "";
-
-      // 2) Load profile (studentId first, fallback email)
-      let prof = null;
-
-      if (studentNumber) {
-        const resByStudent = await fetch(
-          `${API_BASE}/api/profiles/student/${encodeURIComponent(studentNumber)}`
-        );
-        if (resByStudent.ok) prof = await resByStudent.json();
+      const studentNumber = student.studentNumber;
+      if (!studentNumber) {
+        setProfileId(null);
+        return;
       }
 
-      if (!prof && email) {
-        const resByEmail = await fetch(
-          `${API_BASE}/api/profiles/email/${encodeURIComponent(email)}`
-        );
-        if (resByEmail.ok) prof = await resByEmail.json();
-      }
+      const resProfile = await fetch(
+        `${API_BASE}/api/profiles/student/${encodeURIComponent(studentNumber)}`
+      );
 
-      if (prof) {
+      if (resProfile.ok) {
+        const prof = await resProfile.json();
         setProfileId(prof.id);
 
         const parts = (prof.fullName || "").trim().split(" ").filter(Boolean);
@@ -304,8 +276,8 @@ export default function SettingsPage() {
         setProfileId(null);
       }
     } catch (err) {
-      console.error("Failed to reload:", err);
-      alert("Failed to load profile data. Check console.");
+      console.error("Failed to reload student/profile:", err);
+      setProfileId(null);
     }
   };
 
@@ -317,24 +289,15 @@ export default function SettingsPage() {
   const handleSaveProfile = async () => {
     if (saving) return;
 
-    const studentNumber = userData.studentNumber || "";
-    const email = extractedEmail;
-
+    const studentNumber = userData?.studentNumber;
     if (!studentNumber) {
-      alert("No student number found for this user.");
-      return;
-    }
-    if (!email) {
-      alert("No email found for this user. Student API did not return an email field.");
-      console.log("DEBUG userData:", userData);
+      alert("No student ID found for this user.");
       return;
     }
 
     const payload = {
       studentId: studentNumber,
       fullName: `${firstName} ${lastName}`.trim(),
-      email,
-      phone: "",
       campus: course,
       bio: about,
     };
@@ -342,21 +305,25 @@ export default function SettingsPage() {
     try {
       setSaving(true);
 
-      const endpoint = profileId
-        ? `${API_BASE}/api/profiles/${profileId}`
-        : `${API_BASE}/api/profiles`;
-
-      const method = profileId ? "PUT" : "POST";
-
-      const res = await fetch(endpoint, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      let res;
+      if (profileId) {
+        res = await fetch(`${API_BASE}/api/profiles/${profileId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await fetch(`${API_BASE}/api/profiles`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
 
       if (!res.ok) {
-        const msg = await readErrorMessage(res);
-        throw new Error(msg);
+        const text = await res.text();
+        alert(text || "Failed to save profile.");
+        return;
       }
 
       const saved = await res.json();
@@ -364,7 +331,7 @@ export default function SettingsPage() {
       alert("Profile saved!");
     } catch (err) {
       console.error(err);
-      alert(`Failed to save profile.\n\n${err.message}`);
+      alert("Failed to save profile.");
     } finally {
       setSaving(false);
     }

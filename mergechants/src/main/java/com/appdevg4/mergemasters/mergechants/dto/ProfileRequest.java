@@ -1,9 +1,10 @@
 package com.appdevg4.mergemasters.mergechants.dto;
 
 public class ProfileRequest {
+
     private String studentId;
     private String fullName;
-    private String email;
+    private String email; // OPTIONAL now
     private String phone;
     private String campus;
     private String bio;

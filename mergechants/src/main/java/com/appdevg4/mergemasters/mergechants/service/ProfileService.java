@@ -10,13 +10,11 @@ public interface ProfileService {
 
     ProfileResponse getById(Long id);
 
+    ProfileResponse getByStudentId(String studentId);
+
     List<ProfileResponse> getAll();
 
     ProfileResponse update(Long id, ProfileRequest req);
 
     void delete(Long id);
-
-    ProfileResponse getByEmail(String email);
-
-    ProfileResponse getByStudentId(String studentId);
 }
