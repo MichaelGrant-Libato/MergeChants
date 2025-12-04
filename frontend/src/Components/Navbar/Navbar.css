@@ -3,17 +3,20 @@
 ========================================= */
 .navbar {
   width: 100%;
-  height: 80px; /* Fixed height */
+  height: 80px; /* Fixed height to prevent layout shifts */
   background: white;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
-  position: relative;
-  z-index: 50;
+  position: sticky; /* Optional: Sticks to top while scrolling */
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-container {
   width: 100%;
+  max-width: 1400px; /* Prevents it from stretching too wide on huge screens */
+  margin: 0 auto;
   padding: 0 2rem;
   display: flex;
   justify-content: space-between;
@@ -28,25 +31,28 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  min-width: 200px; /* Ensures logo section doesn't shrink */
 }
 
 .logo-circle {
-  background: #8D0133; /* Your Theme Color */
+  background: #8D0133; /* Theme Maroon */
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 800;
+  font-size: 1.3rem;
+  flex-shrink: 0;
 }
 
 .logo-text {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   color: #333;
+  letter-spacing: -0.5px;
 }
 
 /* =========================================
@@ -54,11 +60,17 @@
 ========================================= */
 .navbar-search {
   background: #f3f4f6;
-  padding: 8px 15px;
-  border-radius: 20px;
-  width: 300px;
+  padding: 10px 20px;
+  border-radius: 30px; /* Pill shape */
+  width: 400px; /* Fixed width: Holds the layout structure */
   display: flex;
   align-items: center;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar-search:focus-within {
+  background: #fff;
+  box-shadow: 0 0 0 2px #8D0133; /* Maroon outline on focus */
 }
 
 .navbar-search input {
@@ -67,14 +79,15 @@
   outline: none;
   width: 100%;
   font-size: 0.95rem;
+  color: #333;
 }
 
 /* =========================================
-   NAVIGATION LINKS (The Fix for squished text)
+   NAVIGATION LINKS
 ========================================= */
 .navbar-links {
   display: flex;
-  gap: 25px; /* Add space between links */
+  gap: 30px;
   align-items: center;
 }
 
@@ -84,6 +97,7 @@
   font-weight: 600;
   font-size: 0.95rem;
   transition: color 0.2s;
+  white-space: nowrap; /* Prevents text wrapping */
 }
 
 .navbar-links a:hover {
@@ -91,38 +105,41 @@
 }
 
 /* =========================================
-   PROFILE SECTION (Your new Feature)
+   PROFILE SECTION
 ========================================= */
 .navbar-profile-section {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
+  min-width: 200px; /* Balances the Logo width on the left */
+  justify-content: flex-end;
 }
 
 .icon-btn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s;
+  transition: background-color 0.2s;
 }
 
 .icon-btn:hover {
-  transform: scale(1.1);
+  background-color: #f3f4f6;
 }
 
 /* Profile Chip Styling */
 .user-profile-chip {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 30px; /* Pill shape */
-  transition: background 0.2s;
+  padding: 4px 8px 4px 12px;
+  border-radius: 30px;
+  transition: background 0.2s, border 0.2s;
   border: 1px solid transparent;
 }
 
@@ -150,9 +167,9 @@
 }
 
 .chip-avatar {
-  width: 38px;
-  height: 38px;
-  background-color: #eee;
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -161,11 +178,22 @@
   box-shadow: 0 0 0 1px #e5e7eb;
 }
 
-/* Responsive Hiding */
-@media (max-width: 900px) {
-  .navbar-search { display: none; }
+/* =========================================
+   RESPONSIVE (Mobile)
+========================================= */
+@media (max-width: 1024px) {
+  .navbar-search {
+    width: 250px; /* Shrink search on medium screens */
+  }
+  .navbar-links {
+    gap: 15px;
+  }
 }
 
 @media (max-width: 768px) {
+  .navbar-search { display: none; } /* Hide search completely on mobile */
   .navbar-links { display: none; } /* Hide links on mobile */
+  .navbar-container {
+    justify-content: space-between;
+  }
 }

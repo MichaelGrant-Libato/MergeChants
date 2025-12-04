@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // One clean import
+import { Link, useNavigate, useLocation } from "react-router-dom"; 
+import { User, Bell, Settings } from "lucide-react"; 
 import "./Navbar.css";
-import { User, Bell, Settings } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to check current page
+  const location = useLocation(); 
   const [userData, setUserData] = useState(null);
   const studentId = localStorage.getItem("studentId");
 
@@ -19,6 +19,9 @@ const Navbar = () => {
     }
   }, [studentId]);
 
+  // Check if we are on the dashboard
+  const isDashboard = location.pathname === "/dashboard";
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -28,12 +31,13 @@ const Navbar = () => {
           <span className="logo-text">MergeChants</span>
         </div>
 
-        {/* Search Bar - Only visible on Dashboard/Marketplace */}
-        {location.pathname === "/dashboard" && (
-          <div className="navbar-search">
-            <input type="text" placeholder="Search for items..." />
-          </div>
-        )}
+        {/* Search Bar - HIDDEN on other pages (keeps layout space) */}
+        <div 
+          className="navbar-search" 
+          style={{ visibility: isDashboard ? "visible" : "hidden" }}
+        >
+          <input type="text" placeholder="Search for items..." />
+        </div>
 
         {/* Navigation Links */}
         <div className="navbar-links">
@@ -62,7 +66,7 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            // IF NOT LOGGED IN: Show Cog only (or Login button)
+            // IF NOT LOGGED IN: Show Cog only
             <button className="icon-btn" onClick={() => navigate("/settings")}>
               <Settings size={20} color="#999" />
             </button>
