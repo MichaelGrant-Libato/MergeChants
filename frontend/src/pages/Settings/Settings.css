@@ -147,7 +147,7 @@ html, body { margin: 0; padding: 0; }
 }
 
 .mc-settings__header{
-  max-width: 1100px; 
+  max-width: 1100px;
   width: 100%;
   margin: 6px 0 18px;
 }
@@ -207,15 +207,34 @@ html, body { margin: 0; padding: 0; }
   opacity: .85;
 }
 
+/* ✅ Student ID plain text under Change Photo */
+.mc-studentIdText{
+  width: 100%;
+  text-align: center;
+  margin-top: 6px;
+}
+
+.mc-studentIdLabel{
+  font-size: 12px;
+  font-weight: 800;
+  color: #2b2b2b;
+  opacity: .85;
+  margin-bottom: 4px;
+}
+
+.mc-studentIdValue{
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--mc-maroon);
+}
+
 /* Form */
 .mc-profileForm{
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding-top: 4px;
-
-  /* Optional: makes form children stretch full width */
-  align-items: stretch;
+  align-items: stretch; /* keeps actions aligned with textarea edge */
 }
 
 .mc-grid2{
@@ -264,15 +283,14 @@ html, body { margin: 0; padding: 0; }
   box-shadow: 0 0 0 3px rgba(123,15,36,.12);
 }
 
-
 /* Actions / Buttons */
-.mc-profileForm .mc-actions{
+.mc-actions{
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  gap: 14px;
   margin-top: 12px;
 }
-
 
 .mc-actions--right{
   justify-content: flex-end;
@@ -309,7 +327,7 @@ html, body { margin: 0; padding: 0; }
 /* Generic card for Notification/Security tabs */
 .mc-genericCard{
   width: min(1400px, 100%);
-  margin: 0; 
+  margin: 0;
   background: #fff;
   border-radius: var(--mc-radius);
   box-shadow: var(--mc-shadow);
@@ -335,7 +353,7 @@ html, body { margin: 0; padding: 0; }
   margin: 0 0 10px;
 }
 
-/* Toggle section (kept from your old style, but cleaner) */
+/* Toggle section */
 .toggle-item{
   display: flex;
   justify-content: space-between;
@@ -394,7 +412,7 @@ html, body { margin: 0; padding: 0; }
   transform: translateX(20px);
 }
 
-/* Responsive (prevents broken layout on zoom + smaller screens) */
+/* Responsive */
 @media (max-width: 920px){
   .mc-profileCard{
     grid-template-columns: 1fr;
@@ -429,4 +447,27 @@ html, body { margin: 0; padding: 0; }
     width: 100%;
     flex: 0 0 auto;
   }
+  .mc-studentIdBlock{
+  width: 100%;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.mc-studentIdLabel{
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(0,0,0,.65);
+  margin-bottom: 6px;
+}
+
+.mc-studentIdValue{
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(0,0,0,.06);
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #7a1020;
+}
+
 }
