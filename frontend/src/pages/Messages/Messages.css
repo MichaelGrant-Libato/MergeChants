@@ -102,28 +102,28 @@
 
 /* Message Bubbles */
 .message-bubble {
-  max-width: 60%;
-  padding: 10px 15px;
-  border-radius: 18px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  position: relative;
+    max-width: 65%;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Subtle shadow */
 }
 
-/* My Messages (Right) */
 .message-bubble.me {
-  align-self: flex-end;
-  background-color: #8D0133;
-  color: white;
-  border-bottom-right-radius: 4px;
+    align-self: flex-end;
+    background: linear-gradient(135deg, #8D0133, #a0013a); /* Gradient */
+    color: white;
+    border-bottom-right-radius: 4px;
 }
 
-/* Their Messages (Left) */
 .message-bubble.them {
-  align-self: flex-start;
-  background-color: #e4e6eb;
-  color: black;
-  border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    color: #333;
+    border-bottom-left-radius: 4px;
 }
 
 .message-time {
@@ -170,4 +170,107 @@
   justify-content: center;
   color: #888;
   font-size: 1.2rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.no-chat-selected {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa; /* Light grey background */
+}
+
+.empty-state-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 40px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.empty-icon-wrapper {
+    background-color: #fff0f5; /* Light pink/maroon tint */
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.empty-state-content h3 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.empty-state-content p {
+    color: #666;
+    margin: 5px 0;
+}
+
+.sub-text {
+    font-size: 0.9rem;
+    color: #999 !important;
+    margin-bottom: 25px !important;
+}
+
+.browse-marketplace-btn {
+    background-color: #8D0133;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.browse-marketplace-btn:hover {
+    transform: scale(1.05);
+    background-color: #6b0126;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.search-wrapper {
+    margin-top: auto;
+    margin-left: 10px;
+
+}
+.sidebar-search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #f9f9f9;
+    box-sizing: border-box; /* Prevents overflow */
 }

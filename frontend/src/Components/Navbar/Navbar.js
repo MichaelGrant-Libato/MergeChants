@@ -39,7 +39,6 @@ const Navbar = () => {
           <Link to="/messages">Messages</Link>
           <Link to="/createListings">Sell Item</Link>
           <Link to="/history">History</Link>
-          <Link to="/report">Report</Link>
         </div>
 
         {/* Right Side: Dynamic Profile Section */}

@@ -1,0 +1,5 @@
+# Created at 2025-11-23T20:38:25.719
+Boot Manifest-JAR contains absolute paths in classpath 'F:\codes\MergeChants\backend\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

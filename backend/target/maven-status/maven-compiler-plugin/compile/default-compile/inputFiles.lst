@@ -1,0 +1,14 @@
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\BackendApplication.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\config\SecurityConfig.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\controller\AuthController.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\controller\ListingsController.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\controller\StudentController.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\dto\AuthResponse.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\dto\LoginRequest.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\dto\RegisterRequest.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\entity\ListingsEntity.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\entity\StudentEntity.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\repository\ListingsRepository.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\repository\StudentRepository.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\service\AuthenticationService.java
+F:\codes\MergeChants\backend\src\main\java\com\project\mergechants\backend\service\AuthService.java

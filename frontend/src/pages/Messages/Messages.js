@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom'; // To read URL params
 import './Messages.css';
+import { MessageSquare } from "lucide-react";
 
 export default function Messages() {
     const [searchParams] = useSearchParams();
@@ -9,13 +10,13 @@ export default function Messages() {
     const myId = localStorage.getItem('studentId');
     
     // Who am I talking to?
-    // We check the URL first (e.g. ?user=TechStudent), otherwise null
     const [activeChatUser, setActiveChatUser] = useState(searchParams.get('user') || null);
     
     const [inbox, setInbox] = useState([]); // List of people
     const [messages, setMessages] = useState([]); // Current conversation
     const [newMessage, setNewMessage] = useState(""); // Input box text
     const messagesEndRef = useRef(null); // Auto-scroll to bottom
+    const [searchTerm, setSearchTerm] = useState(""); // Search state
 
     // 1. LOAD INBOX (List of people I've talked to)
     useEffect(() => {
@@ -24,15 +25,12 @@ export default function Messages() {
         fetch(`http://localhost:8080/api/messages/inbox/${myId}`)
             .then(res => res.json())
             .then(data => {
-                // The backend returns ALL messages. We need to group them by unique users.
                 const uniqueUsers = new Set();
                 const conversations = [];
 
-                // Sort by newest first
                 data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
                 data.forEach(msg => {
-                    // Identify the "Other Person"
                     const otherPerson = msg.senderId === myId ? msg.receiverId : msg.senderId;
                     
                     if (!uniqueUsers.has(otherPerson)) {
@@ -47,7 +45,7 @@ export default function Messages() {
                 setInbox(conversations);
             })
             .catch(err => console.error("Error loading inbox:", err));
-    }, [myId, messages]); // Reload inbox when messages change
+    }, [myId, messages]);
 
     // 2. LOAD CHAT HISTORY (Polling every 3 seconds)
     useEffect(() => {
@@ -60,12 +58,9 @@ export default function Messages() {
                 .catch(err => console.error("Error loading chat:", err));
         };
 
-        // Initial fetch
         fetchChat();
-
-        // Poll every 3 seconds to create "Live" effect
         const interval = setInterval(fetchChat, 3000);
-        return () => clearInterval(interval); // Cleanup on unmount
+        return () => clearInterval(interval);
 
     }, [myId, activeChatUser]);
 
@@ -83,7 +78,7 @@ export default function Messages() {
             senderId: myId,
             receiverId: activeChatUser,
             content: newMessage,
-            listingId: null // Optional: Could pass listing ID later
+            listingId: null 
         };
 
         try {
@@ -95,7 +90,6 @@ export default function Messages() {
 
             if (res.ok) {
                 setNewMessage("");
-                // Manually trigger a fetch to update UI immediately
                 const savedMsg = await res.json();
                 setMessages([...messages, savedMsg]);
             }
@@ -112,28 +106,46 @@ export default function Messages() {
             <div className="chat-sidebar">
                 <div className="sidebar-header">
                     <h2>Messages</h2>
+                    <div className="search-wrapper">
+                        <input 
+                            type="text" 
+                            placeholder="Search conversations..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="sidebar-search-input"
+                        />
+                    </div>
                 </div>
+                
                 <div className="conversation-list">
-                    {inbox.map((conv) => (
-                        <div 
-                            key={conv.user} 
-                            className={`conversation-item ${activeChatUser === conv.user ? 'active' : ''}`}
-                            onClick={() => setActiveChatUser(conv.user)}
-                        >
-                            <div className="avatar-circle">
-                                {conv.user.charAt(0).toUpperCase()}
+                    {inbox
+                        .filter(conv => conv.user.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .map((conv) => (
+                            <div 
+                                key={conv.user} 
+                                className={`conversation-item ${activeChatUser === conv.user ? 'active' : ''}`}
+                                onClick={() => setActiveChatUser(conv.user)}
+                            >
+                                <div className="avatar-circle">
+                                    {conv.user.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="conversation-info">
+                                    <h4>{conv.user}</h4>
+                                    <p>{conv.lastMessage.substring(0, 30)}...</p>
+                                </div>
                             </div>
-                            <div className="conversation-info">
-                                <h4>{conv.user}</h4>
-                                <p>{conv.lastMessage.substring(0, 30)}...</p>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    
                     {inbox.length === 0 && (
-                        <p style={{padding: '20px', color:'#888'}}>No conversations yet.</p>
+                        <p style={{padding: '20px', color:'#888', textAlign: 'center'}}>No conversations yet.</p>
                     )}
                 </div>
             </div>
+
+
+
+
+
 
             {/* CHAT WINDOW */}
             <div className="chat-window">
@@ -170,7 +182,18 @@ export default function Messages() {
                     </>
                 ) : (
                     <div className="no-chat-selected">
-                        <p>Select a conversation to start chatting</p>
+                        <div className="empty-state-content">
+                            <div className="empty-icon-wrapper">
+                                <MessageSquare size={64} color="#8D0133" />
+                            </div>
+                            <h3>Your Messages</h3>
+                            <p>Select a chat from the sidebar to view history.</p>
+                            <p className="sub-text">Negotiate prices and arrange meetups safely.</p>
+                            
+                            <button className="browse-marketplace-btn" onClick={() => window.location.href='/dashboard'}>
+                                Browse Marketplace
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

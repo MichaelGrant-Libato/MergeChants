@@ -13,7 +13,6 @@ import Messages from './pages/Messages/Messages';
 import MyListings from "./pages/MyListings/myListings";
 import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History";
-import Report from "./pages/Report";
 import CreateListings from './pages/CreateListings/CreateListings';
 import ProductDetails from './pages/ProductDetails/ProductDetails';
 
@@ -105,14 +104,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/report"
-          element={
-            <MainLayout>
-              <Report />
-            </MainLayout>
-          }
-        />
+
 
         {/* EDIT LISTING ROUTE - Reuses the Create Page */}
         <Route
