@@ -13,10 +13,10 @@ public class ProfileEntity {
     @Column(name = "student_id", nullable = false, unique = true)
     private String studentId;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name")
     private String fullName;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = true) // IMPORTANT (and DB must match)
     private String email;
 
     @Column(name = "phone")
