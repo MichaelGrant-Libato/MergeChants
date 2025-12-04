@@ -1,4 +1,3 @@
-// frontend/src/pages/Dashboard/Dashboard.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
@@ -171,9 +170,14 @@ export default function Dashboard() {
     }
   };
 
+  // 🔴 Only non-sold products are visible in marketplace
+  const availableProducts = products.filter(
+    (p) => !(p.status && p.status.toUpperCase() === "SOLD")
+  );
+
   const getCategoryCounts = () => {
     const counts = {
-      "All Categories": products.length,
+      "All Categories": availableProducts.length,
       Electronics: 0,
       Textbooks: 0,
       Clothing: 0,
@@ -182,7 +186,7 @@ export default function Dashboard() {
       Other: 0,
     };
 
-    products.forEach((product) => {
+    availableProducts.forEach((product) => {
       if (counts.hasOwnProperty(product.category)) {
         counts[product.category]++;
       } else {
@@ -213,7 +217,7 @@ export default function Dashboard() {
     "Fair",
   ];
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = availableProducts.filter((product) => {
     const categoryMatch =
       selectedCategory === "All Categories" ||
       product.category === selectedCategory;

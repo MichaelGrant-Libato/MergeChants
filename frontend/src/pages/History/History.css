@@ -1,0 +1,185 @@
+.mc-page-container {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Header */
+.mc-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mc-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #5d172e;
+}
+
+.mc-description {
+  margin-top: 4px;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+.mc-count-pill {
+  align-self: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: #f3e4ea;
+  color: #5d172e;
+}
+
+/* Error text */
+.mc-error {
+  color: #b91c1c;
+}
+
+/* Grid of cards – similar vibe to MyListings cards */
+.mc-history-grid {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card container */
+.mc-history-card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Image area */
+.mc-card-image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f3f4f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.mc-card-image-tag {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mc-image-placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 0.9rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+      45deg,
+      #f3f4f6,
+      #f3f4f6 10px,
+      #e5e7eb 10px,
+      #e5e7eb 20px
+  );
+}
+
+/* Card body */
+.mc-card-body {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Top row: role + date */
+.mc-card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.15rem;
+}
+
+/* Role chip */
+.mc-role-pill {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.mc-role-pill.buyer {
+  background-color: #ecfdf3;
+  color: #166534;
+}
+
+.mc-role-pill.seller {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.mc-date {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Item title + price */
+.mc-item-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0.1rem 0;
+}
+
+.mc-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #8d0133;
+  margin: 0.1rem 0 0.4rem;
+}
+
+/* Meta section (buyer/seller info) */
+.mc-meta-block {
+  margin-top: 0.25rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.mc-meta-line {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin: 0.1rem 0;
+}
+
+.mc-meta-label {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Loading & empty states use base container layout */
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .mc-page-container {
+    padding: 1.25rem;
+  }
+
+  .mc-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mc-count-pill {
+    align-self: flex-start;
+  }
+}

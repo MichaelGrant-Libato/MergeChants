@@ -12,7 +12,7 @@ import SettingsPage from './pages/Settings/Settings';
 import Messages from './pages/Messages/Messages';
 import MyListings from "./pages/MyListings/myListings";
 import Sell from "./pages/Sell";
-import HistoryPage from "./pages/History";
+import HistoryPage from "./pages/History/History";
 import CreateListings from './pages/CreateListings/CreateListings';
 import ProductDetails from './pages/ProductDetails/ProductDetails';
 
