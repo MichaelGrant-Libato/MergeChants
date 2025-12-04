@@ -71,3 +71,4 @@ public class TransactionEntity {
         this.completedAt = completedAt;
     }
 }
+ 

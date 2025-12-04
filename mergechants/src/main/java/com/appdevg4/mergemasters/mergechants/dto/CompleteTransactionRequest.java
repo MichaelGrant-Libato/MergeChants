@@ -10,6 +10,7 @@ public class CompleteTransactionRequest {
         return listingId;
     }
 
+    
     public void setListingId(Long listingId) {
         this.listingId = listingId;
     }

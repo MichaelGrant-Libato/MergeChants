@@ -1,10 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./History.css";
 
+// Reuse same helper style as MyListings to resolve CSV → URLs
+const getImageUrls = (images) => {
+  if (!images) return [];
+
+  return images
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((img) => {
+      if (img.startsWith("http://") || img.startsWith("https://")) {
+        return img;
+      }
+      if (img.startsWith("/uploads/")) {
+        return `http://localhost:8080${img}`;
+      }
+      return `http://localhost:8080/uploads/${img}`;
+    });
+};
+
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // listingId -> listing details (so we can get images, etc.)
+  const [listingsById, setListingsById] = useState({});
 
   const rawStudentId = localStorage.getItem("studentId");
   const studentId = rawStudentId ? rawStudentId.trim() : "";
@@ -34,6 +56,51 @@ export default function HistoryPage() {
 
     fetchHistory();
   }, [studentId]);
+
+  // After we have history, fetch all related listings (for images)
+  useEffect(() => {
+    const loadListings = async () => {
+      const uniqueIds = [
+        ...new Set(
+          history
+            .map((tx) => tx.listingId)
+            .filter((id) => id !== null && id !== undefined)
+        ),
+      ];
+
+      if (uniqueIds.length === 0) return;
+
+      try {
+        const entries = await Promise.all(
+          uniqueIds.map(async (id) => {
+            try {
+              const res = await fetch(
+                `http://localhost:8080/api/listings/${id}`
+              );
+              if (!res.ok) throw new Error("Failed to fetch listing " + id);
+              const listing = await res.json();
+              return [id, listing];
+            } catch (error) {
+              console.error("Error loading listing for history:", id, error);
+              return [id, null];
+            }
+          })
+        );
+
+        const map = {};
+        entries.forEach(([id, listing]) => {
+          map[id] = listing;
+        });
+        setListingsById(map);
+      } catch (e) {
+        console.error("Error loading listings for history:", e);
+      }
+    };
+
+    if (history.length > 0) {
+      loadListings();
+    }
+  }, [history]);
 
   if (loading) {
     return (
@@ -81,36 +148,57 @@ export default function HistoryPage() {
         {history.map((tx) => {
           const isBuyer = tx.buyerId === studentId;
 
+          const listing = listingsById[tx.listingId];
+          const imageUrls =
+            listing && listing.images ? getImageUrls(listing.images) : [];
+          const imageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
+
           return (
             <div key={tx.id} className="mc-history-card">
-              <div className="mc-card-top-row">
-                <span
-                  className={`mc-role-pill ${
-                    isBuyer ? "buyer" : "seller"
-                  }`}
-                >
-                  {isBuyer ? "Purchased" : "Sold"}
-                </span>
-                <span className="mc-date">
-                  {new Date(tx.completedAt).toLocaleString()}
-                </span>
+              <div className="mc-card-image-wrapper">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={tx.listingName}
+                    className="mc-card-image-tag"
+                  />
+                ) : (
+                  <div className="mc-image-placeholder">
+                    <span>No Image</span>
+                  </div>
+                )}
               </div>
 
-              <h3 className="mc-item-name">{tx.listingName}</h3>
+              <div className="mc-card-body">
+                <div className="mc-card-top-row">
+                  <span
+                    className={`mc-role-pill ${
+                      isBuyer ? "buyer" : "seller"
+                    }`}
+                  >
+                    {isBuyer ? "Purchased" : "Sold"}
+                  </span>
+                  <span className="mc-date">
+                    {new Date(tx.completedAt).toLocaleString()}
+                  </span>
+                </div>
 
-              <p className="mc-price">
-                ₱{Number(tx.price).toFixed(2)}
-              </p>
+                <h3 className="mc-item-name">{tx.listingName}</h3>
 
-              <div className="mc-meta-block">
-                <p className="mc-meta-line">
-                  <span className="mc-meta-label">Buyer:</span>{" "}
-                  {tx.buyerId}
+                <p className="mc-price">
+                  ₱{Number(tx.price).toFixed(2)}
                 </p>
-                <p className="mc-meta-line">
-                  <span className="mc-meta-label">Seller:</span>{" "}
-                  {tx.sellerId}
-                </p>
+
+                <div className="mc-meta-block">
+                  <p className="mc-meta-line">
+                    <span className="mc-meta-label">Buyer:</span>{" "}
+                    {tx.buyerId}
+                  </p>
+                  <p className="mc-meta-line">
+                    <span className="mc-meta-label">Seller:</span>{" "}
+                    {tx.sellerId}
+                  </p>
+                </div>
               </div>
             </div>
           );

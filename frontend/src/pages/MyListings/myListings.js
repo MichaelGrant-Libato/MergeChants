@@ -199,6 +199,7 @@ export default function MyListings() {
     }
   };
 
+  
   const goToCreate = () => {
     navigate("/createListings");
   };
@@ -350,3 +351,4 @@ export default function MyListings() {
     </div>
   );
 }
+  
