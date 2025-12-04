@@ -19,33 +19,42 @@ public class ProfileServiceImpl implements ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    private String norm(String s) {
-        if (s == null)
+    private String normalize(String v) {
+        if (v == null)
             return null;
-        String t = s.trim();
+        String t = v.trim();
         return t.isEmpty() ? null : t;
+    }
+
+    private String generatedEmail(String studentId) {
+        String safe = studentId == null ? "unknown" : studentId.trim().toLowerCase().replaceAll("[^a-z0-9]+", "");
+        return "sid_" + safe + "@mergechants.local";
     }
 
     @Override
     public ProfileResponse create(ProfileRequest req) {
-        String studentId = norm(req.getStudentId());
-        String email = norm(req.getEmail());
-
+        String studentId = normalize(req.getStudentId());
         if (studentId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "studentId is required");
-        }
-        if (email == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email is required");
         }
 
         if (profileRepository.existsByStudentId(studentId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists for this studentId");
         }
+
+        String email = normalize(req.getEmail());
+        if (email == null) {
+            email = generatedEmail(studentId);
+        }
+
         if (profileRepository.existsByEmail(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
 
         ProfileEntity profile = new ProfileEntity();
+        profile.setStudentId(studentId);
+        profile.setEmail(email);
+
         applyReq(profile, req);
 
         ProfileEntity saved = profileRepository.save(profile);
@@ -69,22 +78,25 @@ public class ProfileServiceImpl implements ProfileService {
         ProfileEntity profile = profileRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
-        String studentId = norm(req.getStudentId());
-        String email = norm(req.getEmail());
-
-        if (studentId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "studentId is required");
-        }
-        if (email == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email is required");
+        String incomingStudentId = normalize(req.getStudentId());
+        if (incomingStudentId != null && !incomingStudentId.equalsIgnoreCase(profile.getStudentId())) {
+            if (profileRepository.existsByStudentId(incomingStudentId)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists for this studentId");
+            }
+            profile.setStudentId(incomingStudentId);
         }
 
-        if (!profile.getStudentId().equals(studentId) && profileRepository.existsByStudentId(studentId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "studentId already exists");
-        }
+        String incomingEmail = normalize(req.getEmail());
+        String currentEmail = normalize(profile.getEmail());
 
-        if (!profile.getEmail().equalsIgnoreCase(email) && profileRepository.existsByEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        if (incomingEmail == null && currentEmail == null) {
+            String sid = normalize(profile.getStudentId());
+            profile.setEmail(generatedEmail(sid));
+        } else if (incomingEmail != null && (currentEmail == null || !currentEmail.equalsIgnoreCase(incomingEmail))) {
+            if (profileRepository.existsByEmail(incomingEmail)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            }
+            profile.setEmail(incomingEmail);
         }
 
         applyReq(profile, req);
@@ -102,34 +114,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponse getByEmail(String email) {
-        String e = norm(email);
-        if (e == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email is required");
-
-        ProfileEntity profile = profileRepository.findByEmail(e)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
-        return toResponse(profile);
-    }
-
-    @Override
     public ProfileResponse getByStudentId(String studentId) {
-        String s = norm(studentId);
-        if (s == null)
+        String normalized = normalize(studentId);
+        if (normalized == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "studentId is required");
-
-        ProfileEntity profile = profileRepository.findByStudentId(s)
+        }
+        ProfileEntity profile = profileRepository.findByStudentId(normalized)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
         return toResponse(profile);
     }
 
     private void applyReq(ProfileEntity profile, ProfileRequest req) {
-        profile.setStudentId(norm(req.getStudentId()));
-        profile.setFullName(norm(req.getFullName()));
-        profile.setEmail(norm(req.getEmail()));
-        profile.setPhone(norm(req.getPhone()));
-        profile.setCampus(norm(req.getCampus()));
-        profile.setBio(norm(req.getBio()));
+        profile.setFullName(normalize(req.getFullName()));
+        profile.setPhone(normalize(req.getPhone()));
+        profile.setCampus(normalize(req.getCampus()));
+        profile.setBio(normalize(req.getBio()));
     }
 
     private ProfileResponse toResponse(ProfileEntity profile) {
