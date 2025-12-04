@@ -119,7 +119,11 @@ export default function Messages() {
                 
                 <div className="conversation-list">
                     {inbox
-                        .filter(conv => conv.user.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .filter(conv => 
+                            // Search matches User ID OR the Message Content
+                            conv.user.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            (conv.lastMessage && conv.lastMessage.toLowerCase().includes(searchTerm.toLowerCase()))
+                        )
                         .map((conv) => (
                             <div 
                                 key={conv.user} 

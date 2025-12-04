@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./Navbar.css"; // We will update CSS next
-import { User, Bell, Settings } from "lucide-react"; // Using lucide-react for consistency
+import { Link, useNavigate, useLocation } from "react-router-dom"; // One clean import
+import "./Navbar.css";
+import { User, Bell, Settings } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to check current page
   const [userData, setUserData] = useState(null);
   const studentId = localStorage.getItem("studentId");
 
@@ -27,10 +28,12 @@ const Navbar = () => {
           <span className="logo-text">MergeChants</span>
         </div>
 
-        {/* Search Bar (Optional - keep if you have it) */}
-        <div className="navbar-search">
-          <input type="text" placeholder="Search for items..." />
-        </div>
+        {/* Search Bar - Only visible on Dashboard/Marketplace */}
+        {location.pathname === "/dashboard" && (
+          <div className="navbar-search">
+            <input type="text" placeholder="Search for items..." />
+          </div>
+        )}
 
         {/* Navigation Links */}
         <div className="navbar-links">
