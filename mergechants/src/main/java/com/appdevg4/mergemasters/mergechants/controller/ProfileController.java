@@ -28,6 +28,11 @@ public class ProfileController {
         return profileService.getById(id);
     }
 
+    @GetMapping("/student/{studentId}")
+    public ProfileResponse getByStudentId(@PathVariable String studentId) {
+        return profileService.getByStudentId(studentId);
+    }
+
     @GetMapping
     public List<ProfileResponse> getAll() {
         return profileService.getAll();
@@ -41,15 +46,5 @@ public class ProfileController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         profileService.delete(id);
-    }
-
-    @GetMapping("/email/{email}")
-    public ProfileResponse getByEmail(@PathVariable String email) {
-        return profileService.getByEmail(email);
-    }
-
-    @GetMapping("/student/{studentId}")
-    public ProfileResponse getByStudentId(@PathVariable String studentId) {
-        return profileService.getByStudentId(studentId);
     }
 }
