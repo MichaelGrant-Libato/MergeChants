@@ -129,15 +129,16 @@
 
 /* Sidebar (Filters) */
 .sidebar {
-    width: 260px;
-    padding: 10px;
-    background-color: var(--sidebar-bg);
+     width: 260px;
+    padding: 20px;             
+    background-color: #ffffff;  
     margin-right: 25px;
-    align-self: flex-start;
+    align-self: stretch;
     position: sticky;
     top: 80px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border-radius: 0;          
+    box-shadow: none;           
+    border-right: 1px solid #e5e5e5; 
 }
 
 .sidebar-header {
@@ -346,6 +347,9 @@
     background-color: white;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -400,11 +404,21 @@
     font-size: 2rem;
     font-weight: 900;
     color: rgba(5, 5, 5, 0.747);
+
+    /* NEW – clamp long titles */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;      /* change to 3 if you want more lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .card-body {
     padding: 16px;
     color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .card-subtitle {
@@ -472,6 +486,8 @@
     align-items: center;
     padding: 12px 16px;
     border-top: 1px solid #f0f0f0;
+    margin-top: auto;  /* push footer to bottom of card */
+    min-height: 60px;
 }
 
 .contact-btn {
@@ -484,6 +500,10 @@
     font-weight: 600;
     font-size: 0.875rem;
     transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .contact-btn:hover {

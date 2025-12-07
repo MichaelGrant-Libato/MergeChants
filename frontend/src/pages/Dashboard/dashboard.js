@@ -142,9 +142,13 @@ export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
-  const [priceRange] = useState({ min: 0, max: 100000 });
+
+  // 🔹 REAL price-range state (used by filter + inputs)
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(100000);
 
   useEffect(() => {
     fetchProducts();
@@ -217,15 +221,22 @@ export default function Dashboard() {
     "Fair",
   ];
 
+  // 🔹 Apply category, condition AND price filters
   const filteredProducts = availableProducts.filter((product) => {
     const categoryMatch =
       selectedCategory === "All Categories" ||
       product.category === selectedCategory;
+
     const conditionMatch =
       selectedCondition === "All Conditions" ||
       product.condition === selectedCondition;
+
+    const price = Number(product.price);
+    const min = Number(minPrice) || 0;
+    const max = Number(maxPrice) || Infinity;
+
     const priceMatch =
-      product.price >= priceRange.min && product.price <= priceRange.max;
+      !Number.isNaN(price) && price >= min && price <= max;
 
     return categoryMatch && conditionMatch && priceMatch;
   });
@@ -237,6 +248,8 @@ export default function Dashboard() {
   const clearFilters = () => {
     setSelectedCategory("All Categories");
     setSelectedCondition("All Conditions");
+    setMinPrice(0);
+    setMaxPrice(100000);
   };
 
   return (
@@ -251,6 +264,7 @@ export default function Dashboard() {
             </button>
           </div>
 
+          {/* Categories */}
           <div className="filter-section categories-filter">
             <h3>Categories</h3>
             {categories.map((cat) => (
@@ -267,15 +281,28 @@ export default function Dashboard() {
             ))}
           </div>
 
+          {/* Price Range */}
           <div className="filter-section">
             <h3>Price Range</h3>
             <div className="price-inputs">
-              <span className="price-label">₱{priceRange.min}</span>
-              <span className="price-label">₱{priceRange.max}</span>
+              <input
+                type="number"
+                className="price-label"
+                value={minPrice}
+                min="0"
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
+              <input
+                type="number"
+                className="price-label"
+                value={maxPrice}
+                min="0"
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
             </div>
-            <div className="range-slider-placeholder"></div>
           </div>
 
+          {/* Condition */}
           <div className="filter-section conditions-filter">
             <h3>Condition</h3>
             {conditions.map((cond) => (
@@ -358,4 +385,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
