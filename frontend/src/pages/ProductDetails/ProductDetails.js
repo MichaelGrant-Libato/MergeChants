@@ -1,12 +1,10 @@
 // frontend/src/pages/ProductDetails/ProductDetails.js
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./ProductDetails.css";
 
-// Turn CSV string from DB into full URLs
 const getImageUrls = (images) => {
   if (!images) return [];
-
   return images
     .split(",")
     .map((s) => s.trim())
@@ -22,7 +20,6 @@ const getImageUrls = (images) => {
     });
 };
 
-// Big carousel for details page
 const DetailsImageCarousel = ({ images, alt }) => {
   const [index, setIndex] = useState(0);
 
@@ -30,30 +27,18 @@ const DetailsImageCarousel = ({ images, alt }) => {
     return <div className="no-image-large">No Image Available</div>;
   }
 
-  const prev = () =>
-    setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
-  const next = () =>
-    setIndex((i) => (i + 1) % images.length);
+  const prev = () => setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+  const next = () => setIndex((i) => (i + 1) % images.length);
 
   return (
     <div className="img-placeholder-large">
-      <img
-        src={images[index]}
-        alt={alt}
-        className="details-main-image"
-      />
+      <img src={images[index]} alt={alt} className="details-main-image" />
       {images.length > 1 && (
         <>
-          <button
-            className="details-carousel-btn prev"
-            onClick={prev}
-          >
+          <button className="details-carousel-btn prev" onClick={prev}>
             ‹
           </button>
-          <button
-            className="details-carousel-btn next"
-            onClick={next}
-          >
+          <button className="details-carousel-btn next" onClick={next}>
             ›
           </button>
         </>
@@ -65,10 +50,18 @@ const DetailsImageCarousel = ({ images, alt }) => {
 export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const currentStudentId = localStorage.getItem("studentId");
+  const currentStudentId = localStorage.getItem("studentId") || "";
+
+  // Data if opened from History
+  const source = location.state?.source || "dashboard"; // "history" or "dashboard"
+  const transactionId = location.state?.transactionId || null;
+  const transactionRole = location.state?.role || null; // buyer | seller
+  const otherPartyId = location.state?.otherPartyId || null;
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/listings/${id}`)
@@ -86,11 +79,34 @@ export default function ProductDetails() {
   if (loading) return <div className="details-container">Loading...</div>;
   if (!listing) return <div className="details-container">Item not found.</div>;
 
-  const isOwner = currentStudentId === listing.seller;
+  const isOwner = currentStudentId.trim() === String(listing.seller).trim();
   const imageUrls = getImageUrls(listing.images);
+  const mainImage = imageUrls.length > 0 ? imageUrls[0] : null;
 
   const handleContact = () => {
     navigate(`/messages?user=${listing.seller}`);
+  };
+
+  const handleEdit = () => {
+    navigate(`/edit/${listing.id}`);
+  };
+
+  const handleReportTransaction = () => {
+    if (!transactionId || !transactionRole || !otherPartyId) {
+      console.error("Missing transaction data from history");
+      return;
+    }
+
+    navigate(`/report/transaction/${transactionId}`, {
+      state: {
+        role: transactionRole,
+        otherPartyId,
+        listingName: listing.name,
+        price: listing.price,
+        listingId: listing.id,
+        listingImage: mainImage, // ✅ pass image to report page
+      },
+    });
   };
 
   return (
@@ -102,10 +118,7 @@ export default function ProductDetails() {
       <div className="details-grid">
         {/* LEFT: image / carousel */}
         <div className="image-section">
-          <DetailsImageCarousel
-            images={imageUrls}
-            alt={listing.name}
-          />
+          <DetailsImageCarousel images={imageUrls} alt={listing.name} />
         </div>
 
         {/* RIGHT: info */}
@@ -117,24 +130,28 @@ export default function ProductDetails() {
           <div className="seller-card">
             <div className="seller-avatar">👤</div>
             <div className="seller-info">
-              <p className="seller-name">{listing.seller}</p>
+              <p className="seller-name">
+                {listing.seller}
+                {isOwner && " (you)"}
+              </p>
               <p className="seller-sub">Verified Student</p>
             </div>
           </div>
 
           <div className="action-buttons">
-            {isOwner ? (
+            {source === "history" ? (
               <button
-                className="edit-btn-large"
-                onClick={() => navigate(`/edit/${listing.id}`)}
+                className="report-btn-large"
+                onClick={handleReportTransaction}
               >
+                Report Transaction
+              </button>
+            ) : isOwner ? (
+              <button className="edit-btn-large" onClick={handleEdit}>
                 Edit My Listing
               </button>
             ) : (
-              <button
-                className="contact-btn-large"
-                onClick={handleContact}
-              >
+              <button className="contact-btn-large" onClick={handleContact}>
                 Contact Seller
               </button>
             )}

@@ -1,10 +1,10 @@
+// frontend/src/pages/History/HistoryPage.js
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./History.css";
 
-// Reuse same helper style as MyListings to resolve CSV → URLs
 const getImageUrls = (images) => {
   if (!images) return [];
-
   return images
     .split(",")
     .map((s) => s.trim())
@@ -24,12 +24,12 @@ export default function HistoryPage() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // listingId -> listing details (so we can get images, etc.)
   const [listingsById, setListingsById] = useState({});
 
   const rawStudentId = localStorage.getItem("studentId");
   const studentId = rawStudentId ? rawStudentId.trim() : "";
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!studentId) {
@@ -57,7 +57,6 @@ export default function HistoryPage() {
     fetchHistory();
   }, [studentId]);
 
-  // After we have history, fetch all related listings (for images)
   useEffect(() => {
     const loadListings = async () => {
       const uniqueIds = [
@@ -67,7 +66,6 @@ export default function HistoryPage() {
             .filter((id) => id !== null && id !== undefined)
         ),
       ];
-
       if (uniqueIds.length === 0) return;
 
       try {
@@ -135,27 +133,54 @@ export default function HistoryPage() {
       <div className="mc-header-row">
         <div>
           <h1 className="mc-title">Transaction History</h1>
-          <p className="mc-description">
-            Your previous purchases and sales.
-          </p>
+          <p className="mc-description">Your previous purchases and sales.</p>
         </div>
         <span className="mc-count-pill">
           {history.length} completed {history.length === 1 ? "deal" : "deals"}
         </span>
       </div>
 
-      <div className="mc-history-grid">
+      <div className="mc-history-list">
         {history.map((tx) => {
           const isBuyer = tx.buyerId === studentId;
+          const isSeller = tx.sellerId === studentId;
 
           const listing = listingsById[tx.listingId];
           const imageUrls =
             listing && listing.images ? getImageUrls(listing.images) : [];
           const imageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
 
+          const handleOpenDetails = () => {
+            if (!tx.listingId) return;
+
+            // change /listing to your actual ProductDetails route
+            navigate(`/listing/${tx.listingId}`, {
+              state: {
+                source: "history",
+                transactionId: tx.id,
+                role: isBuyer ? "buyer" : "seller",
+                otherPartyId: isBuyer ? tx.sellerId : tx.buyerId,
+              },
+            });
+          };
+
+          const handleKeyDown = (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleOpenDetails();
+            }
+          };
+
           return (
-            <div key={tx.id} className="mc-history-card">
-              <div className="mc-card-image-wrapper">
+            <div
+              key={tx.id}
+              className="mc-history-card mc-history-card--row"
+              onClick={handleOpenDetails}
+              onKeyDown={handleKeyDown}
+              role="button"
+              tabIndex={0}
+            >
+              <div className="mc-card-image-wrapper mc-card-image-wrapper--small">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
@@ -169,8 +194,13 @@ export default function HistoryPage() {
                 )}
               </div>
 
-              <div className="mc-card-body">
-                <div className="mc-card-top-row">
+              <div className="mc-card-body mc-card-body--row">
+                <div className="mc-card-header-line">
+                  <h3 className="mc-item-name">{tx.listingName}</h3>
+                  <p className="mc-price">₱{Number(tx.price).toFixed(2)}</p>
+                </div>
+
+                <div className="mc-card-subheader-line">
                   <span
                     className={`mc-role-pill ${
                       isBuyer ? "buyer" : "seller"
@@ -183,20 +213,16 @@ export default function HistoryPage() {
                   </span>
                 </div>
 
-                <h3 className="mc-item-name">{tx.listingName}</h3>
-
-                <p className="mc-price">
-                  ₱{Number(tx.price).toFixed(2)}
-                </p>
-
-                <div className="mc-meta-block">
+                <div className="mc-meta-block mc-meta-block--row">
                   <p className="mc-meta-line">
                     <span className="mc-meta-label">Buyer:</span>{" "}
                     {tx.buyerId}
+                    {isBuyer && " (you)"}
                   </p>
                   <p className="mc-meta-line">
                     <span className="mc-meta-label">Seller:</span>{" "}
                     {tx.sellerId}
+                    {isSeller && " (you)"}
                   </p>
                 </div>
               </div>
