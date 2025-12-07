@@ -199,7 +199,7 @@ export default function MyListings() {
     }
   };
 
-  
+
   const goToCreate = () => {
     navigate("/createListings");
   };
@@ -253,11 +253,12 @@ export default function MyListings() {
                 </div>
                 <div className="card-content">
                   <h3>{item.name}</h3>
-                  <span className="price">₱{item.price}</span>
+                  <span className="price">
+                    ₱{Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
                   <span
-                    className={`status-badge ${
-                      item.status?.toLowerCase() || "pending"
-                    }`}
+                    className={`status-badge ${item.status?.toLowerCase() || "pending"
+                      }`}
                   >
                     {item.status || "ACTIVE"}
                   </span>
@@ -351,4 +352,3 @@ export default function MyListings() {
     </div>
   );
 }
-  

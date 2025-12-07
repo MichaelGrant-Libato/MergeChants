@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
+import Escrow from "../Escrow/Escrow";
 
 const CARD_COLOR = "#8D0133";
 
@@ -55,8 +56,25 @@ const ProductCard = ({ product }) => {
 
   const displayImage = getFirstImageUrl(product.images);
 
-  const goToDetails = () => {
-    navigate(`/listing/${product.id}`);
+  // 🔹 Use prop/callback if passed, or default to navigate
+  const handleContactClick = (e) => {
+    e.stopPropagation();
+    if (product.onContact) {
+      product.onContact(product.id, isOwner);
+    } else {
+      // Fallback if not passed (though we plan to pass it from Dashboard)
+      navigate(`/listing/${product.id}`);
+    }
+  };
+
+  const goToDetails = (e) => {
+    // Use the same logic as Contact Seller
+    // Ensure we don't double trigger if clicking another button inside
+    if (product.onContact) {
+      product.onContact(product.id, isOwner);
+    } else {
+      navigate(`/listing/${product.id}`);
+    }
   };
 
   return (
@@ -95,7 +113,7 @@ const ProductCard = ({ product }) => {
 
         <p className="price-info">
           <span className="current-price">
-            ₱{Number(product.price).toFixed(2)}
+            ₱{Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </p>
 
@@ -121,10 +139,7 @@ const ProductCard = ({ product }) => {
         ) : (
           <button
             className="contact-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              goToDetails();
-            }}
+            onClick={handleContactClick}
           >
             Contact Seller
           </button>
@@ -139,6 +154,9 @@ const ProductCard = ({ product }) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  // Get current user ID for Escrow binding
+  const currentStudentId = localStorage.getItem("studentId");
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -149,6 +167,10 @@ export default function Dashboard() {
   // 🔹 REAL price-range state (used by filter + inputs)
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
+
+  // 🔴 Warning Modal State
+  const [showSafetyModal, setShowSafetyModal] = useState(false);
+  const [pendingContact, setPendingContact] = useState(null); // Valid object with id, seller
 
   useEffect(() => {
     fetchProducts();
@@ -252,6 +274,37 @@ export default function Dashboard() {
     setMaxPrice(100000);
   };
 
+  const handleContactSeller = (listingId, isOwner) => {
+    if (isOwner) {
+      // If owner, just go there (edit/view)
+      navigate(`/edit/${listingId}`);
+      return;
+    }
+
+    // Check if user has seen the warning
+    const hasSeen = localStorage.getItem(`hasSeenEscrowWarning_${currentStudentId}`);
+    if (hasSeen === 'true') {
+      // Proceed to listing/messages
+      navigate(`/listing/${listingId}`);
+    } else {
+      // Show blocking modal
+      // Store full contact info needed for Escrow binding
+      setPendingContact({
+        id: listingId,
+        seller: filteredProducts.find(p => p.id === listingId)?.seller
+      });
+      setShowSafetyModal(true);
+    }
+  };
+
+  const confirmSafetyWarning = () => {
+    localStorage.setItem(`hasSeenEscrowWarning_${currentStudentId}`, 'true');
+    setShowSafetyModal(false);
+    if (pendingContact) {
+      navigate(`/listing/${pendingContact.id}`);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="main-content-area">
@@ -270,9 +323,8 @@ export default function Dashboard() {
             {categories.map((cat) => (
               <div
                 key={cat.name}
-                className={`filter-item ${
-                  selectedCategory === cat.name ? "active-category" : ""
-                }`}
+                className={`filter-item ${selectedCategory === cat.name ? "active-category" : ""
+                  }`}
                 onClick={() => setSelectedCategory(cat.name)}
               >
                 <span className="filter-name">{cat.name}</span>
@@ -308,9 +360,8 @@ export default function Dashboard() {
             {conditions.map((cond) => (
               <div
                 key={cond}
-                className={`filter-item condition-item ${
-                  selectedCondition === cond ? "active-condition" : ""
-                }`}
+                className={`filter-item condition-item ${selectedCondition === cond ? "active-condition" : ""
+                  }`}
                 onClick={() => setSelectedCondition(cond)}
               >
                 {cond}
@@ -367,7 +418,10 @@ export default function Dashboard() {
           {!loading && !error && filteredProducts.length > 0 && (
             <div className="product-grid">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={{ ...product, onContact: handleContactSeller }}
+                />
               ))}
             </div>
           )}
@@ -382,6 +436,16 @@ export default function Dashboard() {
       >
         <span className="fab-icon">+</span>
       </button>
+
+      {/* SAFETY MODAL / ESCROW */}
+      {showSafetyModal && pendingContact && (
+        <Escrow
+          listingId={pendingContact.id}
+          sellerId={pendingContact.seller}
+          buyerId={currentStudentId}
+          onConfirm={confirmSafetyWarning}
+        />
+      )}
     </div>
   );
 }
