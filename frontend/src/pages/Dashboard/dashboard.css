@@ -253,6 +253,209 @@
     margin-bottom: 0;
 }
 
+/* Price Range Filter Styles */
+.price-filter {
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+}
+
+.price-filter h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.price-range-display {
+    margin: 0 0 20px 0;
+    background: #f8f8f8;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.price-range-display span {
+    background: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: var(--primary-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.price-slider {
+    position: relative;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    margin: 15px 0 25px;
+    padding: 0 15px;
+}
+
+/* Track */
+.price-slider::before {
+    content: '';
+    position: absolute;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    left: 15px;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Filled track */
+.price-slider::after {
+    content: '';
+    position: absolute;
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 3px;
+    left: 15px;
+    width: calc((100% - 30px) * var(--progress, 1));
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    transition: width 0.1s ease;
+}
+
+.range-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    outline: none;
+    z-index: 3;
+    margin: 0;
+    padding: 0;
+}
+
+/* Thumb */
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -9px;
+    transition: all 0.2s ease;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 4;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(147, 50, 75, 0.15);
+}
+
+/* Track - WebKit */
+.range-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+
+/* Firefox support */
+.range-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.range-slider::-moz-range-track {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    border: none;
+}
+
+.range-slider::-moz-range-progress {
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 3px;
+}
+
+.reset-filters {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.reset-filters:hover {
+    background: rgba(147, 50, 75, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.reset-filters:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Price range track styling */
+.range-slider::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 6px;
+    background: transparent;
+}
+
+/* Firefox support */
+.range-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: white;
+    border: 3px solid var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.range-slider:first-of-type::-moz-range-thumb {
+    border-color: var(--primary-color);
+}
+
+.range-slider::-moz-range-track {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+}
+
+.range-slider::-moz-range-progress {
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 3px;
+}
+
 .condition-item {
     padding: 10px 12px;
     cursor: pointer;

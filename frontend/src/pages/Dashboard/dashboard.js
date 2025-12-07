@@ -144,7 +144,8 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
-  const [priceRange] = useState({ min: 0, max: 100000 });
+  const [maxPrice, setMaxPrice] = useState(20000);
+  const priceRange = { min: 0, max: 20000 };
 
   useEffect(() => {
     fetchProducts();
@@ -224,8 +225,7 @@ export default function Dashboard() {
     const conditionMatch =
       selectedCondition === "All Conditions" ||
       product.condition === selectedCondition;
-    const priceMatch =
-      product.price >= priceRange.min && product.price <= priceRange.max;
+    const priceMatch = product.price <= maxPrice;
 
     return categoryMatch && conditionMatch && priceMatch;
   });
@@ -237,6 +237,7 @@ export default function Dashboard() {
   const clearFilters = () => {
     setSelectedCategory("All Categories");
     setSelectedCondition("All Conditions");
+    setMaxPrice(priceRange.max);
   };
 
   return (
@@ -267,28 +268,53 @@ export default function Dashboard() {
             ))}
           </div>
 
-          <div className="filter-section">
-            <h3>Price Range</h3>
-            <div className="price-inputs">
-              <span className="price-label">₱{priceRange.min}</span>
-              <span className="price-label">₱{priceRange.max}</span>
-            </div>
-            <div className="range-slider-placeholder"></div>
-          </div>
-
           <div className="filter-section conditions-filter">
             <h3>Condition</h3>
-            {conditions.map((cond) => (
-              <div
-                key={cond}
-                className={`filter-item condition-item ${
-                  selectedCondition === cond ? "active-condition" : ""
-                }`}
-                onClick={() => setSelectedCondition(cond)}
-              >
-                {cond}
-              </div>
-            ))}
+            <select
+              value={selectedCondition}
+              onChange={(e) => setSelectedCondition(e.target.value)}
+              className="condition-select"
+            >
+              <option value="All Conditions">All Conditions</option>
+              <option value="New">New</option>
+              <option value="Like New">Like New</option>
+              <option value="Excellent">Excellent</option>
+              <option value="Very Good">Very Good</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+            </select>
+          </div>
+
+          <div className="price-filter">
+            <h3>Price</h3>
+            <div className="price-range-display">
+              <span>0 to  ₱{maxPrice.toLocaleString()}</span>
+            </div>
+            <div
+              className="price-slider"
+              style={{
+                "--progress": maxPrice / priceRange.max,
+              }}
+            >
+              <input
+                type="range"
+                min={priceRange.min}
+                max={priceRange.max}
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                className="range-slider"
+              />
+            </div>
+            <button
+              className="reset-filters"
+              onClick={() => {
+                setMaxPrice(priceRange.max);
+                setSelectedCategory("All Categories");
+                setSelectedCondition("All Conditions");
+              }}
+            >
+              Reset Filters
+            </button>
           </div>
         </aside>
 
