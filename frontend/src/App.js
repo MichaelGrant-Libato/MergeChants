@@ -1,36 +1,39 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import './App.css';
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import "./App.css";
+
 // Layout
-import MainLayout from './layout/MainLayout';
+import MainLayout from "./layout/MainLayout";
 
 // Pages
-import Login from './pages/Login/login';
-import Registration from './pages/Registration/registration';
-import Dashboard from './pages/Dashboard/dashboard';
-import SettingsPage from './pages/Settings/Settings';
-import Messages from './pages/Messages/Messages';
+import Login from "./pages/Login/login";
+import Registration from "./pages/Registration/registration";
+import Dashboard from "./pages/Dashboard/dashboard";
+import SettingsPage from "./pages/Settings/Settings";
+import Messages from "./pages/Messages/Messages";
 import MyListings from "./pages/MyListings/myListings";
 import Sell from "./pages/Sell";
 import HistoryPage from "./pages/History/History";
-import CreateListings from './pages/CreateListings/CreateListings';
-import ProductDetails from './pages/ProductDetails/ProductDetails';
+import CreateListings from "./pages/CreateListings/CreateListings";
+import ProductDetails from "./pages/ProductDetails/ProductDetails";
+import ReportTransaction from "./pages/Report/ReportTransaction";
 
 function App() {
+  const isAuthenticated = true; // TEMP – replace with real auth check
 
-  const isAuthenticated = true; // TEMP
- 
   return (
     <Router>
       <Routes>
-        
         {/* ROOT REDIRECT */}
         <Route
           path="/"
           element={
-            isAuthenticated
-              ? <Navigate to="/dashboard" replace />
-              : <Navigate to="/login" replace />
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
 
@@ -38,7 +41,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Registration />} />
 
-        {/* PROTECTED MAIN ROUTES */}
+        {/* PROTECTED ROUTES (WITH MAIN LAYOUT) */}
         <Route
           path="/dashboard"
           element={
@@ -66,7 +69,6 @@ function App() {
           }
         />
 
-        {/* CREATE LISTING ROUTE */}
         <Route
           path="/createListings"
           element={
@@ -76,7 +78,6 @@ function App() {
           }
         />
 
-        {/* OTHER PAGES */}
         <Route
           path="/mylistings"
           element={
@@ -104,19 +105,7 @@ function App() {
           }
         />
 
-
-
-        {/* EDIT LISTING ROUTE - Reuses the Create Page */}
-        <Route
-          path="/edit/:id"
-          element={
-            <MainLayout>
-              <CreateListings />
-            </MainLayout>
-          }
-        />
-
-        {/* PRODUCT DETAILS ROUTE */}
+        {/* PRODUCT DETAILS (NORMAL + HISTORY MODE) */}
         <Route
           path="/listing/:id"
           element={
@@ -126,12 +115,31 @@ function App() {
           }
         />
 
-        
+        {/* REPORT TRANSACTION PAGE */}
+        <Route
+          path="/report/transaction/:transactionId"
+          element={
+            <MainLayout>
+              <ReportTransaction/>
+            </MainLayout>
+          }
+        />
+
+        {/* EDIT LISTING (REUSES CREATE PAGE) */}
+        <Route
+          path="/edit/:id"
+          element={
+            <MainLayout>
+              <CreateListings />
+            </MainLayout>
+          }
+        />
+
+        {/* OPTIONAL: 404 CATCH-ALL */}
+        {/* <Route path="*" element={<Navigate to="/dashboard" replace />} /> */}
       </Routes>
     </Router>
   );
 }
-
-
 
 export default App;

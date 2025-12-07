@@ -59,10 +59,12 @@
 .seller-avatar {
   font-size: 1.5rem;
 }
+
 .seller-name {
   font-weight: bold;
   margin: 0;
 }
+
 .seller-sub {
   font-size: 0.8rem;
   color: #666;
@@ -70,10 +72,10 @@
 }
 
 .contact-btn-large,
-.edit-btn-large {
+.edit-btn-large,
+.report-btn-large {
   width: 100%;
   padding: 15px;
-  background-color: #8d0133;
   color: white;
   border: none;
   border-radius: 5px;
@@ -82,22 +84,37 @@
   font-weight: bold;
 }
 
+.contact-btn-large {
+  background-color: #8d0133;
+}
+
 .edit-btn-large {
   background-color: #333;
+}
+
+/* report button (history mode) */
+.report-btn-large {
+  background-color: #b91c1c;
+}
+
+.report-btn-large:hover {
+  background-color: #991b1b;
 }
 
 .details-block {
   margin-top: 2rem;
 }
+
 .details-list {
   list-style: none;
   padding: 0;
 }
+
 .details-list li {
   margin-bottom: 0.5rem;
 }
 
-/* === NEW: carousel image styling === */
+/* === carousel image styling === */
 .img-placeholder-large {
   position: relative;
   overflow: hidden;
