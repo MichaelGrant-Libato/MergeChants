@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './Messages.css';
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, MoreVertical, Plus, Image as ImageIcon, Smile } from "lucide-react";
 
 export default function Messages() {
   const [searchParams] = useSearchParams();
@@ -217,16 +217,31 @@ export default function Messages() {
                 className={`conversation-item ${activeChatUser === conv.user ? 'active' : ''}`}
                 onClick={() => {
                   setActiveChatUser(conv.user);
-                  // keep or later infer listingId from messages
                 }}
               >
-                <div className="avatar-circle">
-                  {conv.user.charAt(0).toUpperCase()}
+                {/* 1. Left: Visual Context */}
+                <div className="conv-visual">
+                  <div className="avatar-circle">
+                    {conv.user.charAt(0).toUpperCase()}
+                  </div>
                 </div>
-                <div className="conversation-info">
-                  <h4>{conv.user}</h4>
-                  <p>{conv.lastMessage.substring(0, 30)}...</p>
+
+                {/* 2. Right: Textual Context */}
+                <div className="conv-text">
+                  <div className="conv-header-row">
+                    <h4>{conv.user}</h4>
+                    <span className="conv-time">
+                      {new Date(conv.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <p className="conv-preview">{conv.lastMessage.substring(0, 40)}...</p>
                 </div>
+
+                {/* Unread indicator (Mock logic: if activeChatUser is NOT this user, show dot) 
+                    In real app, backend would send 'isRead' status. 
+                    For UI demo, we can just show it for the first item if not active. 
+                 */}
+                {/* <div className="unread-dot"></div> */}
               </div>
             ))}
 
@@ -261,6 +276,10 @@ export default function Messages() {
                   {isMarkingSold ? "Saving..." : "Mark as Sold"}
                 </button>
               )}
+
+              <button className="more-options-btn">
+                <MoreVertical size={20} />
+              </button>
             </div>
 
             <div className="chat-messages">
@@ -282,13 +301,28 @@ export default function Messages() {
             </div>
 
             <form className="chat-input-area" onSubmit={handleSend}>
-              <input
-                type="text"
+              <button type="button" className="attach-btn">
+                <Plus size={24} />
+              </button>
+
+              <textarea
                 placeholder="Type a message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                rows={1}
+                onInput={(e) => {
+                  e.target.style.height = 'auto'; // Reset height
+                  e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px'; // Expand up to 100px
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend(e);
+                  }
+                }}
               />
-              <button type="submit" className="send-btn">
+
+              <button type="submit" className="send-btn" disabled={!newMessage.trim()}>
                 Send
               </button>
             </form>

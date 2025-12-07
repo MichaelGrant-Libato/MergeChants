@@ -4,10 +4,14 @@
 
 
 :root {
-    --primary-color: #5d172e; /* Dark Maroon/Red for Logo text and active nav */
-    --accent-color: #92324b;  /* Lighter Red for buttons/active states */
-    --card-background: #8D0133; /* Dark Maroon for product card body/header */
-    --sidebar-active-bg: #5d172e; /* Darkest Maroon for active category filter */
+    --primary-color: #5d172e;
+    /* Dark Maroon/Red for Logo text and active nav */
+    --accent-color: #92324b;
+    /* Lighter Red for buttons/active states */
+    --card-background: #8D0133;
+    /* Dark Maroon for product card body/header */
+    --sidebar-active-bg: #5d172e;
+    /* Darkest Maroon for active category filter */
     --sidebar-text: #444;
     --text-color: #333;
     --light-text: #888;
@@ -105,14 +109,16 @@
     gap: 18px;
 }
 
-.notification-icon, .settings-icon {
+.notification-icon,
+.settings-icon {
     font-size: 1.4rem;
     color: #666;
     cursor: pointer;
     transition: color 0.2s;
 }
 
-.notification-icon:hover, .settings-icon:hover {
+.notification-icon:hover,
+.settings-icon:hover {
     color: var(--primary-color);
 }
 
@@ -129,16 +135,16 @@
 
 /* Sidebar (Filters) */
 .sidebar {
-     width: 260px;
-    padding: 20px;             
-    background-color: #ffffff;  
+    width: 260px;
+    padding: 20px;
+    background-color: #ffffff;
     margin-right: 25px;
     align-self: stretch;
     position: sticky;
     top: 80px;
-    border-radius: 0;          
-    box-shadow: none;           
-    border-right: 1px solid #e5e5e5; 
+    border-radius: 0;
+    box-shadow: none;
+    border-right: 1px solid #e5e5e5;
 }
 
 .sidebar-header {
@@ -359,11 +365,13 @@
 
 .card-header {
     background-color: var(--card-background) !important;
-    height: 160px;
-    padding: 12px 16px;
+    height: 220px;
+    /* Increased height for better image display */
+    padding: 8px;
+    /* The maroon margin */
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
     position: relative;
 }
 
@@ -380,10 +388,21 @@
     letter-spacing: 0.3px;
 }
 
-.tag-like-new { background-color: var(--tag-like-new); }
-.tag-excellent { background-color: var(--tag-excellent); }
-.tag-very-good { background-color: var(--tag-very-good); }
-.tag-good { background-color: var(--tag-good); }
+.tag-like-new {
+    background-color: var(--tag-like-new);
+}
+
+.tag-excellent {
+    background-color: var(--tag-excellent);
+}
+
+.tag-very-good {
+    background-color: var(--tag-very-good);
+}
+
+.tag-good {
+    background-color: var(--tag-good);
+}
 
 .verified-badge {
     position: absolute;
@@ -407,7 +426,8 @@
 
     /* NEW – clamp long titles */
     display: -webkit-box;
-    -webkit-line-clamp: 2;      /* change to 3 if you want more lines */
+    -webkit-line-clamp: 2;
+    /* change to 3 if you want more lines */
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
@@ -486,7 +506,8 @@
     align-items: center;
     padding: 12px 16px;
     border-top: 1px solid #f0f0f0;
-    margin-top: auto;  /* push footer to bottom of card */
+    margin-top: auto;
+    /* push footer to bottom of card */
     min-height: 60px;
 }
 
@@ -530,167 +551,171 @@
 }
 
 .fab-create-listing {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #8D0133 0%, #5d172e 100%);
-  border: none;
-  box-shadow: 0 4px 12px rgba(141, 1, 51, 0.4), 
-              0 8px 24px rgba(141, 1, 51, 0.25);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-  overflow: hidden;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8D0133 0%, #5d172e 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(141, 1, 51, 0.4),
+        0 8px 24px rgba(141, 1, 51, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    overflow: hidden;
 }
 
 .fab-create-listing::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .fab-create-listing:hover {
-  transform: scale(1.1) rotate(90deg);
-  box-shadow: 0 6px 16px rgba(141, 1, 51, 0.5), 
-              0 12px 32px rgba(141, 1, 51, 0.3);
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 16px rgba(141, 1, 51, 0.5),
+        0 12px 32px rgba(141, 1, 51, 0.3);
 }
 
 .fab-create-listing:hover::before {
-  opacity: 1;
+    opacity: 1;
 }
 
 .fab-create-listing:active {
-  transform: scale(1.05) rotate(90deg);
+    transform: scale(1.05) rotate(90deg);
 }
 
 .fab-icon {
-  font-size: 32px;
-  font-weight: 300;
-  color: white;
-  line-height: 1;
-  transition: transform 0.3s;
+    font-size: 32px;
+    font-weight: 300;
+    color: white;
+    line-height: 1;
+    transition: transform 0.3s;
 }
 
 .fab-create-listing:hover .fab-icon {
-  transform: rotate(-90deg);
+    transform: rotate(-90deg);
 }
 
 .fab-create-listing::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
 .fab-create-listing:active::after {
-  width: 200px;
-  height: 200px;
+    width: 200px;
+    height: 200px;
 }
 
 @media (max-width: 768px) {
-  .fab-create-listing {
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
-  }
-  
-  .fab-icon {
-    font-size: 28px;
-  }
+    .fab-create-listing {
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .fab-icon {
+        font-size: 28px;
+    }
 }
 
 .loading-state,
 .error-state,
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-  min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    min-height: 400px;
 }
 
 .loading-state p {
-  font-size: 18px;
-  color: #666;
-  margin: 0;
+    font-size: 18px;
+    color: #666;
+    margin: 0;
 }
 
 .error-state {
-  color: #d32f2f;
+    color: #d32f2f;
 }
 
 .error-state p {
-  font-size: 16px;
-  margin-bottom: 20px;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
 .retry-btn,
 .clear-filters-btn {
-  background-color: #8D0133;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    background-color: #8D0133;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .retry-btn:hover,
 .clear-filters-btn:hover {
-  background-color: #5d172e;
+    background-color: #5d172e;
 }
 
 .empty-state p {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 20px;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
 }
 
 .tag-new {
-  background-color: #4caf50;
-  color: white;
+    background-color: #4caf50;
+    color: white;
 }
 
 .tag-fair {
-  background-color: #ff9800;
-  color: white;
+    background-color: #ff9800;
+    color: white;
 }
 
 .card-header {
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    overflow: hidden;
 }
 
 .card-image-preview {
-  position: absolute;
-  inset: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

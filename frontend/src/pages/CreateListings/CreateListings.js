@@ -120,8 +120,8 @@ export default function CreateListings() {
         const preferredLocation = knownLocation
           ? data.preferredLocation
           : data.preferredLocation
-          ? 'Other'
-          : '';
+            ? 'Other'
+            : '';
 
         const customLocation =
           !knownLocation && data.preferredLocation ? data.preferredLocation : '';
@@ -158,15 +158,15 @@ export default function CreateListings() {
           meetingPreferences: data.meetingPreferences
             ? JSON.parse(data.meetingPreferences)
             : {
-                onCampus: false,
-                publicPlace: false,
-                deliveryAvailable: false,
-              },
+              onCampus: false,
+              publicPlace: false,
+              deliveryAvailable: false,
+            },
           uploadedImageNames: data.images
             ? data.images
-                .split(',')
-                .map((s) => s.trim())
-                .filter((t) => t)
+              .split(',')
+              .map((s) => s.trim())
+              .filter((t) => t)
             : [],
           images: [],
           tags: data.tags ? data.tags.split(',').filter((t) => t) : [],
@@ -253,8 +253,8 @@ export default function CreateListings() {
     const files = Array.from(e.target.files);
     if (
       files.length +
-        formData.images.length +
-        formData.uploadedImageNames.length >
+      formData.images.length +
+      formData.uploadedImageNames.length >
       8
     ) {
       alert('Maximum 8 images allowed');
@@ -287,6 +287,45 @@ export default function CreateListings() {
     }));
   };
 
+  const handlePriceChange = (e) => {
+    // 1. Remove anything that isn't a digit or decimal point
+    let rawValue = e.target.value.replace(/[^0-9.]/g, '');
+
+    // 2. Prevent multiple decimal points
+    const parts = rawValue.split('.');
+    if (parts.length > 2) {
+      // If adding a second dot, ignore it
+      rawValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    // 3. Format with commas
+    // Split integer and decimal parts
+    const [integer, decimal] = rawValue.split('.');
+
+    // Add commas to integer part
+    const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Recombine
+    let formattedValue = formattedInteger;
+    if (rawValue.includes('.')) {
+      formattedValue += '.' + (decimal || '');
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      price: formattedValue,
+    }));
+
+    // Clear price error if valid
+    if (formattedValue) {
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated.price;
+        return updated;
+      });
+    }
+  };
+
   const validateCurrentStep = () => {
     const newErrors = {};
 
@@ -302,8 +341,11 @@ export default function CreateListings() {
       }
       if (!formData.price) {
         newErrors.price = 'Price is required.';
-      } else if (parseFloat(formData.price) < 0) {
-        newErrors.price = 'Price must be 0 or higher.';
+      } else {
+        const rawPrice = parseFloat(formData.price.replace(/,/g, ''));
+        if (isNaN(rawPrice) || rawPrice < 0) {
+          newErrors.price = 'Price must be 0 or higher.';
+        }
       }
     } else if (currentStep === 2) {
       if (!formData.description.trim()) {
@@ -444,11 +486,11 @@ export default function CreateListings() {
         name: formData.name,
         subTitle: formData.subTitle || '',
         category: formData.category,
-        price: parseFloat(formData.price),
+        price: parseFloat(formData.price.toString().replace(/,/g, '')),
         originalPrice:
           formData.originalPrice !== ''
-            ? parseFloat(formData.originalPrice)
-            : parseFloat(formData.price),
+            ? parseFloat(formData.originalPrice.toString().replace(/,/g, ''))
+            : parseFloat(formData.price.toString().replace(/,/g, '')),
         condition: formData.condition,
         campus: formData.campus || '',
         description: formData.description,
@@ -506,18 +548,16 @@ export default function CreateListings() {
       {/* Step indicator */}
       <div className="step-indicator">
         <div
-          className={`step ${currentStep >= 1 ? 'active' : ''} ${
-            currentStep > 1 ? 'completed' : ''
-          }`}
+          className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''
+            }`}
         >
           <div className="step-circle">1</div>
           <span>Basic Info</span>
         </div>
         <div className="step-line"></div>
         <div
-          className={`step ${currentStep >= 2 ? 'active' : ''} ${
-            currentStep > 2 ? 'completed' : ''
-          }`}
+          className={`step ${currentStep >= 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''
+            }`}
         >
           <div className="step-circle">2</div>
           <span>Details & Images</span>
@@ -533,7 +573,7 @@ export default function CreateListings() {
         <form onSubmit={handleSubmit}>
           {/* STEP 1 */}
           {currentStep === 1 && (
-            <div className="form-step">
+            <div className="form-step basic-info-step">
               <h2>Basic Information</h2>
 
               <div className="form-group">
@@ -559,9 +599,8 @@ export default function CreateListings() {
                     <button
                       key={cat}
                       type="button"
-                      className={`category-btn ${
-                        formData.category === cat ? 'selected' : ''
-                      } ${errors.category ? 'error' : ''}`}
+                      className={`category-btn ${formData.category === cat ? 'selected' : ''
+                        } ${errors.category ? 'error' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({ ...prev, category: cat }));
                         setErrors((prev) => {
@@ -587,9 +626,8 @@ export default function CreateListings() {
                     <button
                       key={cond}
                       type="button"
-                      className={`condition-btn ${
-                        formData.condition === cond ? 'selected' : ''
-                      } ${errors.condition ? 'error' : ''}`}
+                      className={`condition-btn ${formData.condition === cond ? 'selected' : ''
+                        } ${errors.condition ? 'error' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({ ...prev, condition: cond }));
                         setErrors((prev) => {
@@ -611,13 +649,11 @@ export default function CreateListings() {
               <div className="form-group">
                 <label>Price *</label>
                 <input
-                  type="number"
+                  type="text"
                   name="price"
                   value={formData.price}
-                  onChange={handleChange}
+                  onChange={handlePriceChange}
                   placeholder="0.00"
-                  min="0"
-                  step="0.01"
                   className={errors.price ? 'error' : ''}
                   required
                 />
@@ -868,9 +904,8 @@ export default function CreateListings() {
                         <button
                           key={tag}
                           type="button"
-                          className={`tag-chip ${
-                            formData.tags.includes(tag) ? 'selected' : ''
-                          }`}
+                          className={`tag-chip ${formData.tags.includes(tag) ? 'selected' : ''
+                            }`}
                           onClick={() => handleTagClick(tag)}
                         >
                           {tag}
@@ -969,7 +1004,7 @@ export default function CreateListings() {
                     <div className="detail-row">
                       <span>Price:</span>
                       <span>
-                        ₱{parseFloat(formData.price || 0).toFixed(2)}
+                        ₱{parseFloat(formData.price.toString().replace(/,/g, '') || 0).toFixed(2)}
                       </span>
                     </div>
                     <div className="detail-row">
@@ -992,7 +1027,7 @@ export default function CreateListings() {
                       <span>Availability (Time):</span>
                       <span>
                         {formData.availableTimeFrom &&
-                        formData.availableTimeUntil
+                          formData.availableTimeUntil
                           ? `${formData.availableTimeFrom} - ${formData.availableTimeUntil}`
                           : 'Not specified'}
                       </span>
@@ -1094,13 +1129,12 @@ export default function CreateListings() {
 
               {message && (
                 <div
-                  className={`message ${
-                    message.includes('Error') ||
+                  className={`message ${message.includes('Error') ||
                     message.includes('Network') ||
                     message.includes('failed')
-                      ? 'error'
-                      : 'success'
-                  }`}
+                    ? 'error'
+                    : 'success'
+                    }`}
                 >
                   {message}
                 </div>
