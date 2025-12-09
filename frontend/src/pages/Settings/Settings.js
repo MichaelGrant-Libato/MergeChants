@@ -1,34 +1,11 @@
 // src/pages/Settings/Settings.js
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Bell, Shield, LogOut } from "lucide-react";
+import { User, LogOut, Camera } from "lucide-react";
 import "./Settings.css";
 
 const API_BASE = "http://localhost:8080";
-
-const ToggleItem = ({ title, description, enabled = false }) => {
-  const [isOn, setIsOn] = useState(enabled);
-  return (
-    <div className="toggle-item">
-      <div>
-        <h4 className="toggle-title">{title}</h4>
-        <p className="toggle-description">{description}</p>
-      </div>
-      <label className="toggle-switch">
-        <input
-          type="checkbox"
-          checked={isOn}
-          onChange={() => setIsOn(!isOn)}
-          className="toggle-checkbox"
-        />
-        <div className="toggle-bg">
-          <span className="toggle-dot" />
-        </div>
-      </label>
-    </div>
-  );
-};
 
 const PersonalInformation = ({
   userData,
@@ -36,15 +13,29 @@ const PersonalInformation = ({
   lastName,
   course,
   about,
+  profilePic,
   setFirstName,
   setLastName,
   setCourse,
   setAbout,
   onSave,
   onCancel,
+  onUploadPhoto,
   saving,
 }) => {
   const studentNumber = userData?.studentNumber || "";
+  const fileInputRef = useRef(null);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onUploadPhoto(file);
+    }
+  };
 
   return (
     <>
@@ -60,14 +51,26 @@ const PersonalInformation = ({
           <div className="mc-avatar">
             <div className="mc-avatar__ring">
               <div className="mc-avatar__img" aria-hidden="true">
-                <User size={52} color="#333" />
+                {profilePic ? (
+                  <img src={`${API_BASE}${profilePic}`} alt="Profile" className="mc-avatar-img-element" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={52} color="#333" />
+                )}
               </div>
             </div>
           </div>
 
-          <button className="mc-btn mc-btn--primary" type="button">
+          <button className="mc-btn mc-btn--primary" type="button" onClick={handlePhotoClick}>
+            <Camera size={16} style={{ marginRight: '8px' }} />
             Change Photo
           </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
 
           <div className="mc-studentIdBlock">
             <div className="mc-studentIdLabel">Student ID</div>
@@ -144,80 +147,6 @@ const PersonalInformation = ({
   );
 };
 
-const NotificationSettings = () => (
-  <>
-    <header className="mc-settings__header">
-      <h1 className="mc-settings__heading">Notification Settings</h1>
-      <p className="mc-settings__subheading">Manage your notification preferences</p>
-    </header>
-
-    <section className="mc-genericCard">
-      <div className="mc-cardSection">
-        <h3 className="mc-cardSubheader">Email Notifications</h3>
-        <ToggleItem title="Email Notifications" description="Receive notifications via email" enabled />
-        <ToggleItem title="New Messages" description="Get notified when you receive new messages" enabled />
-        <ToggleItem title="Weekly Digest" description="Summary of marketplace activity" enabled />
-        <ToggleItem title="Promotional Emails" description="Feature updates" enabled />
-      </div>
-
-      <div className="mc-cardSection">
-        <h3 className="mc-cardSubheader">Push Notifications</h3>
-        <ToggleItem title="Push Notifications" description="Enable push notifications" enabled />
-        <ToggleItem title="Marketplace Updates" description="New listing alerts" enabled />
-        <ToggleItem title="Bid Updates" description="Bid notifications" enabled />
-      </div>
-
-      <div className="mc-actions mc-actions--right">
-        <button className="mc-btn mc-btn--cancel" type="button">
-          Cancel
-        </button>
-        <button className="mc-btn mc-btn--save" type="button">
-          Save Changes
-        </button>
-      </div>
-    </section>
-  </>
-);
-
-const SecuritySettings = () => (
-  <>
-    <header className="mc-settings__header">
-      <h1 className="mc-settings__heading">Security and Privacy</h1>
-      <p className="mc-settings__subheading">
-        Manage your security settings and privacy preferences
-      </p>
-    </header>
-
-    <section className="mc-genericCard">
-      <div className="mc-cardSection">
-        <h3 className="mc-cardSubheader">Account Security</h3>
-        <ToggleItem title="Two-Factor Authentication" description="Add extra security" enabled />
-        <ToggleItem title="Login Alerts" description="Get login alerts" enabled />
-        <ToggleItem title="Auto Logout" description="Logout automatically" enabled />
-        <ToggleItem title="Strong Password Requirements" description="Force strong passwords" enabled />
-        <ToggleItem title="Device Management" description="Manage logged-in devices" enabled />
-      </div>
-
-      <div className="mc-cardSection">
-        <h3 className="mc-cardSubheader">Privacy Settings</h3>
-        <ToggleItem title="Profile Visibility" description="Make profile visible" enabled />
-        <ToggleItem title="Activity Tracking" description="Track your activity" />
-        <ToggleItem title="Data Sharing" description="Share anonymous usage data" />
-        <ToggleItem title="Cookie Preferences" description="Manage cookies" />
-      </div>
-
-      <div className="mc-actions mc-actions--right">
-        <button className="mc-btn mc-btn--cancel" type="button">
-          Cancel
-        </button>
-        <button className="mc-btn mc-btn--save" type="button">
-          Save Changes
-        </button>
-      </div>
-    </section>
-  </>
-);
-
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
   const [userData, setUserData] = useState({});
@@ -227,6 +156,7 @@ export default function SettingsPage() {
   const [lastName, setLastName] = useState("");
   const [course, setCourse] = useState("");
   const [about, setAbout] = useState("");
+  const [profilePic, setProfilePic] = useState("");
 
   const [saving, setSaving] = useState(false);
 
@@ -245,14 +175,20 @@ export default function SettingsPage() {
       const student = await resStudent.json();
       setUserData(student);
 
-      setFirstName(student.firstName || "");
-      setLastName(student.lastName || "");
-      setCourse(student.course || "");
-      setAbout("");
+      const initialFirstName = student.firstName || "";
+      const initialLastName = student.lastName || "";
+      const initialCourse = student.course || "";
+      const initialAbout = "";
+      const initialProfilePic = "";
 
       const studentNumber = student.studentNumber;
       if (!studentNumber) {
         setProfileId(null);
+        setFirstName(initialFirstName);
+        setLastName(initialLastName);
+        setCourse(initialCourse);
+        setAbout(initialAbout);
+        setProfilePic(initialProfilePic);
         return;
       }
 
@@ -268,16 +204,27 @@ export default function SettingsPage() {
         const fn = parts[0] || "";
         const ln = parts.slice(1).join(" ");
 
-        setFirstName(fn || student.firstName || "");
-        setLastName(ln || student.lastName || "");
-        setCourse(prof.campus || student.course || "");
+        setFirstName(fn || initialFirstName);
+        setLastName(ln || initialLastName);
+        setCourse(prof.campus || initialCourse);
         setAbout(prof.bio || "");
+        setProfilePic(prof.profilePic || "");
       } else {
         setProfileId(null);
+        setFirstName(initialFirstName);
+        setLastName(initialLastName);
+        setCourse(initialCourse);
+        setAbout(initialAbout);
+        setProfilePic(initialProfilePic);
       }
     } catch (err) {
       console.error("Failed to reload student/profile:", err);
       setProfileId(null);
+      setFirstName("");
+      setLastName("");
+      setCourse("");
+      setAbout("");
+      setProfilePic("");
     }
   };
 
@@ -285,6 +232,30 @@ export default function SettingsPage() {
     resetToLoadedValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentId]);
+
+  const handleUploadPhoto = async (file) => {
+    const formData = new FormData();
+    formData.append("files", file);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/files/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const urls = await res.json();
+      if (urls.length > 0) {
+        setProfilePic(urls[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload photo");
+    }
+  };
 
   const handleSaveProfile = async () => {
     if (saving) return;
@@ -300,6 +271,7 @@ export default function SettingsPage() {
       fullName: `${firstName} ${lastName}`.trim(),
       campus: course,
       bio: about,
+      profilePic: profilePic,
     };
 
     try {
@@ -329,6 +301,7 @@ export default function SettingsPage() {
       const saved = await res.json();
       setProfileId(saved.id);
       alert("Profile saved!");
+      window.dispatchEvent(new Event("profileUpdated"));
     } catch (err) {
       console.error(err);
       alert("Failed to save profile.");
@@ -342,25 +315,10 @@ export default function SettingsPage() {
     navigate("/login");
   };
 
-  const fullName =
-    userData.firstName || userData.lastName
-      ? `${userData.firstName || ""} ${userData.lastName || ""}`.trim()
-      : "Loading...";
-
   return (
     <div className="mc-settings">
       <aside className="mc-settings__sidebar">
         <h2 className="mc-settings__title">Settings</h2>
-
-        <div className="mc-sidebarProfile">
-          <div className="mc-sidebarAvatar">
-            <User size={28} color="#555" />
-          </div>
-          <div className="mc-sidebarMeta">
-            <div className="mc-sidebarName">{fullName}</div>
-            <div className="mc-sidebarId">{userData.studentNumber || ""}</div>
-          </div>
-        </div>
 
         <nav className="mc-settings__nav">
           <button
@@ -372,28 +330,6 @@ export default function SettingsPage() {
               <User size={18} />
             </span>
             <span>Personal Information</span>
-          </button>
-
-          <button
-            className={`mc-settings__navItem ${activeTab === "notifications" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("notifications")}
-            type="button"
-          >
-            <span className="mc-settings__navIcon">
-              <Bell size={18} />
-            </span>
-            <span>Notifications</span>
-          </button>
-
-          <button
-            className={`mc-settings__navItem ${activeTab === "security" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("security")}
-            type="button"
-          >
-            <span className="mc-settings__navIcon">
-              <Shield size={18} />
-            </span>
-            <span>Security and Privacy</span>
           </button>
         </nav>
 
@@ -415,17 +351,17 @@ export default function SettingsPage() {
             lastName={lastName}
             course={course}
             about={about}
+            profilePic={profilePic}
             setFirstName={setFirstName}
             setLastName={setLastName}
             setCourse={setCourse}
             setAbout={setAbout}
             onSave={handleSaveProfile}
             onCancel={resetToLoadedValues}
+            onUploadPhoto={handleUploadPhoto}
             saving={saving}
           />
         )}
-        {activeTab === "notifications" && <NotificationSettings />}
-        {activeTab === "security" && <SecuritySettings />}
       </main>
     </div>
   );

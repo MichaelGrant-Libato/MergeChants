@@ -3,25 +3,29 @@
 ========================================= */
 .navbar {
   width: 100%;
-  height: 70px; /* Slightly reduced for sleeker look */
+  height: 70px;
+  /* Slightly reduced for sleeker look */
   background: white;
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02); /* Subtle shadow for depth */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  /* Subtle shadow for depth */
 }
 
 .navbar-container {
-  max-width: none; /* Remove max-width constraint */
+  max-width: none;
+  /* Remove max-width constraint */
   margin: 0;
   padding: 0 2rem;
   height: 100%;
-  
+
   /* FLEXBOX LAYOUT for better spacing control */
   display: flex;
   align-items: center;
-  gap: 3rem; /* Increased gap for more breathing room */
+  gap: 3rem;
+  /* Increased gap for more breathing room */
 }
 
 /* =========================================
@@ -32,11 +36,13 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  flex-shrink: 0; /* Prevents logo from shrinking */
+  flex-shrink: 0;
+  /* Prevents logo from shrinking */
 }
 
 .logo-circle {
-  background: linear-gradient(135deg, #8D0133 0%, #a50142 100%); /* Subtle gradient */
+  background: linear-gradient(135deg, #8D0133 0%, #a50142 100%);
+  /* Subtle gradient */
   color: white;
   width: 38px;
   height: 38px;
@@ -46,13 +52,15 @@
   justify-content: center;
   font-weight: 800;
   font-size: 1.1rem;
-  box-shadow: 0 2px 8px rgba(141, 1, 51, 0.2); /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(141, 1, 51, 0.2);
+  /* Subtle shadow */
 }
 
 .logo-text {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #1a1a1a; /* Deeper black for contrast */
+  color: #1a1a1a;
+  /* Deeper black for contrast */
   letter-spacing: -0.5px;
 }
 
@@ -60,13 +68,16 @@
    CENTER: SEARCH BAR
 ========================================= */
 .navbar-search {
-  flex: 0 1 400px; /* Reduced max size */
+  flex: 0 1 400px;
+  /* Reduced max size */
   max-width: 400px;
-  min-width: 250px; /* Prevent it from getting too small */
+  min-width: 250px;
+  /* Prevent it from getting too small */
 }
 
 .navbar-search input {
-  background: #f8f9fa; /* Lighter, cleaner background */
+  background: #f8f9fa;
+  /* Lighter, cleaner background */
   padding: 11px 22px;
   border-radius: 30px;
   width: 100%;
@@ -74,7 +85,7 @@
   outline: none;
   font-size: 0.9rem;
   color: #333;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   transition: all 0.25s ease;
 }
 
@@ -86,7 +97,8 @@
   background: #fff;
   border-color: #8D0133;
   box-shadow: 0 0 0 3px rgba(141, 1, 51, 0.08);
-  transform: translateY(-1px); /* Subtle lift effect */
+  transform: translateY(-1px);
+  /* Subtle lift effect */
 }
 
 /* =========================================
@@ -95,15 +107,20 @@
 .navbar-right-section {
   display: flex;
   align-items: center;
-  gap: 5rem; /* Increased gap between links and profile section */
-  flex-shrink: 0; /* Prevents right section from shrinking */
-  margin-left: auto; /* Pushes this section to the far right */
-  min-width: fit-content; /* Ensures links never wrap or compress */
+  gap: 5rem;
+  /* Increased gap between links and profile section */
+  flex-shrink: 0;
+  /* Prevents right section from shrinking */
+  margin-left: auto;
+  /* Pushes this section to the far right */
+  min-width: fit-content;
+  /* Ensures links never wrap or compress */
 }
 
 .navbar-links {
   display: flex;
-  gap: 7rem; /* Increased from 1.5rem for more breathing room */
+  gap: 7rem;
+  /* Increased from 1.5rem for more breathing room */
   align-items: center;
 }
 
@@ -131,7 +148,8 @@
   align-items: center;
   gap: 12px;
   padding-left: 24px;
-  border-left: 1px solid #e9ecef; /* Lighter separator */
+  border-left: 1px solid #e9ecef;
+  /* Lighter separator */
 }
 
 .user-profile-chip {
@@ -148,7 +166,8 @@
 .user-profile-chip:hover {
   background-color: #f8f9fa;
   border-color: #e9ecef;
-  transform: translateY(-1px); /* Subtle lift */
+  transform: translateY(-1px);
+  /* Subtle lift */
 }
 
 .chip-info {
@@ -172,13 +191,15 @@
 .chip-avatar {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); /* Subtle gradient */
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  /* Subtle gradient */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .icon-btn {
@@ -206,7 +227,7 @@
   .navbar-links {
     gap: 1.2rem;
   }
-  
+
   .navbar-links a {
     font-size: 0.9rem;
   }
@@ -217,7 +238,7 @@
     flex: 0 1 350px;
     max-width: 350px;
   }
-  
+
   .navbar-links {
     gap: 1rem;
   }
@@ -227,33 +248,33 @@
   .navbar-container {
     gap: 1rem;
   }
-  
+
   .navbar-right-section {
     gap: 1rem;
   }
-  
+
   .navbar-links {
     gap: 0.8rem;
   }
-  
+
   .navbar-links a {
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 950px) {
-  .navbar-links { 
-    display: none; 
+  .navbar-links {
+    display: none;
   }
-  
-  .navbar-search { 
-    display: none; 
+
+  .navbar-search {
+    display: none;
   }
-  
+
   .navbar-container {
     justify-content: space-between;
   }
-  
+
   .navbar-profile-section {
     border-left: none;
     padding-left: 0;

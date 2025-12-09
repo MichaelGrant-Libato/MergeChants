@@ -28,6 +28,9 @@ public class ProfileEntity {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "profile_pic")
+    private String profilePic;
+
     public Long getId() {
         return id;
     }
@@ -78,5 +81,13 @@ public class ProfileEntity {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 }
