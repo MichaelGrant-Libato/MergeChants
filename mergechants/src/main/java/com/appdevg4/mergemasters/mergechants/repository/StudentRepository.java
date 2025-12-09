@@ -8,7 +8,14 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<StudentEntity, String> {
-  boolean existsByStudentNumber(String studentNumber);
 
-  Optional<StudentEntity> findByStudentNumber(String studentNumber);
+    boolean existsByStudentNumber(String studentNumber);
+
+    boolean existsByOutlookEmail(String outlookEmail);
+
+    Optional<StudentEntity> findByStudentNumber(String studentNumber);
+
+    Optional<StudentEntity> findByOutlookEmail(String outlookEmail);
+
+    Optional<StudentEntity> findByStudentNumberOrOutlookEmail(String studentNumber, String outlookEmail);
 }

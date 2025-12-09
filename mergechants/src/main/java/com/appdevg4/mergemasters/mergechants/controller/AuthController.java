@@ -14,33 +14,35 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
-  private final AuthService authService;
+    private final AuthService authService;
 
-  @Autowired
-  public AuthController(AuthService authService) {
-    this.authService = authService;
-  }
-
-  @PostMapping("/register")
-  public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
-    try {
-      authService.registerStudent(registerRequest);
-      return new ResponseEntity<>("User Registration Successful!", HttpStatus.CREATED);
-    } catch (IllegalArgumentException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
-  }
 
-  @PostMapping("/login")
-  public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-    try {
-      String token = authService.authenticateUser(loginRequest);
-      return ResponseEntity.ok()
-          .body(new AuthResponse(loginRequest.getStudentId(), token));
-
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body("{\"message\": \"Invalid student ID or password.\"}");
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
+        try {
+            authService.registerStudent(registerRequest);
+            return new ResponseEntity<>("User Registration Successful!", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Registration failed: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-  }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            String token = authService.authenticateUser(loginRequest);
+            return ResponseEntity.ok()
+                    .body(new AuthResponse(loginRequest.getCredential(), token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"message\": \"Invalid ID/email or password.\"}");
+        }
+    }
 }
