@@ -129,6 +129,7 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setPhone(normalize(req.getPhone()));
         profile.setCampus(normalize(req.getCampus()));
         profile.setBio(normalize(req.getBio()));
+        profile.setProfilePic(normalize(req.getProfilePic()));
     }
 
     private ProfileResponse toResponse(ProfileEntity profile) {
@@ -139,6 +140,7 @@ public class ProfileServiceImpl implements ProfileService {
                 profile.getEmail(),
                 profile.getPhone(),
                 profile.getCampus(),
-                profile.getBio());
+                profile.getBio(),
+                profile.getProfilePic());
     }
 }

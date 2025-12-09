@@ -8,6 +8,7 @@ public class ProfileRequest {
     private String phone;
     private String campus;
     private String bio;
+    private String profilePic;
 
     public String getStudentId() {
         return studentId;
@@ -55,5 +56,13 @@ public class ProfileRequest {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 }

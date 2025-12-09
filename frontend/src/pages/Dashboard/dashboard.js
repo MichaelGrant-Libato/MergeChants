@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
-import Escrow from "../Escrow/Escrow";
+
 
 const CARD_COLOR = "#8D0133";
 
@@ -168,9 +168,7 @@ export default function Dashboard() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
 
-  // 🔴 Warning Modal State
-  const [showSafetyModal, setShowSafetyModal] = useState(false);
-  const [pendingContact, setPendingContact] = useState(null); // Valid object with id, seller
+
 
   useEffect(() => {
     fetchProducts();
@@ -276,34 +274,13 @@ export default function Dashboard() {
 
   const handleContactSeller = (listingId, isOwner) => {
     if (isOwner) {
-      // If owner, just go there (edit/view)
       navigate(`/edit/${listingId}`);
-      return;
-    }
-
-    // Check if user has seen the warning
-    const hasSeen = localStorage.getItem(`hasSeenEscrowWarning_${currentStudentId}`);
-    if (hasSeen === 'true') {
-      // Proceed to listing/messages
-      navigate(`/listing/${listingId}`);
     } else {
-      // Show blocking modal
-      // Store full contact info needed for Escrow binding
-      setPendingContact({
-        id: listingId,
-        seller: filteredProducts.find(p => p.id === listingId)?.seller
-      });
-      setShowSafetyModal(true);
+      navigate(`/listing/${listingId}`);
     }
   };
 
-  const confirmSafetyWarning = () => {
-    localStorage.setItem(`hasSeenEscrowWarning_${currentStudentId}`, 'true');
-    setShowSafetyModal(false);
-    if (pendingContact) {
-      navigate(`/listing/${pendingContact.id}`);
-    }
-  };
+
 
   return (
     <div className="dashboard-container">
@@ -437,15 +414,7 @@ export default function Dashboard() {
         <span className="fab-icon">+</span>
       </button>
 
-      {/* SAFETY MODAL / ESCROW */}
-      {showSafetyModal && pendingContact && (
-        <Escrow
-          listingId={pendingContact.id}
-          sellerId={pendingContact.seller}
-          buyerId={currentStudentId}
-          onConfirm={confirmSafetyWarning}
-        />
-      )}
+
     </div>
   );
 }

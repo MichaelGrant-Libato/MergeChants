@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./ProductDetails.css";
+import Escrow from "../Escrow/Escrow";
 
 const getImageUrls = (images) => {
   if (!images) return [];
@@ -54,6 +55,7 @@ export default function ProductDetails() {
 
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showSafetyModal, setShowSafetyModal] = useState(false);
 
   const currentStudentId = localStorage.getItem("studentId") || "";
 
@@ -84,6 +86,18 @@ export default function ProductDetails() {
   const mainImage = imageUrls.length > 0 ? imageUrls[0] : null;
 
   const handleContact = () => {
+    // Check if user has seen the warning
+    const hasSeen = localStorage.getItem(`hasSeenEscrowWarning_${currentStudentId}`);
+    if (hasSeen === 'true') {
+      navigate(`/messages?user=${listing.seller}`);
+    } else {
+      setShowSafetyModal(true);
+    }
+  };
+
+  const confirmSafetyWarning = () => {
+    localStorage.setItem(`hasSeenEscrowWarning_${currentStudentId}`, 'true');
+    setShowSafetyModal(false);
     navigate(`/messages?user=${listing.seller}`);
   };
 
@@ -184,6 +198,16 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-    </div>
+      {
+        showSafetyModal && (
+          <Escrow
+            listingId={listing.id}
+            sellerId={listing.seller}
+            buyerId={currentStudentId}
+            onConfirm={confirmSafetyWarning}
+          />
+        )
+      }
+    </div >
   );
 }

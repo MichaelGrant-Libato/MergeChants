@@ -8,12 +8,13 @@ public class ProfileResponse {
     private String phone;
     private String campus;
     private String bio;
+    private String profilePic;
 
     public ProfileResponse() {
     }
 
     public ProfileResponse(Long id, String studentId, String fullName, String email, String phone, String campus,
-            String bio) {
+            String bio, String profilePic) {
         this.id = id;
         this.studentId = studentId;
         this.fullName = fullName;
@@ -21,6 +22,7 @@ public class ProfileResponse {
         this.phone = phone;
         this.campus = campus;
         this.bio = bio;
+        this.profilePic = profilePic;
     }
 
     public Long getId() {
@@ -77,5 +79,13 @@ public class ProfileResponse {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 }

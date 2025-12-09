@@ -1,29 +1,41 @@
 /* Force Settings page to FULL-BLEED even inside a centered/max-width layout */
-.mc-settings{
+.mc-settings {
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   min-height: calc(100vh - 80px);
 }
 
-:root{
+:root {
   --mc-maroon: #6b0f1a;
   --mc-maroon-2: #8a1c27;
   --mc-accent: #facc15;
   --mc-card: #f6ecee;
   --mc-text: #1b1b1b;
-  --mc-muted: rgba(255,255,255,.75);
-  --mc-border: rgba(0,0,0,.12);
-  --mc-shadow: 0 14px 40px rgba(0,0,0,.18);
+  --mc-muted: rgba(255, 255, 255, .75);
+  --mc-border: rgba(0, 0, 0, .12);
+  --mc-shadow: 0 14px 40px rgba(0, 0, 0, .18);
   --mc-radius: 18px;
 }
 
-*{ box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-.mc-settings *{ min-width: 0; } /* prevents zoom overflow break */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.mc-settings * {
+  min-width: 0;
+}
+
+/* prevents zoom overflow break */
 
 /* Full page (below navbar) */
-.mc-settings{
+.mc-settings {
   width: 100%;
   min-height: calc(100vh - 80px);
   display: flex;
@@ -31,7 +43,7 @@ html, body { margin: 0; padding: 0; }
 }
 
 /* Sidebar */
-.mc-settings__sidebar{
+.mc-settings__sidebar {
   width: 280px;
   flex: 0 0 280px;
   background: #8a1c27;
@@ -40,24 +52,31 @@ html, body { margin: 0; padding: 0; }
   flex-direction: column;
 }
 
-.mc-settings__title{
+.mc-settings__title {
   color: var(--mc-accent);
   font-size: 28px;
   font-weight: 800;
   margin: 0 0 16px;
 }
 
-.mc-sidebarProfile{
-  display: none;
+/* Hiding the sidebar profile section */
+.mc-sidebarProfile {
+  /* display: none; */
+  /* Keeping this commented out in case you re-enable it on small screens */
   align-items: center;
   gap: 12px;
   padding: 12px;
   border-radius: 14px;
-  background: rgba(255,255,255,.06);
+  background: rgba(255, 255, 255, .06);
   margin-bottom: 14px;
+  height: 0;
+  /* Effectively hiding the element while keeping its space if needed for future use */
+  overflow: hidden;
+  padding: 0;
+  margin-bottom: 0;
 }
 
-.mc-sidebarAvatar{
+.mc-sidebarAvatar {
   width: 44px;
   height: 44px;
   border-radius: 999px;
@@ -68,32 +87,32 @@ html, body { margin: 0; padding: 0; }
   flex: 0 0 44px;
 }
 
-.mc-sidebarMeta{
+.mc-sidebarMeta {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
 }
 
-.mc-sidebarName{
+.mc-sidebarName {
   color: #fff;
   font-weight: 800;
   font-size: 14px;
 }
 
-.mc-sidebarId{
-  color: rgba(255,255,255,.75);
+.mc-sidebarId {
+  color: rgba(255, 255, 255, .75);
   font-size: 12px;
   margin-top: 4px;
 }
 
-.mc-settings__nav{
+.mc-settings__nav {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 6px;
 }
 
-.mc-settings__navItem{
+.mc-settings__navItem {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -109,36 +128,37 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-.mc-settings__navItem:hover{
-  background: rgba(255,255,255,.08);
+.mc-settings__navItem:hover {
+  background: rgba(255, 255, 255, .08);
 }
 
-.mc-settings__navItem.is-active{
+.mc-settings__navItem.is-active {
   background: var(--mc-accent);
   color: #111;
 }
 
-.mc-settings__navIcon{
+.mc-settings__navIcon {
   width: 28px;
   display: inline-flex;
   justify-content: center;
 }
 
-.mc-sidebarFooter{
+.mc-sidebarFooter {
   margin-top: auto;
   padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,.15);
+  border-top: 1px solid rgba(255, 255, 255, .15);
 }
 
-.mc-logout{
+.mc-logout {
   color: #ffe3e7;
 }
-.mc-logout:hover{
-  background: rgba(255,255,255,.08);
+
+.mc-logout:hover {
+  background: rgba(255, 255, 255, .08);
 }
 
 /* Main content */
-.mc-settings__main{
+.mc-settings__main {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -146,13 +166,13 @@ html, body { margin: 0; padding: 0; }
   background: #9a1e2a;
 }
 
-.mc-settings__header{
+.mc-settings__header {
   max-width: 1100px;
   width: 100%;
   margin: 6px 0 18px;
 }
 
-.mc-settings__heading{
+.mc-settings__heading {
   margin: 0;
   color: var(--mc-accent);
   font-size: clamp(28px, 3vw, 40px);
@@ -160,14 +180,14 @@ html, body { margin: 0; padding: 0; }
   letter-spacing: .2px;
 }
 
-.mc-settings__subheading{
+.mc-settings__subheading {
   margin: 6px 0 0;
   color: var(--mc-muted);
   font-weight: 500;
 }
 
 /* Profile Card (Personal Info) */
-.mc-profileCard{
+.mc-profileCard {
   width: min(1400px, 100%);
   margin: 0;
   background: var(--mc-card);
@@ -180,7 +200,7 @@ html, body { margin: 0; padding: 0; }
   align-items: start;
 }
 
-.mc-profileCard__left{
+.mc-profileCard__left {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,7 +208,7 @@ html, body { margin: 0; padding: 0; }
   padding-top: 6px;
 }
 
-.mc-avatar__ring{
+.mc-avatar__ring {
   width: 190px;
   height: 190px;
   border-radius: 999px;
@@ -196,25 +216,28 @@ html, body { margin: 0; padding: 0; }
   display: grid;
   place-items: center;
   background: #efe6e8;
+  overflow: hidden;
+  /* Added to clip the image */
 }
 
-.mc-avatar__img{
-  width: 76px;
-  height: 76px;
+.mc-avatar__img {
+  width: 100%;
+  height: 100%;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  opacity: .85;
+  opacity: 1;
+  /* Changed from .85 to 1 for clear image */
 }
 
 /* ✅ Student ID plain text under Change Photo */
-.mc-studentIdText{
+.mc-studentIdText {
   width: 100%;
   text-align: center;
   margin-top: 6px;
 }
 
-.mc-studentIdLabel{
+.mc-studentIdLabel {
   font-size: 12px;
   font-weight: 800;
   color: #2b2b2b;
@@ -222,36 +245,41 @@ html, body { margin: 0; padding: 0; }
   margin-bottom: 4px;
 }
 
-.mc-studentIdValue{
+.mc-studentIdValue {
   font-size: 13px;
   font-weight: 900;
   color: var(--mc-maroon);
 }
 
 /* Form */
-.mc-profileForm{
+.mc-profileForm {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding-top: 4px;
-  align-items: stretch; /* keeps actions aligned with textarea edge */
+  align-items: stretch;
+  /* keeps actions aligned with textarea edge */
 }
 
-.mc-grid2{
+.mc-grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 
-.mc-field{ display:flex; flex-direction:column; gap: 6px; }
+.mc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-.mc-label{
+.mc-label {
   font-size: 13px;
   font-weight: 800;
   color: #2b2b2b;
 }
 
-.mc-input{
+.mc-input {
   height: 38px;
   border-radius: 6px;
   border: 1px solid var(--mc-border);
@@ -261,12 +289,12 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-.mc-input--disabled{
+.mc-input--disabled {
   background: #f2f2f2;
   color: #666;
 }
 
-.mc-textarea{
+.mc-textarea {
   min-height: 115px;
   resize: vertical;
   border-radius: 6px;
@@ -278,13 +306,13 @@ html, body { margin: 0; padding: 0; }
 }
 
 .mc-input:focus,
-.mc-textarea:focus{
-  border-color: rgba(123,15,36,.55);
-  box-shadow: 0 0 0 3px rgba(123,15,36,.12);
+.mc-textarea:focus {
+  border-color: rgba(123, 15, 36, .55);
+  box-shadow: 0 0 0 3px rgba(123, 15, 36, .12);
 }
 
 /* Actions / Buttons */
-.mc-actions{
+.mc-actions {
   width: 100%;
   display: flex;
   justify-content: flex-end;
@@ -292,11 +320,9 @@ html, body { margin: 0; padding: 0; }
   margin-top: 12px;
 }
 
-.mc-actions--right{
-  justify-content: flex-end;
-}
+/* Removed mc-actions--right as it's not needed for the only remaining card */
 
-.mc-btn{
+.mc-btn {
   border: 0;
   border-radius: 10px;
   padding: 10px 18px;
@@ -305,169 +331,84 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-.mc-btn--primary{
+.mc-btn--primary {
   width: 150px;
   background: var(--mc-maroon-2);
   color: white;
-  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
 }
 
-.mc-btn--save{
+.mc-btn--save {
   min-width: 150px;
   background: var(--mc-maroon-2);
   color: white;
 }
 
-.mc-btn--cancel{
+.mc-btn--cancel {
   min-width: 120px;
   background: #d9d9d9;
   color: #222;
 }
 
-/* Generic card for Notification/Security tabs */
-.mc-genericCard{
-  width: min(1400px, 100%);
-  margin: 0;
-  background: #fff;
-  border-radius: var(--mc-radius);
-  box-shadow: var(--mc-shadow);
-  padding: clamp(18px, 2.5vw, 28px);
-}
-
-.mc-cardSection{
-  padding-bottom: 18px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.mc-cardSection:last-child{
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.mc-cardSubheader{
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--mc-maroon-2);
-  margin: 0 0 10px;
-}
-
-/* Toggle section */
-.toggle-item{
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 10px 0;
-}
-
-.toggle-title{
-  font-size: 14px;
-  font-weight: 800;
-  margin: 0;
-}
-
-.toggle-description{
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #555;
-}
-
-/* Switch */
-.toggle-switch{
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.toggle-checkbox{
-  position: absolute;
-  opacity: 0;
-}
-
-.toggle-bg{
-  width: 44px;
-  height: 24px;
-  background-color: #ccc;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  padding: 3px;
-  transition: 0.2s;
-}
-
-.toggle-dot{
-  width: 18px;
-  height: 18px;
-  background-color: #ffffff;
-  border-radius: 999px;
-  transition: 0.2s;
-}
-
-.toggle-checkbox:checked + .toggle-bg{
-  background-color: #22c55e;
-}
-
-.toggle-checkbox:checked + .toggle-bg .toggle-dot{
-  transform: translateX(20px);
-}
+/* Removed genericCard, cardSection, cardSubheader, toggle-item, toggle-switch styles */
 
 /* Responsive */
-@media (max-width: 920px){
-  .mc-profileCard{
+@media (max-width: 920px) {
+  .mc-profileCard {
     grid-template-columns: 1fr;
   }
 
-  .mc-profileCard__left{
+  .mc-profileCard__left {
     flex-direction: row;
     justify-content: flex-start;
     gap: 16px;
   }
 
-  .mc-avatar__ring{
+  .mc-avatar__ring {
     width: 130px;
     height: 130px;
   }
 
-  .mc-grid2{
+  .mc-grid2 {
     grid-template-columns: 1fr;
   }
 
-  .mc-actions{
+  .mc-actions {
     justify-content: flex-end;
   }
 }
 
-@media (max-width: 720px){
-  .mc-settings{
+@media (max-width: 720px) {
+  .mc-settings {
     flex-direction: column;
   }
 
-  .mc-settings__sidebar{
+  .mc-settings__sidebar {
     width: 100%;
     flex: 0 0 auto;
   }
-  .mc-studentIdBlock{
-  width: 100%;
-  margin-top: 14px;
-  text-align: center;
-}
 
-.mc-studentIdLabel{
-  font-size: 12px;
-  font-weight: 800;
-  color: rgba(0,0,0,.65);
-  margin-bottom: 6px;
-}
+  .mc-studentIdBlock {
+    width: 100%;
+    margin-top: 14px;
+    text-align: center;
+  }
 
-.mc-studentIdValue{
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 10px;
-  background: rgba(0,0,0,.06);
-  font-weight: 900;
-  letter-spacing: .5px;
-  color: #7a1020;
-}
+  .mc-studentIdLabel {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(0, 0, 0, .65);
+    margin-bottom: 6px;
+  }
+
+  .mc-studentIdValue {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, .06);
+    font-weight: 900;
+    letter-spacing: .5px;
+    color: #7a1020;
+  }
 
 }
