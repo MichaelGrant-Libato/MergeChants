@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "blocks")
+@Table(
+    name = "blocks",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"blockerId", "blockedId"})
+)
 public class BlockEntity {
 
     @Id

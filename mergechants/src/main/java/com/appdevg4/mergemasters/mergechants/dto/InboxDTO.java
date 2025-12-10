@@ -15,8 +15,13 @@ public class InboxDTO {
     public InboxDTO() {
     }
 
-    public InboxDTO(String otherUserId, String otherUserName, String lastMessage, LocalDateTime time, Long listingId,
-            String listingName, String listingImage) {
+    public InboxDTO(String otherUserId,
+                    String otherUserName,
+                    String lastMessage,
+                    LocalDateTime time,
+                    Long listingId,
+                    String listingName,
+                    String listingImage) {
         this.otherUserId = otherUserId;
         this.otherUserName = otherUserName;
         this.lastMessage = lastMessage;
@@ -26,7 +31,6 @@ public class InboxDTO {
         this.listingImage = listingImage;
     }
 
-    // Getters and Setters
     public String getOtherUserId() {
         return otherUserId;
     }
