@@ -403,6 +403,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
   white-space: nowrap;
+  margin-right: 500px;
 }
 
 .mark-sold-btn:hover:not(:disabled) {
@@ -478,4 +479,72 @@
 
 .dropdown-item.danger:hover {
   background-color: #fee2e2;
+}
+
+.system-message {
+  margin: 12px auto;
+  padding: 10px 14px;
+  max-width: 60%;
+  border-radius: 12px;
+  background: #f5f5f7;
+  color: #555;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.unblock-btn {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  background: #8d0133;
+  color: #fff;
+}
+
+.mc-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.mc-modal {
+  background: #fff;
+  padding: 1.75rem 2rem;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.mc-modal-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.mc-modal-message {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.mc-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.mc-btn.mc-btn--secondary {
+  background: #e5e5e5;
+}
+
+.mc-btn.mc-btn--danger {
+  background: #8d0133;
+  color: #fff;
 }

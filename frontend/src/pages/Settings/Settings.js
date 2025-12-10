@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, LogOut, Camera } from "lucide-react";
+import { User, LogOut, Camera, UserX } from "lucide-react"; // added UserX
 import "./Settings.css";
 
 const API_BASE = "http://localhost:8080";
 
+/* ---------- PersonalInformation component (unchanged except imports) ---------- */
 const PersonalInformation = ({
   userData,
   firstName,
@@ -130,12 +131,7 @@ const PersonalInformation = ({
 
           <div className="mc-field">
             <label className="mc-label">Year Level</label>
-            <input
-              className="mc-input"
-              type="text"
-              value={yearLevel}
-              disabled
-            />
+            <input className="mc-input" type="text" value={yearLevel} disabled />
           </div>
 
           <div className="mc-field">
@@ -182,6 +178,59 @@ const PersonalInformation = ({
   );
 };
 
+/* ---------- NEW: Blocked Users tab component ---------- */
+const BlockedUsersTab = ({ blockedUsers, onUnblock }) => {
+  return (
+    <>
+      <header className="mc-settings__header">
+        <h1 className="mc-settings__heading">Blocked Users</h1>
+        <p className="mc-settings__subheading">
+          View and manage the people you&apos;ve blocked from messaging you.
+        </p>
+      </header>
+
+      <section className="mc-blockedCard">
+        {blockedUsers.length === 0 ? (
+          <p className="mc-blocked-empty">
+            You haven&apos;t blocked anyone yet.
+          </p>
+        ) : (
+          <ul className="mc-blockedList">
+            {blockedUsers.map((u) => (
+              <li key={u.userId} className="mc-blockedItem">
+                <div className="mc-blocked-left">
+                  <div className="mc-blocked-avatar">
+                    {u.profilePic ? (
+                      <img
+                        src={`${API_BASE}${u.profilePic}`}
+                        alt={u.displayName}
+                      />
+                    ) : (
+                      <UserX size={20} />
+                    )}
+                  </div>
+                  <div className="mc-blocked-text">
+                    <div className="mc-blocked-name">{u.displayName}</div>
+                    <div className="mc-blocked-id">{u.userId}</div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="mc-btn mc-btn--small"
+                  onClick={() => onUnblock(u.userId)}
+                >
+                  Unblock
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
+  );
+};
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("personal");
   const [userData, setUserData] = useState({});
@@ -196,9 +245,11 @@ export default function SettingsPage() {
   const [profilePic, setProfilePic] = useState("");
 
   const [saving, setSaving] = useState(false);
+  const [blockedUsers, setBlockedUsers] = useState([]); // NEW
 
   const navigate = useNavigate();
 
+  /* ---------- existing resetToLoadedValues (unchanged) ---------- */
   const resetToLoadedValues = async () => {
     const storedStudentId = localStorage.getItem("studentId");
     const storedEmail = localStorage.getItem("outlookEmail");
@@ -206,20 +257,17 @@ export default function SettingsPage() {
     try {
       let resStudent = null;
 
-      // first try by student number
       if (storedStudentId) {
         resStudent = await fetch(
           `${API_BASE}/api/students/${encodeURIComponent(storedStudentId)}`
         );
 
-        // if that fails and we have email, try by email
         if (!resStudent.ok && storedEmail) {
           resStudent = await fetch(
             `${API_BASE}/api/students/email/${encodeURIComponent(storedEmail)}`
           );
         }
       } else if (storedEmail) {
-        // no studentId in storage; try by email directly
         resStudent = await fetch(
           `${API_BASE}/api/students/email/${encodeURIComponent(storedEmail)}`
         );
@@ -255,7 +303,6 @@ export default function SettingsPage() {
         return;
       }
 
-      // load profile row for extra info
       const resProfile = await fetch(
         `${API_BASE}/api/profiles/student/${encodeURIComponent(studentNumber)}`
       );
@@ -287,13 +334,13 @@ export default function SettingsPage() {
       }
     } catch (err) {
       console.error("Failed to reload student/profile:", err);
-      const storedEmail = localStorage.getItem("outlookEmail") || "";
+      const storedEmail2 = localStorage.getItem("outlookEmail") || "";
       setProfileId(null);
       setUserData({});
       setFirstName("");
       setLastName("");
       setCourse("");
-      setOutlookEmail(storedEmail);
+      setOutlookEmail(storedEmail2);
       setYearLevel("");
       setAbout("");
       setProfilePic("");
@@ -304,6 +351,27 @@ export default function SettingsPage() {
     resetToLoadedValues();
   }, []);
 
+  /* ---------- NEW: load blocked users when tab is active ---------- */
+  useEffect(() => {
+    if (activeTab !== "blocked") return;
+
+    const studentId = localStorage.getItem("studentId");
+    if (!studentId) return;
+
+    fetch(
+      `${API_BASE}/api/messages/blocked/${encodeURIComponent(studentId)}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setBlockedUsers(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to load blocked users:", err);
+        setBlockedUsers([]);
+      });
+  }, [activeTab]);
+
+  /* ---------- upload + save profile (unchanged) ---------- */
   const handleUploadPhoto = async (file) => {
     const formData = new FormData();
     formData.append("files", file);
@@ -386,6 +454,35 @@ export default function SettingsPage() {
     navigate("/login");
   };
 
+  /* ---------- NEW: unblock from settings ---------- */
+  const handleUnblockFromSettings = async (blockedId) => {
+    const myId = localStorage.getItem("studentId");
+    if (!myId) return;
+
+    if (!window.confirm(`Unblock ${blockedId}?`)) return;
+
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/messages/unblock?blockerId=${encodeURIComponent(
+          myId
+        )}&blockedId=${encodeURIComponent(blockedId)}`,
+        { method: "POST" }
+      );
+
+      if (!res.ok) {
+        alert("Failed to unblock user.");
+        return;
+      }
+
+      setBlockedUsers((prev) =>
+        prev.filter((u) => u.userId !== blockedId)
+      );
+    } catch (err) {
+      console.error("Failed to unblock:", err);
+      alert("Failed to unblock user.");
+    }
+  };
+
   return (
     <div className="mc-settings">
       <aside className="mc-settings__sidebar">
@@ -403,6 +500,19 @@ export default function SettingsPage() {
               <User size={18} />
             </span>
             <span>Personal Information</span>
+          </button>
+
+          <button
+            className={`mc-settings__navItem ${
+              activeTab === "blocked" ? "is-active" : ""
+            }`}
+            onClick={() => setActiveTab("blocked")}
+            type="button"
+          >
+            <span className="mc-settings__navIcon">
+              <UserX size={18} />
+            </span>
+            <span>Blocked Users</span>
           </button>
         </nav>
 
@@ -439,6 +549,13 @@ export default function SettingsPage() {
             onCancel={resetToLoadedValues}
             onUploadPhoto={handleUploadPhoto}
             saving={saving}
+          />
+        )}
+
+        {activeTab === "blocked" && (
+          <BlockedUsersTab
+            blockedUsers={blockedUsers}
+            onUnblock={handleUnblockFromSettings}
           />
         )}
       </main>
