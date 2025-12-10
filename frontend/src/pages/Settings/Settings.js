@@ -12,6 +12,8 @@ const PersonalInformation = ({
   firstName,
   lastName,
   course,
+  outlookEmail,
+  yearLevel,
   about,
   profilePic,
   setFirstName,
@@ -52,7 +54,12 @@ const PersonalInformation = ({
             <div className="mc-avatar__ring">
               <div className="mc-avatar__img" aria-hidden="true">
                 {profilePic ? (
-                  <img src={`${API_BASE}${profilePic}`} alt="Profile" className="mc-avatar-img-element" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img
+                    src={`${API_BASE}${profilePic}`}
+                    alt="Profile"
+                    className="mc-avatar-img-element"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
                 ) : (
                   <User size={52} color="#333" />
                 )}
@@ -60,8 +67,12 @@ const PersonalInformation = ({
             </div>
           </div>
 
-          <button className="mc-btn mc-btn--primary" type="button" onClick={handlePhotoClick}>
-            <Camera size={16} style={{ marginRight: '8px' }} />
+          <button
+            className="mc-btn mc-btn--primary"
+            type="button"
+            onClick={handlePhotoClick}
+          >
+            <Camera size={16} style={{ marginRight: "8px" }} />
             Change Photo
           </button>
           <input
@@ -69,7 +80,7 @@ const PersonalInformation = ({
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
           />
 
           <div className="mc-studentIdBlock">
@@ -108,6 +119,26 @@ const PersonalInformation = ({
           </div>
 
           <div className="mc-field">
+            <label className="mc-label">CIT Outlook Email</label>
+            <input
+              className="mc-input"
+              type="email"
+              value={outlookEmail}
+              disabled
+            />
+          </div>
+
+          <div className="mc-field">
+            <label className="mc-label">Year Level</label>
+            <input
+              className="mc-input"
+              type="text"
+              value={yearLevel}
+              disabled
+            />
+          </div>
+
+          <div className="mc-field">
             <label className="mc-label">Course / Department</label>
             <input
               className="mc-input"
@@ -129,7 +160,11 @@ const PersonalInformation = ({
           </div>
 
           <div className="mc-actions">
-            <button className="mc-btn mc-btn--save" type="submit" disabled={saving}>
+            <button
+              className="mc-btn mc-btn--save"
+              type="submit"
+              disabled={saving}
+            >
               {saving ? "Saving..." : "Save Changes"}
             </button>
             <button
@@ -155,43 +190,72 @@ export default function SettingsPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [course, setCourse] = useState("");
+  const [outlookEmail, setOutlookEmail] = useState("");
+  const [yearLevel, setYearLevel] = useState("");
   const [about, setAbout] = useState("");
   const [profilePic, setProfilePic] = useState("");
 
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
-  const studentId = localStorage.getItem("studentId");
 
   const resetToLoadedValues = async () => {
-    if (!studentId) return;
+    const storedStudentId = localStorage.getItem("studentId");
+    const storedEmail = localStorage.getItem("outlookEmail");
 
     try {
-      const resStudent = await fetch(`${API_BASE}/api/students/${encodeURIComponent(studentId)}`);
-      if (!resStudent.ok) {
-        const text = await resStudent.text();
+      let resStudent = null;
+
+      // first try by student number
+      if (storedStudentId) {
+        resStudent = await fetch(
+          `${API_BASE}/api/students/${encodeURIComponent(storedStudentId)}`
+        );
+
+        // if that fails and we have email, try by email
+        if (!resStudent.ok && storedEmail) {
+          resStudent = await fetch(
+            `${API_BASE}/api/students/email/${encodeURIComponent(storedEmail)}`
+          );
+        }
+      } else if (storedEmail) {
+        // no studentId in storage; try by email directly
+        resStudent = await fetch(
+          `${API_BASE}/api/students/email/${encodeURIComponent(storedEmail)}`
+        );
+      }
+
+      if (!resStudent || !resStudent.ok) {
+        const text = resStudent ? await resStudent.text() : "";
         throw new Error(text || "Failed to load student data");
       }
+
       const student = await resStudent.json();
       setUserData(student);
 
       const initialFirstName = student.firstName || "";
       const initialLastName = student.lastName || "";
       const initialCourse = student.course || "";
+      const initialOutlookEmail = student.outlookEmail || storedEmail || "";
+      const initialYearLevel = student.yearLevel || "";
       const initialAbout = "";
       const initialProfilePic = "";
 
       const studentNumber = student.studentNumber;
+
       if (!studentNumber) {
         setProfileId(null);
         setFirstName(initialFirstName);
         setLastName(initialLastName);
         setCourse(initialCourse);
+        setOutlookEmail(initialOutlookEmail);
+        setYearLevel(initialYearLevel);
         setAbout(initialAbout);
         setProfilePic(initialProfilePic);
         return;
       }
 
+      // load profile row for extra info
       const resProfile = await fetch(
         `${API_BASE}/api/profiles/student/${encodeURIComponent(studentNumber)}`
       );
@@ -207,6 +271,8 @@ export default function SettingsPage() {
         setFirstName(fn || initialFirstName);
         setLastName(ln || initialLastName);
         setCourse(prof.campus || initialCourse);
+        setOutlookEmail(initialOutlookEmail);
+        setYearLevel(initialYearLevel);
         setAbout(prof.bio || "");
         setProfilePic(prof.profilePic || "");
       } else {
@@ -214,15 +280,21 @@ export default function SettingsPage() {
         setFirstName(initialFirstName);
         setLastName(initialLastName);
         setCourse(initialCourse);
+        setOutlookEmail(initialOutlookEmail);
+        setYearLevel(initialYearLevel);
         setAbout(initialAbout);
         setProfilePic(initialProfilePic);
       }
     } catch (err) {
       console.error("Failed to reload student/profile:", err);
+      const storedEmail = localStorage.getItem("outlookEmail") || "";
       setProfileId(null);
+      setUserData({});
       setFirstName("");
       setLastName("");
       setCourse("");
+      setOutlookEmail(storedEmail);
+      setYearLevel("");
       setAbout("");
       setProfilePic("");
     }
@@ -230,8 +302,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     resetToLoadedValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentId]);
+  }, []);
 
   const handleUploadPhoto = async (file) => {
     const formData = new FormData();
@@ -322,7 +393,9 @@ export default function SettingsPage() {
 
         <nav className="mc-settings__nav">
           <button
-            className={`mc-settings__navItem ${activeTab === "personal" ? "is-active" : ""}`}
+            className={`mc-settings__navItem ${
+              activeTab === "personal" ? "is-active" : ""
+            }`}
             onClick={() => setActiveTab("personal")}
             type="button"
           >
@@ -334,7 +407,11 @@ export default function SettingsPage() {
         </nav>
 
         <div className="mc-sidebarFooter">
-          <button className="mc-settings__navItem mc-logout" onClick={handleLogout} type="button">
+          <button
+            className="mc-settings__navItem mc-logout"
+            onClick={handleLogout}
+            type="button"
+          >
             <span className="mc-settings__navIcon">
               <LogOut size={18} />
             </span>
@@ -350,6 +427,8 @@ export default function SettingsPage() {
             firstName={firstName}
             lastName={lastName}
             course={course}
+            outlookEmail={outlookEmail}
+            yearLevel={yearLevel}
             about={about}
             profilePic={profilePic}
             setFirstName={setFirstName}

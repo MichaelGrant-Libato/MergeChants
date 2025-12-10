@@ -1,7 +1,9 @@
-// login.js
+// src/pages/Login/login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
+
+const API_BASE = "http://localhost:8080";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -45,7 +47,7 @@ export default function Login() {
       return;
     }
 
-    const loginUrl = "http://localhost:8080/api/auth/login";
+    const loginUrl = `${API_BASE}/api/auth/login`;
 
     try {
       const response = await fetch(loginUrl, {
@@ -54,7 +56,7 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          credential: identifier, // ✅ MUST match LoginRequest.credential
+          credential: identifier,
           password: password,
         }),
       });
@@ -74,12 +76,47 @@ export default function Login() {
       }
 
       const data = await response.json();
-
       console.log("Login successful. Data:", data);
 
+      // store token
       localStorage.setItem("authToken", data.token);
-      // store whatever identifier was used
-      localStorage.setItem("studentId", data.studentId || identifier);
+
+      // resolve canonical student number
+      let studentNumber = data.studentNumber || data.studentId || "";
+
+      // if logged in via email and backend didn't send studentNumber, resolve it
+      if (!studentNumber && isCitEmail) {
+        try {
+          const resStudent = await fetch(
+            `${API_BASE}/api/students/email/${encodeURIComponent(identifier)}`
+          );
+          if (resStudent.ok) {
+            const student = await resStudent.json();
+            studentNumber = student.studentNumber || "";
+          }
+        } catch (e) {
+          console.error("Failed to resolve student number from email", e);
+        }
+      }
+
+      // final fallback: if they actually typed a valid student ID, use that
+      if (!studentNumber && isStudentId) {
+        studentNumber = identifier;
+      }
+
+      if (studentNumber) {
+        localStorage.setItem("studentId", studentNumber);
+      } else {
+        localStorage.removeItem("studentId");
+      }
+
+      // also store outlook email for Settings / navbar
+      const outlook = data.outlookEmail || (isCitEmail ? identifier : "");
+      if (outlook) {
+        localStorage.setItem("outlookEmail", outlook);
+      } else {
+        localStorage.removeItem("outlookEmail");
+      }
 
       navigate("/dashboard");
     } catch (err) {

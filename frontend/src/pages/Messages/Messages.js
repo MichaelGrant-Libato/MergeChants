@@ -1,29 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './Messages.css';
-import { MessageSquare, MoreVertical, Plus, Image as ImageIcon, Smile } from "lucide-react";
+import { MessageSquare, MoreVertical, Plus } from "lucide-react";
+
+/* ===== Helper functions (outside component so no dependency issues) ===== */
+const capitalize = (s) =>
+  s && s.length ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
+
+const formatIdentifierAsName = (identifier) => {
+  if (!identifier) return "";
+
+  // remove domain if email
+  const withoutDomain = identifier.split('@')[0];
+
+  // split on dot, underscore, or space
+  const parts = withoutDomain.split(/[.\s_]+/).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return parts.map(capitalize).join(" ");
+  }
+
+  const one = parts[0] || withoutDomain;
+  if (one.length <= 3) return capitalize(one);
+
+  const mid = Math.floor(one.length / 2);
+  const first = one.slice(0, mid);
+  const last = one.slice(mid);
+  return `${capitalize(first)} ${capitalize(last)}`.trim();
+};
 
 export default function Messages() {
   const [searchParams] = useSearchParams();
 
-  // Who am I?
   const myId = localStorage.getItem('studentId');
 
-  // Who am I talking to?
   const [activeChatUser, setActiveChatUser] = useState(searchParams.get('user') || null);
-
-  // Listing connected to this chat (if any, from URL or messages)
   const [activeListingId, setActiveListingId] = useState(searchParams.get('listing') || null);
   const [activeListing, setActiveListing] = useState(null);
 
-  const [inbox, setInbox] = useState([]);     // List of people
-  const [messages, setMessages] = useState([]); // Current conversation
-  const [newMessage, setNewMessage] = useState(""); // Input box text
-  const messagesEndRef = useRef(null);        // Auto-scroll to bottom
-  const [searchTerm, setSearchTerm] = useState(""); // Search state
+  const [inbox, setInbox] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isMarkingSold, setIsMarkingSold] = useState(false);
 
-  // 1. LOAD INBOX (List of people I've talked to)
   useEffect(() => {
     if (!myId) return;
 
@@ -33,17 +54,27 @@ export default function Messages() {
         const uniqueUsers = new Set();
         const conversations = [];
 
-        // sort by newest message
         data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         data.forEach(msg => {
-          const otherPerson = msg.senderId === myId ? msg.receiverId : msg.senderId;
+          const otherPersonId = msg.senderId === myId ? msg.receiverId : msg.senderId;
 
-          if (!uniqueUsers.has(otherPerson)) {
-            uniqueUsers.add(otherPerson);
+          if (!uniqueUsers.has(otherPersonId)) {
+            uniqueUsers.add(otherPersonId);
+
+            let displayName;
+            if (msg.senderId === myId && msg.receiverName) {
+              displayName = msg.receiverName;
+            } else if (msg.senderId !== myId && msg.senderName) {
+              displayName = msg.senderName;
+            } else {
+              displayName = formatIdentifierAsName(otherPersonId);
+            }
+
             conversations.push({
-              user: otherPerson,
-              lastMessage: msg.content,
+              userId: otherPersonId,
+              displayName,
+              lastMessage: msg.content || "",
               time: msg.timestamp,
             });
           }
@@ -53,7 +84,6 @@ export default function Messages() {
       .catch(err => console.error("Error loading inbox:", err));
   }, [myId, messages]);
 
-  // 2. LOAD CHAT HISTORY (Polling every 3 seconds)
   useEffect(() => {
     if (!myId || !activeChatUser) return;
 
@@ -69,7 +99,6 @@ export default function Messages() {
     return () => clearInterval(interval);
   }, [myId, activeChatUser]);
 
-  // 2b. TRY TO DETECT listingId FROM MESSAGES IF NOT SET
   useEffect(() => {
     if (activeListingId) return;
     const msgWithListing = messages.find(m => m.listingId);
@@ -78,7 +107,6 @@ export default function Messages() {
     }
   }, [messages, activeListingId]);
 
-  // 3. LOAD LISTING DETAILS FOR HEADER + SELLER CHECK
   useEffect(() => {
     if (!activeListingId) {
       setActiveListing(null);
@@ -97,12 +125,10 @@ export default function Messages() {
       });
   }, [activeListingId]);
 
-  // 4. AUTO-SCROLL TO BOTTOM
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 5. SEND MESSAGE
   const handleSend = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !activeChatUser) return;
@@ -131,7 +157,6 @@ export default function Messages() {
     }
   };
 
-  // 6. MARK AS SOLD (ONLY WHEN I AM THE SELLER)
   const isSeller =
     activeListing &&
     activeListing.seller &&
@@ -148,7 +173,7 @@ export default function Messages() {
 
   const handleMarkAsSold = async () => {
     if (!canMarkAsSold) return;
-    if (!window.confirm(`Mark "${activeListing.name}" as SOLD to ${activeChatUser}?`)) {
+    if (!window.confirm(`Mark "${activeListing.name}" as SOLD to this buyer?`)) {
       return;
     }
 
@@ -159,7 +184,7 @@ export default function Messages() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Student-Id': myId,  // seller id header
+          'X-Student-Id': myId,
         },
         body: JSON.stringify({
           listingId: activeListingId,
@@ -187,9 +212,12 @@ export default function Messages() {
 
   if (!myId) return <div className="chat-container">Please log in to view messages.</div>;
 
+  const activeChatDisplayName =
+    inbox.find(conv => conv.userId === activeChatUser)?.displayName
+    || formatIdentifierAsName(activeChatUser);
+
   return (
     <div className="chat-container">
-      {/* SIDEBAR */}
       <div className="chat-sidebar">
         <div className="sidebar-header">
           <h2>Messages</h2>
@@ -207,41 +235,40 @@ export default function Messages() {
         <div className="conversation-list">
           {inbox
             .filter(conv =>
-              conv.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              (conv.lastMessage &&
-                conv.lastMessage.toLowerCase().includes(searchTerm.toLowerCase()))
+              (
+                conv.displayName &&
+                conv.displayName.toLowerCase().includes(searchTerm.toLowerCase())
+              ) ||
+              (
+                conv.lastMessage &&
+                conv.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+              )
             )
             .map((conv) => (
               <div
-                key={conv.user}
-                className={`conversation-item ${activeChatUser === conv.user ? 'active' : ''}`}
+                key={conv.userId}
+                className={`conversation-item ${activeChatUser === conv.userId ? 'active' : ''}`}
                 onClick={() => {
-                  setActiveChatUser(conv.user);
+                  setActiveChatUser(conv.userId);
                 }}
               >
-                {/* 1. Left: Visual Context */}
                 <div className="conv-visual">
                   <div className="avatar-circle">
-                    {conv.user.charAt(0).toUpperCase()}
+                    {conv.displayName ? conv.displayName.charAt(0).toUpperCase() : "?"}
                   </div>
                 </div>
 
-                {/* 2. Right: Textual Context */}
                 <div className="conv-text">
                   <div className="conv-header-row">
-                    <h4>{conv.user}</h4>
+                    <h4>{conv.displayName || conv.userId}</h4>
                     <span className="conv-time">
                       {new Date(conv.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="conv-preview">{conv.lastMessage.substring(0, 40)}...</p>
+                  <p className="conv-preview">
+                    {conv.lastMessage ? conv.lastMessage.substring(0, 40) : ""}...
+                  </p>
                 </div>
-
-                {/* Unread indicator (Mock logic: if activeChatUser is NOT this user, show dot) 
-                    In real app, backend would send 'isRead' status. 
-                    For UI demo, we can just show it for the first item if not active. 
-                 */}
-                {/* <div className="unread-dot"></div> */}
               </div>
             ))}
 
@@ -253,13 +280,12 @@ export default function Messages() {
         </div>
       </div>
 
-      {/* CHAT WINDOW */}
       <div className="chat-window">
         {activeChatUser ? (
           <>
             <div className="chat-header">
               <div>
-                <h3>{activeChatUser}</h3>
+                <h3>{activeChatDisplayName}</h3>
                 {activeListing && (
                   <p className="chat-subtitle">
                     Item: {activeListing.name} · Status: {activeListing.status}
@@ -311,8 +337,8 @@ export default function Messages() {
                 onChange={(e) => setNewMessage(e.target.value)}
                 rows={1}
                 onInput={(e) => {
-                  e.target.style.height = 'auto'; // Reset height
-                  e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px'; // Expand up to 100px
+                  e.target.style.height = 'auto';
+                  e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {

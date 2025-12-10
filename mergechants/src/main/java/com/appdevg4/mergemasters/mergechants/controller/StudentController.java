@@ -21,4 +21,11 @@ public class StudentController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<StudentEntity> getByEmail(@PathVariable String email) {
+        return studentRepository.findByOutlookEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
