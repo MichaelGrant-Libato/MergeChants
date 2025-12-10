@@ -159,16 +159,20 @@
 
 /* Message Bubbles - Modernized */
 .message-bubble {
-  max-width: 60%;              /* smaller width for nicer bubbles, ralph maot */
+  max-width: 60%;
+  /* smaller width for nicer bubbles, ralph maot */
   padding: 14px 18px;
   border-radius: 18px;
   font-size: 0.95rem;
   line-height: 1.5;
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  overflow-wrap: break-word;   /* wrap long words, ralph maot */
-  word-wrap: break-word;       /* legacy support, ralph maot */
-  word-break: break-word;      /* force breaking super long strings, ralph maot */
+  overflow-wrap: break-word;
+  /* wrap long words, ralph maot */
+  word-wrap: break-word;
+  /* legacy support, ralph maot */
+  word-break: break-word;
+  /* force breaking super long strings, ralph maot */
 }
 
 .message-bubble.me {
@@ -370,7 +374,7 @@
   z-index: 5;
 }
 
-.chat-header > div {
+.chat-header>div {
   min-width: 0;
 }
 
@@ -435,4 +439,43 @@
   .message-bubble {
     max-width: 80%;
   }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 50;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-item.danger {
+  color: #dc2626;
+}
+
+.dropdown-item.danger:hover {
+  background-color: #fee2e2;
 }

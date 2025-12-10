@@ -197,14 +197,13 @@ export default function HistoryPage() {
               <div className="mc-card-body mc-card-body--row">
                 <div className="mc-card-header-line">
                   <h3 className="mc-item-name">{tx.listingName}</h3>
-                  <p className="mc-price">₱{Number(tx.price).toFixed(2)}</p>
+                  <p className="mc-price">₱{Number(tx.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
 
                 <div className="mc-card-subheader-line">
                   <span
-                    className={`mc-role-pill ${
-                      isBuyer ? "buyer" : "seller"
-                    }`}
+                    className={`mc-role-pill ${isBuyer ? "buyer" : "seller"
+                      }`}
                   >
                     {isBuyer ? "Purchased" : "Sold"}
                   </span>
