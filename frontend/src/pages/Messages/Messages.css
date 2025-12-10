@@ -2,7 +2,6 @@
 .chat-container {
   display: flex;
   height: calc(100vh - 80px);
-  /* Full height minus Navbar */
   background-color: #f0f2f5;
 }
 
@@ -95,7 +94,6 @@
   flex-direction: column;
   justify-content: center;
   min-width: 0;
-  /* allows text truncation to work */
 }
 
 .conv-header-row {
@@ -159,25 +157,25 @@
   gap: 10px;
 }
 
-/* Message Bubbles */
 /* Message Bubbles - Modernized */
 .message-bubble {
-  max-width: 70%;
+  max-width: 60%;              /* smaller width for nicer bubbles, ralph maot */
   padding: 14px 18px;
   border-radius: 18px;
   font-size: 0.95rem;
   line-height: 1.5;
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow-wrap: break-word;   /* wrap long words, ralph maot */
+  word-wrap: break-word;       /* legacy support, ralph maot */
+  word-break: break-word;      /* force breaking super long strings, ralph maot */
 }
 
 .message-bubble.me {
   align-self: flex-end;
   background-color: var(--primary-color);
-  /* Brand color solid */
   color: white;
   border-bottom-right-radius: 4px;
-  /* subtle corner */
 }
 
 .message-bubble.them {
@@ -202,7 +200,6 @@
   border-top: 1px solid #e5e5e5;
   display: flex;
   align-items: flex-end;
-  /* align bottom when textarea grows */
   gap: 12px;
   background: white;
 }
@@ -232,12 +229,10 @@
   padding: 12px 16px;
   border: 1px solid #ddd;
   border-radius: 20px;
-  /* rounded pill shape */
   outline: none;
   font-size: 0.95rem;
   font-family: inherit;
   resize: none;
-  /* auto-expanding handled by JS */
   max-height: 120px;
   overflow-y: auto;
   line-height: 1.4;
@@ -256,7 +251,6 @@
   cursor: pointer;
   font-weight: 600;
   height: 42px;
-  /* Fixed height match */
   transition: opacity 0.2s;
   flex-shrink: 0;
 }
@@ -291,15 +285,7 @@
   justify-content: center;
   color: #888;
   font-size: 1.2rem;
-}
-
-.no-chat-selected {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: #f8f9fa;
-  /* Light grey background */
 }
 
 .empty-state-content {
@@ -313,7 +299,6 @@
 
 .empty-icon-wrapper {
   background-color: #fff0f5;
-  /* Light pink/maroon tint */
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -358,7 +343,6 @@
 
 /* ===== SIDEBAR SEARCH ===== */
 .search-wrapper {
-  /* NEW: sit directly under the heading, full width */
   margin-top: 4px;
   margin-left: 0;
   width: 100%;
@@ -371,7 +355,6 @@
   border-radius: 8px;
   background: #f9f9f9;
   box-sizing: border-box;
-  /* Prevents overflow */
 }
 
 /* ===== CHAT HEADER ===== */
@@ -387,7 +370,7 @@
   z-index: 5;
 }
 
-.chat-header>div {
+.chat-header > div {
   min-width: 0;
 }
 
@@ -403,7 +386,7 @@
   color: #6b7280;
 }
 
-/* ===== MARK AS SOLD BUTTON (Messages seller side) ===== */
+/* ===== MARK AS SOLD BUTTON ===== */
 .mark-sold-btn {
   background-color: #8D0133;
   color: #ffffff;
@@ -435,7 +418,7 @@
   box-shadow: none;
 }
 
-/* Small screens – keep header tidy */
+/* Small screens */
 @media (max-width: 768px) {
   .chat-header {
     padding: 12px 16px;
@@ -447,5 +430,9 @@
     width: 100%;
     text-align: center;
     justify-content: center;
+  }
+
+  .message-bubble {
+    max-width: 80%;
   }
 }
