@@ -45,7 +45,17 @@ const Navbar = () => {
 
         {/* LEFT: Logo */}
         <div className="navbar-logo" onClick={() => navigate("/dashboard")}>
-          <div className="logo-circle">M</div>
+          <img 
+            src="/images/LOGO MERGE.png" 
+            alt="MergeChants Logo" 
+            className="logo-image"
+            style={{
+              height: '80px',
+              width: '80px',
+              objectFit: 'contain',
+              borderRadius: '50%'
+            }}
+          />
           <span className="logo-text">MergeChants</span>
         </div>
 

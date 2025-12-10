@@ -144,8 +144,8 @@ export default function CreateListings() {
           subTitle: data.subTitle || '',
           category: data.category || '',
           condition: data.condition || '',
-          price: data.price ?? '',
-          originalPrice: data.originalPrice ?? '',
+          price: data.price !== undefined ? String(data.price) : '',
+          originalPrice: data.originalPrice !== undefined ? String(data.originalPrice) : '',
           campus: data.campus || '',
           description: data.description || '',
           preferredLocation,
@@ -342,7 +342,7 @@ export default function CreateListings() {
       if (!formData.price) {
         newErrors.price = 'Price is required.';
       } else {
-        const rawPrice = parseFloat(formData.price.replace(/,/g, ''));
+        const rawPrice = parseFloat(String(formData.price).replace(/,/g, ''));
         if (isNaN(rawPrice) || rawPrice < 0) {
           newErrors.price = 'Price must be 0 or higher.';
         }

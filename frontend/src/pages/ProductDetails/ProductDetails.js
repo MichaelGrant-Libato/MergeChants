@@ -65,12 +65,28 @@ export default function ProductDetails() {
   const transactionRole = location.state?.role || null; // buyer | seller
   const otherPartyId = location.state?.otherPartyId || null;
 
+  const [sellerName, setSellerName] = useState("Student");
+
   useEffect(() => {
     fetch(`http://localhost:8080/api/listings/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setListing(data);
         setLoading(false);
+
+        // Fetch seller name after listing is loaded
+        if (data.seller) {
+          fetch(`http://localhost:8080/api/students/${encodeURIComponent(data.seller)}`)
+            .then((res) => {
+              if (res.ok) return res.json();
+              throw new Error("Failed to fetch student");
+            })
+            .then((studentData) => {
+              const fullName = `${studentData.firstName || ""} ${studentData.lastName || ""}`.trim();
+              if (fullName) setSellerName(fullName);
+            })
+            .catch((err) => console.error("Error loading seller name:", err));
+        }
       })
       .catch((err) => {
         console.error("Error loading listing:", err);
@@ -145,10 +161,10 @@ export default function ProductDetails() {
             <div className="seller-avatar">👤</div>
             <div className="seller-info">
               <p className="seller-name">
-                {listing.seller}
+                {sellerName} ({listing.seller})
                 {isOwner && " (you)"}
               </p>
-              <p className="seller-sub">Verified Student</p>
+              <p className="seller-sub">- Verified Student</p>
             </div>
           </div>
 
