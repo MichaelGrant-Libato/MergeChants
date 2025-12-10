@@ -39,6 +39,24 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const currentStudentId = localStorage.getItem("studentId");
   const isOwner = product.seller === currentStudentId;
+  const [sellerName, setSellerName] = useState("Student");
+
+  useEffect(() => {
+    if (product.seller) {
+      fetch(`http://localhost:8080/api/students/${encodeURIComponent(product.seller)}`)
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Failed to fetch student");
+        })
+        .then((data) => {
+          const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
+          if (fullName) setSellerName(fullName);
+        })
+        .catch((err) => {
+          console.error("Failed to load seller name", err);
+        });
+    }
+  }, [product.seller]);
 
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return "Recently";
@@ -118,10 +136,12 @@ const ProductCard = ({ product }) => {
         </p>
 
         <p className="seller-info">
-          <span className="seller-name">👤 {product.seller}</span>
+          <span className="seller-name">
+            👤 {sellerName} ({product.seller})
+          </span>
         </p>
 
-        <p className="campus-info">📍 {product.campus}</p>
+        <p className="campus-info">📍 {product.preferredLocation || "Main Campus"}</p>
       </div>
 
       <div className="card-footer">
