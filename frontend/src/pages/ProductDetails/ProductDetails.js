@@ -89,7 +89,7 @@ export default function ProductDetails() {
     // Check if user has seen the warning
     const hasSeen = localStorage.getItem(`hasSeenEscrowWarning_${currentStudentId}`);
     if (hasSeen === 'true') {
-      navigate(`/messages?user=${listing.seller}`);
+      navigate(`/messages?user=${listing.seller}&listing=${listing.id}`);
     } else {
       setShowSafetyModal(true);
     }
@@ -98,7 +98,7 @@ export default function ProductDetails() {
   const confirmSafetyWarning = () => {
     localStorage.setItem(`hasSeenEscrowWarning_${currentStudentId}`, 'true');
     setShowSafetyModal(false);
-    navigate(`/messages?user=${listing.seller}`);
+    navigate(`/messages?user=${listing.seller}&listing=${listing.id}`);
   };
 
   const handleEdit = () => {

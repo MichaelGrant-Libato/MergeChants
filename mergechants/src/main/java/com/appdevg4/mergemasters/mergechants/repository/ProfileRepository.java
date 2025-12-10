@@ -14,4 +14,6 @@ public interface ProfileRepository extends JpaRepository<ProfileEntity, Long> {
     boolean existsByEmail(String email);
 
     Optional<ProfileEntity> findByEmail(String email);
+
+    java.util.List<ProfileEntity> findByStudentIdIn(java.util.List<String> studentIds);
 }

@@ -44,6 +44,9 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMarkingSold, setIsMarkingSold] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blockedBy, setBlockedBy] = useState(null);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     if (!myId) return;
@@ -51,35 +54,13 @@ export default function Messages() {
     fetch(`http://localhost:8080/api/messages/inbox/${myId}`)
       .then(res => res.json())
       .then(data => {
-        const uniqueUsers = new Set();
-        const conversations = [];
-
-        data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        data.forEach(msg => {
-          const otherPersonId = msg.senderId === myId ? msg.receiverId : msg.senderId;
-
-          if (!uniqueUsers.has(otherPersonId)) {
-            uniqueUsers.add(otherPersonId);
-
-            let displayName;
-            if (msg.senderId === myId && msg.receiverName) {
-              displayName = msg.receiverName;
-            } else if (msg.senderId !== myId && msg.senderName) {
-              displayName = msg.senderName;
-            } else {
-              displayName = formatIdentifierAsName(otherPersonId);
-            }
-
-            conversations.push({
-              userId: otherPersonId,
-              displayName,
-              lastMessage: msg.content || "",
-              time: msg.timestamp,
-            });
-          }
-        });
-        setInbox(conversations);
+        // Backend now returns List<InboxDTO> sorted by time
+        if (Array.isArray(data)) {
+          setInbox(data);
+        } else {
+          console.error("Inbox data is not an array:", data);
+          setInbox([]);
+        }
       })
       .catch(err => console.error("Error loading inbox:", err));
   }, [myId, messages]);
@@ -88,16 +69,30 @@ export default function Messages() {
     if (!myId || !activeChatUser) return;
 
     const fetchChat = () => {
-      fetch(`http://localhost:8080/api/messages/${myId}/${activeChatUser}`)
+      // Append listingId to separate logs
+      let url = `http://localhost:8080/api/messages/${myId}/${activeChatUser}`;
+      if (activeListingId) {
+        url += `?listingId=${activeListingId}`;
+      }
+
+      fetch(url)
         .then(res => res.json())
-        .then(data => setMessages(data))
+        .then(data => {
+          if (data.messages) {
+            setMessages(data.messages);
+            setIsBlocked(data.isBlocked);
+            setBlockedBy(data.blockedBy);
+          } else {
+            setMessages(Array.isArray(data) ? data : []);
+          }
+        })
         .catch(err => console.error("Error loading chat:", err));
     };
 
     fetchChat();
     const interval = setInterval(fetchChat, 3000);
     return () => clearInterval(interval);
-  }, [myId, activeChatUser]);
+  }, [myId, activeChatUser, activeListingId]);
 
   useEffect(() => {
     if (activeListingId) return;
@@ -133,6 +128,11 @@ export default function Messages() {
     e.preventDefault();
     if (!newMessage.trim() || !activeChatUser) return;
 
+    if (isBlocked) {
+      alert("Person inaccessible");
+      return;
+    }
+
     const payload = {
       senderId: myId,
       receiverId: activeChatUser,
@@ -151,9 +151,40 @@ export default function Messages() {
         setNewMessage("");
         const savedMsg = await res.json();
         setMessages([...messages, savedMsg]);
+      } else {
+        // Handle blocked error from backend
+        const text = await res.text();
+        if (text.includes("blocked")) {
+          alert("Person inaccessible");
+          setIsBlocked(true);
+        }
       }
     } catch (err) {
       console.error("Failed to send:", err);
+    }
+  };
+
+  const handleDeleteChat = async () => {
+    if (!window.confirm("Are you sure you want to delete this chat? This cannot be undone.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/messages/${myId}/${activeChatUser}`, {
+        method: 'DELETE'
+      });
+
+      if (res.ok) {
+        setMessages([]);
+        setIsBlocked(true);
+        setBlockedBy(myId);
+        setShowOptions(false);
+        alert("Chat deleted.");
+      } else {
+        alert("Failed to delete chat.");
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -213,7 +244,7 @@ export default function Messages() {
   if (!myId) return <div className="chat-container">Please log in to view messages.</div>;
 
   const activeChatDisplayName =
-    inbox.find(conv => conv.userId === activeChatUser)?.displayName
+    inbox.find(item => item.otherUserId === activeChatUser)?.otherUserName
     || formatIdentifierAsName(activeChatUser);
 
   return (
@@ -234,43 +265,75 @@ export default function Messages() {
 
         <div className="conversation-list">
           {inbox
-            .filter(conv =>
-              (
-                conv.displayName &&
-                conv.displayName.toLowerCase().includes(searchTerm.toLowerCase())
-              ) ||
-              (
-                conv.lastMessage &&
-                conv.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-            )
-            .map((conv) => (
-              <div
-                key={conv.userId}
-                className={`conversation-item ${activeChatUser === conv.userId ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveChatUser(conv.userId);
-                }}
-              >
-                <div className="conv-visual">
-                  <div className="avatar-circle">
-                    {conv.displayName ? conv.displayName.charAt(0).toUpperCase() : "?"}
-                  </div>
-                </div>
+            .filter(item => {
+              const term = searchTerm.toLowerCase();
+              return (
+                (item.listingName && item.listingName.toLowerCase().includes(term)) ||
+                (item.otherUserName && item.otherUserName.toLowerCase().includes(term)) ||
+                (item.otherUserId && item.otherUserId.toLowerCase().includes(term)) ||
+                (item.lastMessage && item.lastMessage.toLowerCase().includes(term))
+              );
+            })
+            .map((item, idx) => {
+              // Determine if active: match user AND listing
+              const isActive =
+                activeChatUser === item.otherUserId &&
+                ((!activeListingId && !item.listingId) || (String(activeListingId) === String(item.listingId)));
 
-                <div className="conv-text">
-                  <div className="conv-header-row">
-                    <h4>{conv.displayName || conv.userId}</h4>
-                    <span className="conv-time">
-                      {new Date(conv.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+              // Resolve image
+              let imageUrl = null;
+              if (item.listingImage) {
+                if (item.listingImage.startsWith("http")) imageUrl = item.listingImage;
+                else imageUrl = `http://localhost:8080/uploads/${item.listingImage}`;
+              }
+
+              return (
+                <div
+                  key={`${item.otherUserId}_${item.listingId || 'general'}_${idx}`}
+                  className={`conversation-item ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveChatUser(item.otherUserId);
+                    setActiveListingId(item.listingId);
+                    setMessages([]);
+                    setIsBlocked(false);
+                    setBlockedBy(null);
+                    setShowOptions(false);
+                  }}
+                >
+                  <div className="conv-visual">
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="item"
+                        style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div className="avatar-circle">
+                        {/* Use first char of formatted name or ID */}
+                        {item.otherUserName ? item.otherUserName.charAt(0).toUpperCase() : item.otherUserId.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
-                  <p className="conv-preview">
-                    {conv.lastMessage ? conv.lastMessage.substring(0, 40) : ""}...
-                  </p>
+
+                  <div className="conv-text">
+                    <div className="conv-header-row">
+                      <h4 title={item.listingName || item.otherUserName}>
+                        {item.listingName || item.otherUserName}
+                      </h4>
+                      <span className="conv-time">
+                        {new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '2px' }}>
+                      {item.otherUserName}
+                    </div>
+                    <p className="conv-preview">
+                      {item.lastMessage ? item.lastMessage.substring(0, 40) : ""}...
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
 
           {inbox.length === 0 && (
             <p style={{ padding: '20px', color: '#888', textAlign: 'center' }}>
@@ -303,9 +366,21 @@ export default function Messages() {
                 </button>
               )}
 
-              <button className="more-options-btn">
-                <MoreVertical size={20} />
-              </button>
+              <div style={{ position: 'relative' }}>
+                <button
+                  className="more-options-btn"
+                  onClick={() => setShowOptions(!showOptions)}
+                >
+                  <MoreVertical size={20} />
+                </button>
+                {showOptions && (
+                  <div className="dropdown-menu">
+                    <button onClick={handleDeleteChat} className="dropdown-item danger">
+                      Delete Chat
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="chat-messages">
@@ -327,15 +402,18 @@ export default function Messages() {
             </div>
 
             <form className="chat-input-area" onSubmit={handleSend}>
-              <button type="button" className="attach-btn">
-                <Plus size={24} />
-              </button>
+              {!isBlocked && (
+                <button type="button" className="attach-btn">
+                  <Plus size={24} />
+                </button>
+              )}
 
               <textarea
-                placeholder="Type a message..."
+                placeholder={isBlocked ? "Person inaccessible" : "Type a message..."}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 rows={1}
+                disabled={isBlocked}
                 onInput={(e) => {
                   e.target.style.height = 'auto';
                   e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
@@ -348,7 +426,7 @@ export default function Messages() {
                 }}
               />
 
-              <button type="submit" className="send-btn" disabled={!newMessage.trim()}>
+              <button type="submit" className="send-btn" disabled={!newMessage.trim() || isBlocked}>
                 Send
               </button>
             </form>

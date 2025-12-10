@@ -17,14 +17,16 @@ public class MessageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String senderId;    
-    private String receiverId; 
-    
-    
-    private Long listingId; 
+    private String senderId;
+    private String receiverId;
+
+    private Long listingId;
 
     @Column(length = 1000)
-    private String content;     
+    private String content;
 
-    private LocalDateTime timestamp; 
+    private LocalDateTime timestamp;
+
+    private boolean deletedBySender = false;
+    private boolean deletedByReceiver = false;
 }
