@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, LogOut, Camera, UserX } from "lucide-react"; // added UserX
+import { User, LogOut, Camera, UserX } from "lucide-react";
 import "./Settings.css";
 
 const API_BASE = "http://localhost:8080";
 
-/* ---------- PersonalInformation component (unchanged except imports) ---------- */
+/* ---------- PersonalInformation component ---------- */
 const PersonalInformation = ({
   userData,
   firstName,
@@ -178,7 +178,7 @@ const PersonalInformation = ({
   );
 };
 
-/* ---------- NEW: Blocked Users tab component ---------- */
+/* ---------- Blocked Users tab component ---------- */
 const BlockedUsersTab = ({ blockedUsers, onUnblock }) => {
   return (
     <>
@@ -245,11 +245,14 @@ export default function SettingsPage() {
   const [profilePic, setProfilePic] = useState("");
 
   const [saving, setSaving] = useState(false);
-  const [blockedUsers, setBlockedUsers] = useState([]); // NEW
+  const [blockedUsers, setBlockedUsers] = useState([]);
+
+  // NEW: logout modal state
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const navigate = useNavigate();
 
-  /* ---------- existing resetToLoadedValues (unchanged) ---------- */
+  /* ---------- load student + profile ---------- */
   const resetToLoadedValues = async () => {
     const storedStudentId = localStorage.getItem("studentId");
     const storedEmail = localStorage.getItem("outlookEmail");
@@ -351,7 +354,7 @@ export default function SettingsPage() {
     resetToLoadedValues();
   }, []);
 
-  /* ---------- NEW: load blocked users when tab is active ---------- */
+  /* ---------- load blocked users when tab active ---------- */
   useEffect(() => {
     if (activeTab !== "blocked") return;
 
@@ -371,7 +374,7 @@ export default function SettingsPage() {
       });
   }, [activeTab]);
 
-  /* ---------- upload + save profile (unchanged) ---------- */
+  /* ---------- upload + save profile ---------- */
   const handleUploadPhoto = async (file) => {
     const formData = new FormData();
     formData.append("files", file);
@@ -454,7 +457,7 @@ export default function SettingsPage() {
     navigate("/login");
   };
 
-  /* ---------- NEW: unblock from settings ---------- */
+  /* ---------- unblock from settings ---------- */
   const handleUnblockFromSettings = async (blockedId) => {
     const myId = localStorage.getItem("studentId");
     if (!myId) return;
@@ -519,7 +522,7 @@ export default function SettingsPage() {
         <div className="mc-sidebarFooter">
           <button
             className="mc-settings__navItem mc-logout"
-            onClick={handleLogout}
+            onClick={() => setShowLogoutConfirm(true)}
             type="button"
           >
             <span className="mc-settings__navIcon">
@@ -559,6 +562,33 @@ export default function SettingsPage() {
           />
         )}
       </main>
+
+      {showLogoutConfirm && (
+        <div className="mc-modalBackdrop">
+          <div className="mc-modal">
+            <h3 className="mc-modal__title">Log out</h3>
+            <p className="mc-modal__text">
+              Are you sure you want to log out?
+            </p>
+            <div className="mc-modal__actions">
+              <button
+                type="button"
+                className="mc-btn mc-btn--cancel"
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="mc-btn mc-btn--save"
+                onClick={handleLogout}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

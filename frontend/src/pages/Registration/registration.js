@@ -89,6 +89,10 @@ export default function Registration() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  // NEW: modals
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   const backgroundImageURL = "/cit-u_background_img.jpg";
 
   const isJuniorHS = ["Grade 7", "Grade 8", "Grade 9", "Grade 10"].includes(
@@ -206,14 +210,20 @@ export default function Registration() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit Handler
-  const handleSubmit = async (e) => {
+  // Submit Handler – now only validates + opens confirm modal
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) {
       console.log("Validation failed", errors);
       return;
     }
 
+    // All good → show confirmation popup
+    setShowConfirmModal(true);
+  };
+
+  // Actual registration call (runs after user confirms)
+  const performRegistration = async () => {
     const registerUrl = "http://localhost:8080/api/auth/register";
 
     const payload = {
@@ -230,6 +240,8 @@ export default function Registration() {
 
     try {
       setIsLoading(true);
+      setShowConfirmModal(false); // hide confirm modal while processing
+
       console.log("Attempting registration for:", payload.studentNumber);
 
       const response = await fetch(registerUrl, {
@@ -251,8 +263,13 @@ export default function Registration() {
         throw new Error(errorMessage);
       }
 
-      // success: no alert, just go to login with loading overlay
-      navigate("/login");
+      // success: show success modal then redirect
+      setIsLoading(false);
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000); // 2 seconds before redirect
     } catch (err) {
       console.error("Registration Error:", err.message);
       setIsLoading(false);
@@ -529,6 +546,78 @@ export default function Registration() {
           <div className="loading-box">
             <div className="loading-spinner"></div>
             <p className="loading-text">Processing your registration...</p>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRMATION MODAL */}
+      {showConfirmModal && (
+        <div className="reg-modalBackdrop">
+          <div className="reg-modal">
+            <h3 className="reg-modal__title">Confirm your details</h3>
+            <p className="reg-modal__text">
+              Are you sure all the information you entered is correct?
+            </p>
+
+            <div className="reg-modal__summary">
+              <p>
+                <strong>Student ID:</strong> {formData.studentNumber}
+              </p>
+              <p>
+                <strong>Email:</strong> {formData.outlookEmail}
+              </p>
+              <p>
+                <strong>Name:</strong>{" "}
+                {`${formData.firstName} ${
+                  formData.middleInitial ? formData.middleInitial + " " : ""
+                }${formData.lastName}`}
+              </p>
+              <p>
+                <strong>Year Level:</strong> {formData.yearLevel}
+              </p>
+              <p>
+                <strong>Course/Dept:</strong> {formData.course}
+              </p>
+            </div>
+
+            <div className="reg-modal__actions">
+              <button
+                type="button"
+                className="reg-btn reg-btn--cancel"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Review Again
+              </button>
+              <button
+                type="button"
+                className="reg-btn reg-btn--confirm"
+                onClick={performRegistration}
+              >
+                Yes, Create Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS MODAL */}
+      {showSuccessModal && (
+        <div className="reg-modalBackdrop">
+          <div className="reg-modal">
+            <h3 className="reg-modal__title">Account Created</h3>
+            <p className="reg-modal__text">
+              Your MergeChants account has been created successfully.
+              Redirecting you to the login page...
+            </p>
+            <div className="reg-modal__actions">
+              <button
+                type="button"
+                className="reg-btn reg-btn--confirm"
+                onClick={() => navigate("/login")}
+              >
+                Go to Login Now
+              </button>
+            </div>
           </div>
         </div>
       )}
