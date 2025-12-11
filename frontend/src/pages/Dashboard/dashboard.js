@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 
-
 const CARD_COLOR = "#8D0133";
 
 // 🔹 SAME helper as in MyListings
@@ -43,13 +42,19 @@ const ProductCard = ({ product }) => {
 
   useEffect(() => {
     if (product.seller) {
-      fetch(`http://localhost:8080/api/students/${encodeURIComponent(product.seller)}`)
+      fetch(
+        `http://localhost:8080/api/students/${encodeURIComponent(
+          product.seller
+        )}`
+      )
         .then((res) => {
           if (res.ok) return res.json();
           throw new Error("Failed to fetch student");
         })
         .then((data) => {
-          const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
+          const fullName = `${data.firstName || ""} ${
+            data.lastName || ""
+          }`.trim();
           if (fullName) setSellerName(fullName);
         })
         .catch((err) => {
@@ -74,20 +79,16 @@ const ProductCard = ({ product }) => {
 
   const displayImage = getFirstImageUrl(product.images);
 
-  // 🔹 Use prop/callback if passed, or default to navigate
   const handleContactClick = (e) => {
     e.stopPropagation();
     if (product.onContact) {
       product.onContact(product.id, isOwner);
     } else {
-      // Fallback if not passed (though we plan to pass it from Dashboard)
       navigate(`/listing/${product.id}`);
     }
   };
 
-  const goToDetails = (e) => {
-    // Use the same logic as Contact Seller
-    // Ensure we don't double trigger if clicking another button inside
+  const goToDetails = () => {
     if (product.onContact) {
       product.onContact(product.id, isOwner);
     } else {
@@ -131,7 +132,11 @@ const ProductCard = ({ product }) => {
 
         <p className="price-info">
           <span className="current-price">
-            ₱{Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ₱
+            {Number(product.price).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </span>
         </p>
 
@@ -141,7 +146,9 @@ const ProductCard = ({ product }) => {
           </span>
         </p>
 
-        <p className="campus-info">📍 {product.preferredLocation || "Main Campus"}</p>
+        <p className="campus-info">
+          📍 {product.preferredLocation || "Main Campus"}
+        </p>
       </div>
 
       <div className="card-footer">
@@ -157,10 +164,7 @@ const ProductCard = ({ product }) => {
             Edit Listing
           </button>
         ) : (
-          <button
-            className="contact-btn"
-            onClick={handleContactClick}
-          >
+          <button className="contact-btn" onClick={handleContactClick}>
             Contact Seller
           </button>
         )}
@@ -174,7 +178,6 @@ const ProductCard = ({ product }) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  // Get current user ID for Escrow binding
   const currentStudentId = localStorage.getItem("studentId");
 
   const [products, setProducts] = useState([]);
@@ -183,12 +186,11 @@ export default function Dashboard() {
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
-
-  // 🔹 REAL price-range state (used by filter + inputs)
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
 
-
+  // 🔹 Sort state
+  const [sortOption, setSortOption] = useState("Newest First");
 
   useEffect(() => {
     fetchProducts();
@@ -261,7 +263,7 @@ export default function Dashboard() {
     "Fair",
   ];
 
-  // 🔹 Apply category, condition AND price filters
+  // 🔹 Filter by category, condition, and price
   const filteredProducts = availableProducts.filter((product) => {
     const categoryMatch =
       selectedCategory === "All Categories" ||
@@ -279,6 +281,29 @@ export default function Dashboard() {
       !Number.isNaN(price) && price >= min && price <= max;
 
     return categoryMatch && conditionMatch && priceMatch;
+  });
+
+  // 🔹 Sort filtered products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortOption === "Newest First") {
+      const timeA = a.time ? new Date(a.time).getTime() : 0;
+      const timeB = b.time ? new Date(b.time).getTime() : 0;
+      // Newest first => larger timestamp first
+      return timeB - timeA;
+    }
+
+    const priceA = Number(a.price) || 0;
+    const priceB = Number(b.price) || 0;
+
+    if (sortOption === "Price: Low to High") {
+      return priceA - priceB;
+    }
+
+    if (sortOption === "Price: High to Low") {
+      return priceB - priceA;
+    }
+
+    return 0;
   });
 
   const handleCreateListing = () => {
@@ -300,8 +325,6 @@ export default function Dashboard() {
     }
   };
 
-
-
   return (
     <div className="dashboard-container">
       <div className="main-content-area">
@@ -320,8 +343,9 @@ export default function Dashboard() {
             {categories.map((cat) => (
               <div
                 key={cat.name}
-                className={`filter-item ${selectedCategory === cat.name ? "active-category" : ""
-                  }`}
+                className={`filter-item ${
+                  selectedCategory === cat.name ? "active-category" : ""
+                }`}
                 onClick={() => setSelectedCategory(cat.name)}
               >
                 <span className="filter-name">{cat.name}</span>
@@ -357,8 +381,9 @@ export default function Dashboard() {
             {conditions.map((cond) => (
               <div
                 key={cond}
-                className={`filter-item condition-item ${selectedCondition === cond ? "active-condition" : ""
-                  }`}
+                className={`filter-item condition-item ${
+                  selectedCondition === cond ? "active-condition" : ""
+                }`}
                 onClick={() => setSelectedCondition(cond)}
               >
                 {cond}
@@ -372,7 +397,7 @@ export default function Dashboard() {
           <div className="marketplace-header">
             <h1 className="marketplace-title">MARKETPLACE</h1>
             <span className="item-count">
-              {filteredProducts.length} items found
+              {sortedProducts.length} items found
             </span>
 
             <div className="sort-controls">
@@ -380,10 +405,14 @@ export default function Dashboard() {
                 <span className="icon-placeholder">::</span>
               </button>
 
-              <select className="sort-dropdown">
-                <option>Newest First</option>
-                <option>Price: Low to High</option>
-                <option>Rating</option>
+              <select
+                className="sort-dropdown"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="Newest First">Newest First</option>
+                <option value="Price: Low to High">Price: Low to High</option>
+                <option value="Price: High to Low">Price: High to Low</option>
               </select>
             </div>
           </div>
@@ -403,7 +432,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          {!loading && !error && filteredProducts.length === 0 && (
+          {!loading && !error && sortedProducts.length === 0 && (
             <div className="empty-state">
               <p>No listings found matching your filters.</p>
               <button onClick={clearFilters} className="clear-filters-btn">
@@ -412,9 +441,9 @@ export default function Dashboard() {
             </div>
           )}
 
-          {!loading && !error && filteredProducts.length > 0 && (
+          {!loading && !error && sortedProducts.length > 0 && (
             <div className="product-grid">
-              {filteredProducts.map((product) => (
+              {sortedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={{ ...product, onContact: handleContactSeller }}
@@ -433,8 +462,6 @@ export default function Dashboard() {
       >
         <span className="fab-icon">+</span>
       </button>
-
-
     </div>
   );
 }

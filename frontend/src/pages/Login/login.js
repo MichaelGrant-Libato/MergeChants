@@ -160,7 +160,7 @@ export default function Login() {
             <p>
               Connect with fellow students, buy and sell items, and discover
               amazing deals right on your campus. Join thousands of students
-              already using TeknoyHUB.
+              already using MergeChants.
             </p>
 
             <div className="info-cards">
@@ -231,7 +231,7 @@ export default function Login() {
               className="signin-btn"
               disabled={isLoading}
             >
-              {isLoading ? "Signing In..." : "Sign In to Teknoy Hub"}
+              {isLoading ? "Signing In..." : "Sign In to MergeChants"}
             </button>
 
             <p className="or">Or continue with</p>
