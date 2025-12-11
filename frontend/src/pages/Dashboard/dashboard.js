@@ -146,6 +146,18 @@ const ProductCard = ({ product }) => {
           </span>
         </p>
 
+        {product.category && (
+          <p className="category-info">
+            🏷️ {product.category}
+          </p>
+        )}
+
+        {product.condition && (
+          <p className="condition-info">
+            ⭐ {product.condition}
+          </p>
+        )}
+
         <p className="campus-info">
           📍 {product.preferredLocation || "Main Campus"}
         </p>
