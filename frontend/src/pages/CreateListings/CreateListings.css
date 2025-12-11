@@ -220,7 +220,6 @@
     cursor: pointer;
     transition: background-color 0.3s;
     float: right;
-
 }
 
 .next-btn:hover,
@@ -260,7 +259,6 @@
 
 .availability-row {
     display: flex;
-    /* Changed from grid to flex for better flow */
     align-items: center;
     gap: 15px;
     margin-top: 8px;
@@ -280,17 +278,17 @@
     font-weight: 500;
 }
 
+/* Meeting preferences list */
 .checkbox-group {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    /* Increased gap */
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 12px;              /* bigger gap between box & text */
     font-weight: 500;
     cursor: pointer;
     padding: 12px 16px;
@@ -310,6 +308,7 @@
     height: 20px;
     cursor: pointer;
     accent-color: #5d172e;
+    margin-right: 4px;      /* extra breathing room */
 }
 
 .image-upload-area {
@@ -679,24 +678,22 @@
     }
 }
 
-/* Availability days layout */
+/* Availability days layout – back to wide boxes (like your first image) */
 .availability-days-grid {
     display: grid;
-    grid-template-columns: repeat(4, auto);
-    /* Mon Tue Wed Thu in first row */
+    grid-template-columns: repeat(4, 1fr);
     column-gap: 2rem;
-    /* space between columns */
     row-gap: 0.5rem;
-    /* space between rows */
-    align-items: center;
+    align-items: stretch;
 }
 
 .availability-days-grid .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 12px;
 }
 
+/* Validation error states */
 input.error,
 textarea.error,
 select.error {
