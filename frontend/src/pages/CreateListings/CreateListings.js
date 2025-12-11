@@ -19,6 +19,29 @@ const buildImageUrl = (value) => {
   return `http://localhost:8080/uploads/${trimmed}`;
 };
 
+// 🔹 Helper: parse "HH:MM" → minutes (for validation)
+const parseTimeToMinutes = (timeStr) => {
+  if (!timeStr) return null;
+  const [hStr, mStr] = timeStr.split(':');
+  const h = Number(hStr);
+  const m = Number(mStr);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  return h * 60 + m;
+};
+
+// 🔹 Helper: format "HH:MM" → "h:MM AM/PM" for UI
+const formatTime12h = (timeStr) => {
+  if (!timeStr) return '';
+  const [hStr, mStr] = timeStr.split(':');
+  let h = Number(hStr);
+  if (Number.isNaN(h) || Number.isNaN(Number(mStr))) return timeStr;
+
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${mStr} ${suffix}`;
+};
+
 const categories = [
   'Electronics',
   'Textbooks',
@@ -96,8 +119,8 @@ export default function CreateListings() {
       publicPlace: false,
       deliveryAvailable: false,
     },
-    images: [],              // File[] (new uploads this session)
-    uploadedImageNames: [],  // string[] already saved in DB
+    images: [], // File[] (new uploads this session)
+    uploadedImageNames: [], // string[] already saved in DB
     tags: [],
   });
 
@@ -120,15 +143,19 @@ export default function CreateListings() {
         const preferredLocation = knownLocation
           ? data.preferredLocation
           : data.preferredLocation
-            ? 'Other'
-            : '';
+          ? 'Other'
+          : '';
 
         const customLocation =
           !knownLocation && data.preferredLocation ? data.preferredLocation : '';
 
         const parsedDays = data.availableFrom
-          ? data.availableFrom.split(',').map((s) => s.trim()).filter(Boolean)
+          ? data.availableFrom
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
           : [];
+
         let timeFrom = '';
         let timeUntil = '';
         if (data.availableUntil && data.availableUntil.includes('-')) {
@@ -144,8 +171,12 @@ export default function CreateListings() {
           subTitle: data.subTitle || '',
           category: data.category || '',
           condition: data.condition || '',
-          price: data.price !== undefined ? String(data.price) : '',
-          originalPrice: data.originalPrice !== undefined ? String(data.originalPrice) : '',
+          price:
+            data.price !== undefined ? String(data.price) : '',
+          originalPrice:
+            data.originalPrice !== undefined
+              ? String(data.originalPrice)
+              : '',
           campus: data.campus || '',
           description: data.description || '',
           preferredLocation,
@@ -158,15 +189,15 @@ export default function CreateListings() {
           meetingPreferences: data.meetingPreferences
             ? JSON.parse(data.meetingPreferences)
             : {
-              onCampus: false,
-              publicPlace: false,
-              deliveryAvailable: false,
-            },
+                onCampus: false,
+                publicPlace: false,
+                deliveryAvailable: false,
+              },
           uploadedImageNames: data.images
             ? data.images
-              .split(',')
-              .map((s) => s.trim())
-              .filter((t) => t)
+                .split(',')
+                .map((s) => s.trim())
+                .filter((t) => t)
             : [],
           images: [],
           tags: data.tags ? data.tags.split(',').filter((t) => t) : [],
@@ -244,7 +275,9 @@ export default function CreateListings() {
       const exists = prev.tags.includes(tag);
       return {
         ...prev,
-        tags: exists ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag],
+        tags: exists
+          ? prev.tags.filter((t) => t !== tag)
+          : [...prev.tags, tag],
       };
     });
   };
@@ -253,8 +286,8 @@ export default function CreateListings() {
     const files = Array.from(e.target.files);
     if (
       files.length +
-      formData.images.length +
-      formData.uploadedImageNames.length >
+        formData.images.length +
+        formData.uploadedImageNames.length >
       8
     ) {
       alert('Maximum 8 images allowed');
@@ -294,18 +327,16 @@ export default function CreateListings() {
     // 2. Prevent multiple decimal points
     const parts = rawValue.split('.');
     if (parts.length > 2) {
-      // If adding a second dot, ignore it
       rawValue = parts[0] + '.' + parts.slice(1).join('');
     }
 
     // 3. Format with commas
-    // Split integer and decimal parts
     const [integer, decimal] = rawValue.split('.');
+    const formattedInteger = integer.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      ','
+    );
 
-    // Add commas to integer part
-    const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-    // Recombine
     let formattedValue = formattedInteger;
     if (rawValue.includes('.')) {
       formattedValue += '.' + (decimal || '');
@@ -316,7 +347,6 @@ export default function CreateListings() {
       price: formattedValue,
     }));
 
-    // Clear price error if valid
     if (formattedValue) {
       setErrors((prev) => {
         const updated = { ...prev };
@@ -342,7 +372,9 @@ export default function CreateListings() {
       if (!formData.price) {
         newErrors.price = 'Price is required.';
       } else {
-        const rawPrice = parseFloat(String(formData.price).replace(/,/g, ''));
+        const rawPrice = parseFloat(
+          String(formData.price).replace(/,/g, '')
+        );
         if (isNaN(rawPrice) || rawPrice < 0) {
           newErrors.price = 'Price must be 0 or higher.';
         }
@@ -371,9 +403,26 @@ export default function CreateListings() {
         newErrors.availableDays = 'Please select at least one available day.';
       }
 
-      // ✅ Time range required (both from and until)
+      // ✅ Time range required AND logical
       if (!formData.availableTimeFrom || !formData.availableTimeUntil) {
-        newErrors.availableTime = 'Please set a start and end time range.';
+        newErrors.availableTime =
+          'Please set a start and end time range.';
+      } else {
+        const fromMins = parseTimeToMinutes(
+          formData.availableTimeFrom
+        );
+        const untilMins = parseTimeToMinutes(
+          formData.availableTimeUntil
+        );
+
+        if (
+          fromMins === null ||
+          untilMins === null ||
+          fromMins >= untilMins
+        ) {
+          newErrors.availableTime =
+            'Please select a valid time range (end should be later than start).';
+        }
       }
 
       // ✅ At least one meeting preference
@@ -489,7 +538,9 @@ export default function CreateListings() {
         price: parseFloat(formData.price.toString().replace(/,/g, '')),
         originalPrice:
           formData.originalPrice !== ''
-            ? parseFloat(formData.originalPrice.toString().replace(/,/g, ''))
+            ? parseFloat(
+                formData.originalPrice.toString().replace(/,/g, '')
+              )
             : parseFloat(formData.price.toString().replace(/,/g, '')),
         condition: formData.condition,
         campus: formData.campus || '',
@@ -548,16 +599,18 @@ export default function CreateListings() {
       {/* Step indicator */}
       <div className="step-indicator">
         <div
-          className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''
-            }`}
+          className={`step ${currentStep >= 1 ? 'active' : ''} ${
+            currentStep > 1 ? 'completed' : ''
+          }`}
         >
           <div className="step-circle">1</div>
           <span>Basic Info</span>
         </div>
         <div className="step-line"></div>
         <div
-          className={`step ${currentStep >= 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''
-            }`}
+          className={`step ${currentStep >= 2 ? 'active' : ''} ${
+            currentStep > 2 ? 'completed' : ''
+          }`}
         >
           <div className="step-circle">2</div>
           <span>Details & Images</span>
@@ -599,8 +652,9 @@ export default function CreateListings() {
                     <button
                       key={cat}
                       type="button"
-                      className={`category-btn ${formData.category === cat ? 'selected' : ''
-                        } ${errors.category ? 'error' : ''}`}
+                      className={`category-btn ${
+                        formData.category === cat ? 'selected' : ''
+                      } ${errors.category ? 'error' : ''}`}
                       onClick={() => {
                         setFormData((prev) => ({ ...prev, category: cat }));
                         setErrors((prev) => {
@@ -626,10 +680,14 @@ export default function CreateListings() {
                     <button
                       key={cond}
                       type="button"
-                      className={`condition-btn ${formData.condition === cond ? 'selected' : ''
-                        } ${errors.condition ? 'error' : ''}`}
+                      className={`condition-btn ${
+                        formData.condition === cond ? 'selected' : ''
+                      } ${errors.condition ? 'error' : ''}`}
                       onClick={() => {
-                        setFormData((prev) => ({ ...prev, condition: cond }));
+                        setFormData((prev) => ({
+                          ...prev,
+                          condition: cond,
+                        }));
                         setErrors((prev) => {
                           const updated = { ...prev };
                           delete updated.condition;
@@ -687,7 +745,9 @@ export default function CreateListings() {
                       required
                     />
                     {errors.description && (
-                      <p className="error-text">{errors.description}</p>
+                      <p className="error-text">
+                        {errors.description}
+                      </p>
                     )}
                   </div>
 
@@ -742,10 +802,12 @@ export default function CreateListings() {
                           <label key={day} className="checkbox-label">
                             <input
                               type="checkbox"
-                              checked={formData.availableDays.includes(day)}
+                              checked={formData.availableDays.includes(
+                                day
+                              )}
                               onChange={() => toggleDay(day)}
                             />
-                            {day}
+                            <span className="checkbox-text">{day}</span>
                           </label>
                         ))}
                       </div>
@@ -774,7 +836,9 @@ export default function CreateListings() {
                         />
                       </div>
                       {errors.availableTime && (
-                        <p className="error-text">{errors.availableTime}</p>
+                        <p className="error-text">
+                          {errors.availableTime}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -789,7 +853,7 @@ export default function CreateListings() {
                           checked={formData.meetingPreferences.onCampus}
                           onChange={handleChange}
                         />
-                        On Campus
+                        <span className="checkbox-text">On Campus</span>
                       </label>
                       <label className="checkbox-label">
                         <input
@@ -798,7 +862,7 @@ export default function CreateListings() {
                           checked={formData.meetingPreferences.publicPlace}
                           onChange={handleChange}
                         />
-                        Public Place
+                        <span className="checkbox-text">Public Place</span>
                       </label>
                       <label className="checkbox-label">
                         <input
@@ -809,7 +873,9 @@ export default function CreateListings() {
                           }
                           onChange={handleChange}
                         />
-                        Delivery Available
+                        <span className="checkbox-text">
+                          Delivery Available
+                        </span>
                       </label>
                     </div>
                     {errors.meetingPreferences && (
@@ -823,7 +889,11 @@ export default function CreateListings() {
                 <div className="right-column">
                   <div className="form-group">
                     <label>Images *</label>
-                    <div className={`image-upload-area ${errors.images ? 'error' : ''}`}>
+                    <div
+                      className={`image-upload-area ${
+                        errors.images ? 'error' : ''
+                      }`}
+                    >
                       <div className="upload-placeholder">
                         <div className="upload-icon">☁️</div>
                         <p>Drag & drop images here</p>
@@ -854,7 +924,10 @@ export default function CreateListings() {
                           {formData.uploadedImageNames.map((name, idx) => {
                             const url = buildImageUrl(name);
                             return (
-                              <div key={`ex-${idx}`} className="image-preview">
+                              <div
+                                key={`ex-${idx}`}
+                                className="image-preview"
+                              >
                                 {url && (
                                   <img src={url} alt={`Existing ${idx}`} />
                                 )}
@@ -874,7 +947,10 @@ export default function CreateListings() {
                       {formData.images.length > 0 && (
                         <div className="image-preview-grid">
                           {formData.images.map((img, idx) => (
-                            <div key={`new-${idx}`} className="image-preview">
+                            <div
+                              key={`new-${idx}`}
+                              className="image-preview"
+                            >
                               <img
                                 src={URL.createObjectURL(img)}
                                 alt={`Preview ${idx}`}
@@ -904,8 +980,9 @@ export default function CreateListings() {
                         <button
                           key={tag}
                           type="button"
-                          className={`tag-chip ${formData.tags.includes(tag) ? 'selected' : ''
-                            }`}
+                          className={`tag-chip ${
+                            formData.tags.includes(tag) ? 'selected' : ''
+                          }`}
                           onClick={() => handleTagClick(tag)}
                         >
                           {tag}
@@ -984,7 +1061,11 @@ export default function CreateListings() {
                             {formData.availableDays.join(', ')}{' '}
                             {formData.availableTimeFrom &&
                               formData.availableTimeUntil &&
-                              `(${formData.availableTimeFrom}–${formData.availableTimeUntil})`}
+                              `(${formatTime12h(
+                                formData.availableTimeFrom
+                              )}–${formatTime12h(
+                                formData.availableTimeUntil
+                              )})`}
                           </>
                         )}
                       </p>
@@ -1004,7 +1085,10 @@ export default function CreateListings() {
                     <div className="detail-row">
                       <span>Price:</span>
                       <span>
-                        ₱{parseFloat(formData.price.toString().replace(/,/g, '') || 0).toFixed(2)}
+                        ₱
+                        {parseFloat(
+                          formData.price.toString().replace(/,/g, '') || 0
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="detail-row">
@@ -1027,8 +1111,12 @@ export default function CreateListings() {
                       <span>Availability (Time):</span>
                       <span>
                         {formData.availableTimeFrom &&
-                          formData.availableTimeUntil
-                          ? `${formData.availableTimeFrom} - ${formData.availableTimeUntil}`
+                        formData.availableTimeUntil
+                          ? `${formatTime12h(
+                              formData.availableTimeFrom
+                            )} - ${formatTime12h(
+                              formData.availableTimeUntil
+                            )}`
                           : 'Not specified'}
                       </span>
                     </div>
@@ -1042,11 +1130,17 @@ export default function CreateListings() {
                       <li>Always meet in public places on campus</li>
                       <li>Verify the item condition before payment</li>
                       <li>Use secure payment methods when possible</li>
-                      <li>Report any suspicious activity to campus security</li>
+                      <li>
+                        Report any suspicious activity to campus security
+                      </li>
                     </ul>
                   </div>
 
-                  <div className={`terms-conditions ${errors.terms ? 'error' : ''}`}>
+                  <div
+                    className={`terms-conditions ${
+                      errors.terms ? 'error' : ''
+                    }`}
+                  >
                     <h4>Terms & Conditions</h4>
                     <div className="terms-checkboxes">
                       <label className="checkbox-label">
@@ -1065,8 +1159,10 @@ export default function CreateListings() {
                             });
                           }}
                         />
-                        I confirm that the item complies to be sold and I have
-                        the right to sell it
+                        <span className="checkbox-text">
+                          I confirm that the item complies to be sold and I
+                          have the right to sell it
+                        </span>
                       </label>
                       <label className="checkbox-label">
                         <input
@@ -1084,8 +1180,10 @@ export default function CreateListings() {
                             });
                           }}
                         />
-                        I agree to MergeChants Terms of Service and Community
-                        Guidelines
+                        <span className="checkbox-text">
+                          I agree to MergeChants Terms of Service and
+                          Community Guidelines
+                        </span>
                       </label>
                       <label className="checkbox-label">
                         <input
@@ -1103,8 +1201,10 @@ export default function CreateListings() {
                             });
                           }}
                         />
-                        I understand that false or misleading information may
-                        result in account suspension
+                        <span className="checkbox-text">
+                          I understand that false or misleading information may
+                          result in account suspension
+                        </span>
                       </label>
                     </div>
                     {errors.terms && (
@@ -1129,12 +1229,13 @@ export default function CreateListings() {
 
               {message && (
                 <div
-                  className={`message ${message.includes('Error') ||
+                  className={`message ${
+                    message.includes('Error') ||
                     message.includes('Network') ||
                     message.includes('failed')
-                    ? 'error'
-                    : 'success'
-                    }`}
+                      ? 'error'
+                      : 'success'
+                  }`}
                 >
                   {message}
                 </div>
