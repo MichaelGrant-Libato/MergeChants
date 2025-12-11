@@ -58,12 +58,18 @@ export default function MyListings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // for mark-as-sold modal
+  // Mark-as-sold modal
   const [showSoldModal, setShowSoldModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
   const [buyerIdInput, setBuyerIdInput] = useState("");
   const [soldError, setSoldError] = useState("");
   const [soldLoading, setSoldLoading] = useState(false);
+
+  // Delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [listingToDelete, setListingToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const navigate = useNavigate();
 
@@ -89,7 +95,7 @@ export default function MyListings() {
 
         const data = await response.json();
 
-        // 🔴 Hide SOLD items from My Listings
+        // Hide SOLD items from My Listings
         const activeOnly = data.filter(
           (item) =>
             !item.status ||
@@ -107,27 +113,6 @@ export default function MyListings() {
 
     fetchMyListings();
   }, [studentId]);
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this listing?"))
-      return;
-
-    try {
-      const res = await fetch(
-        `http://localhost:8080/api/listings/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to delete listing");
-
-      setListings((prev) => prev.filter((item) => item.id !== id));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete item");
-    }
-  };
 
   // Open Mark-as-Sold modal
   const openMarkAsSoldModal = (listing) => {
@@ -185,7 +170,7 @@ export default function MyListings() {
 
       await res.json();
 
-      // 🔴 Remove sold listing from MyListings right away
+      // Remove sold listing from MyListings right away
       setListings((prev) =>
         prev.filter((item) => item.id !== selectedListing.id)
       );
@@ -199,6 +184,57 @@ export default function MyListings() {
     }
   };
 
+  // ----- DELETE LISTING (with custom popup) -----
+
+  const openDeleteModal = (listing) => {
+    setListingToDelete(listing);
+    setDeleteError("");
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setListingToDelete(null);
+    setDeleteError("");
+    setDeleteLoading(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!listingToDelete) return;
+
+    try {
+      setDeleteLoading(true);
+      setDeleteError("");
+
+      const res = await fetch(
+        `http://localhost:8080/api/listings/${listingToDelete.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Failed to delete listing:", res.status, text);
+        setDeleteError(
+          text || `Failed to delete listing. (Status ${res.status})`
+        );
+        return;
+      }
+
+      // Remove from UI
+      setListings((prev) =>
+        prev.filter((item) => item.id !== listingToDelete.id)
+      );
+
+      closeDeleteModal();
+    } catch (err) {
+      console.error(err);
+      setDeleteError("Failed to delete item. Check console for details.");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const goToCreate = () => {
     navigate("/createListings");
@@ -254,11 +290,16 @@ export default function MyListings() {
                 <div className="card-content">
                   <h3>{item.name}</h3>
                   <span className="price">
-                    ₱{Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ₱
+                    {Number(item.price).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                   <span
-                    className={`status-badge ${item.status?.toLowerCase() || "pending"
-                      }`}
+                    className={`status-badge ${
+                      item.status?.toLowerCase() || "pending"
+                    }`}
                   >
                     {item.status || "ACTIVE"}
                   </span>
@@ -278,7 +319,7 @@ export default function MyListings() {
                     </button>
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => openDeleteModal(item)}
                     >
                       Delete
                     </button>
@@ -346,6 +387,56 @@ export default function MyListings() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE LISTING MODAL */}
+      {showDeleteModal && listingToDelete && (
+        <div className="ml-modal-backdrop" onClick={closeDeleteModal}>
+          <div
+            className="ml-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="ml-modal-header">
+              <h2>Delete Listing</h2>
+              <button
+                className="ml-modal-close"
+                onClick={closeDeleteModal}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="ml-modal-subtitle">
+              Are you sure you want to delete{" "}
+              <strong>{listingToDelete.name}</strong>?<br />
+              This action cannot be undone.
+            </p>
+
+            {deleteError && (
+              <p className="ml-modal-error">{deleteError}</p>
+            )}
+
+            <div className="ml-modal-actions">
+              <button
+                type="button"
+                className="ml-modal-btn ml-modal-btn-secondary"
+                onClick={closeDeleteModal}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="ml-modal-btn ml-modal-btn-danger"
+                onClick={handleConfirmDelete}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}

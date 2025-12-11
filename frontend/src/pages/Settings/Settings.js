@@ -7,6 +7,57 @@ import "./Settings.css";
 
 const API_BASE = "http://localhost:8080";
 
+/* ---------- constants ---------- */
+const YEAR_LEVEL_OPTIONS = [
+  "Grade 7",
+  "Grade 8",
+  "Grade 9",
+  "Grade 10",
+  "Grade 11",
+  "Grade 12",
+  "1st Year College",
+  "2nd Year College",
+  "3rd Year College",
+  "4th Year College",
+  "5th Year College",
+];
+
+const COLLEGE_COURSE_OPTIONS = [
+  "(CEA) BS Architecture",
+  "(CEA) BS Chemical Engineering",
+  "(CEA) BS Civil Engineering",
+  "(CEA) BS Computer Engineering",
+  "(CEA) BS Electrical Engineering",
+  "(CEA) BS Electronics Engineering",
+  "(CEA) BS Industrial Engineering",
+  "(CEA) BS Mechanical Engineering",
+  "(CEA) BS Mining Engineering",
+  "(CCS) BS Computer Science",
+  "(CCS) BS Information Technology",
+  "(CCS) Associate in Computer Technology",
+  "(CASE) AB Communication",
+  "(CASE) AB English Language",
+  "(CASE) BS Mathematics",
+  "(CASE) BS Biology",
+  "(CASE) BS Psychology",
+  "(CASE) Bachelor of Elementary Education",
+  "(CASE) Bachelor of Secondary Education",
+  "(CASE) Bachelor of Multimedia Arts",
+  "(CMBA) BS Hospitality Management",
+  "(CMBA) BS Tourism Management",
+  "(CMBA) BS Accountancy",
+  "(CMBA) BS Management Accounting",
+  "(CMBA) BS Business Administration",
+  "(CMBA) Bachelor in Public Administration",
+  "(CMBA) BS Office Administration",
+  "(CMBA) Associate in Office Administration",
+  "(CCJ) BS Criminology",
+  "(CNAHS) BS Nursing",
+  "(CNAHS) BS Pharmacy",
+  "(CNAHS) Diploma in Midwifery",
+  "(CNAHS) Medical Technology",
+];
+
 /* ---------- PersonalInformation component ---------- */
 const PersonalInformation = ({
   userData,
@@ -20,23 +71,74 @@ const PersonalInformation = ({
   setFirstName,
   setLastName,
   setCourse,
+  setYearLevel,
   setAbout,
-  onSave,
+  onSaveClick,
   onCancel,
   onUploadPhoto,
   saving,
+  isEditing,
+  onStartEdit,
+  errors,
 }) => {
   const studentNumber = userData?.studentNumber || "";
   const fileInputRef = useRef(null);
 
+  const isJuniorHigh = ["Grade 7", "Grade 8", "Grade 9", "Grade 10"].includes(
+    yearLevel
+  );
+  const isSeniorHigh = ["Grade 11", "Grade 12"].includes(yearLevel);
+  const isCollege = [
+    "1st Year College",
+    "2nd Year College",
+    "3rd Year College",
+    "4th Year College",
+    "5th Year College",
+  ].includes(yearLevel);
+
+  const autoDept =
+    isJuniorHigh
+      ? "Junior High School Department"
+      : isSeniorHigh
+      ? "Senior High School Department"
+      : "";
+
+  const displayCourse = isCollege ? course : autoDept || course || "";
+
   const handlePhotoClick = () => {
-    fileInputRef.current.click();
+    if (!isEditing) return;
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       onUploadPhoto(file);
+    }
+  };
+
+  const handleYearLevelChange = (e) => {
+    const value = e.target.value;
+    setYearLevel(value);
+
+    if (["Grade 7", "Grade 8", "Grade 9", "Grade 10"].includes(value)) {
+      setCourse("Junior High School Department");
+    } else if (["Grade 11", "Grade 12"].includes(value)) {
+      setCourse("Senior High School Department");
+    } else if (
+      [
+        "1st Year College",
+        "2nd Year College",
+        "3rd Year College",
+        "4th Year College",
+        "5th Year College",
+      ].includes(value)
+    ) {
+      if (!COLLEGE_COURSE_OPTIONS.includes(course)) {
+        setCourse("");
+      }
+    } else {
+      setCourse("");
     }
   };
 
@@ -68,61 +170,147 @@ const PersonalInformation = ({
             </div>
           </div>
 
-          <button
-            className="mc-btn mc-btn--primary"
-            type="button"
-            onClick={handlePhotoClick}
-          >
-            <Camera size={16} style={{ marginRight: "8px" }} />
-            Change Photo
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            style={{ display: "none" }}
-          />
+          {/* Change Photo only visible while editing */}
+          {isEditing && (
+            <>
+              <button
+                className="mc-btn mc-btn--primary"
+                type="button"
+                onClick={handlePhotoClick}
+              >
+                <Camera size={16} style={{ marginRight: "8px" }} />
+                Change Photo
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: "none" }}
+              />
+            </>
+          )}
 
-          <div className="mc-studentIdBlock">
+          {/* Student ID pill */}
+          <div className="mc-studentIdText">
             <div className="mc-studentIdLabel">Student ID</div>
             <div className="mc-studentIdValue">{studentNumber || "—"}</div>
           </div>
         </div>
 
-        <form
-          className="mc-profileForm"
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSave();
-          }}
-        >
+        <form className="mc-profileForm">
           <div className="mc-grid2">
             <div className="mc-field">
               <label className="mc-label">First Name</label>
               <input
-                className="mc-input"
+                className={
+                  "mc-input" +
+                  (!isEditing ? " mc-input--disabled" : "") +
+                  (errors.firstName ? " mc-input--error" : "")
+                }
                 type="text"
                 value={firstName}
+                disabled={!isEditing}
                 onChange={(e) => setFirstName(e.target.value)}
               />
+              {errors.firstName && (
+                <p className="mc-error-field">{errors.firstName}</p>
+              )}
             </div>
 
             <div className="mc-field">
               <label className="mc-label">Last Name</label>
               <input
-                className="mc-input"
+                className={
+                  "mc-input" +
+                  (!isEditing ? " mc-input--disabled" : "") +
+                  (errors.lastName ? " mc-input--error" : "")
+                }
                 type="text"
                 value={lastName}
+                disabled={!isEditing}
                 onChange={(e) => setLastName(e.target.value)}
               />
+              {errors.lastName && (
+                <p className="mc-error-field">{errors.lastName}</p>
+              )}
             </div>
+          </div>
+
+          {/* Year Level dropdown */}
+          <div className="mc-field">
+            <label className="mc-label">Year Level</label>
+            <select
+              className={
+                "mc-input" +
+                (!isEditing ? " mc-input--disabled" : "") +
+                (errors.yearLevel ? " mc-input--error" : "")
+              }
+              value={yearLevel}
+              disabled={!isEditing}
+              onChange={handleYearLevelChange}
+            >
+              <option value="">Select year level</option>
+              {YEAR_LEVEL_OPTIONS.map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  {lvl}
+                </option>
+              ))}
+            </select>
+            {errors.yearLevel && (
+              <p className="mc-error-field">{errors.yearLevel}</p>
+            )}
+          </div>
+
+          <div className="mc-field">
+            <label className="mc-label">Course / Department</label>
+
+            {!isCollege ? (
+              <>
+                <input
+                  className={
+                    "mc-input mc-input--disabled" +
+                    (errors.course ? " mc-input--error" : "")
+                  }
+                  type="text"
+                  value={displayCourse}
+                  disabled
+                  readOnly
+                />
+                {errors.course && (
+                  <p className="mc-error-field">{errors.course}</p>
+                )}
+              </>
+            ) : (
+              <>
+                <select
+                  className={
+                    "mc-input" +
+                    (!isEditing ? " mc-input--disabled" : "") +
+                    (errors.course ? " mc-input--error" : "")
+                  }
+                  value={course}
+                  disabled={!isEditing}
+                  onChange={(e) => setCourse(e.target.value)}
+                >
+                  <option value="">Select course</option>
+                  {COLLEGE_COURSE_OPTIONS.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                {errors.course && (
+                  <p className="mc-error-field">{errors.course}</p>
+                )}
+              </>
+            )}
           </div>
 
           <div className="mc-field">
             <label className="mc-label">CIT Outlook Email</label>
             <input
-              className="mc-input"
+              className="mc-input mc-input--disabled"
               type="email"
               value={outlookEmail}
               disabled
@@ -130,47 +318,51 @@ const PersonalInformation = ({
           </div>
 
           <div className="mc-field">
-            <label className="mc-label">Year Level</label>
-            <input className="mc-input" type="text" value={yearLevel} disabled />
-          </div>
-
-          <div className="mc-field">
-            <label className="mc-label">Course / Department</label>
-            <input
-              className="mc-input"
-              type="text"
-              value={course}
-              onChange={(e) => setCourse(e.target.value)}
-            />
-          </div>
-
-          <div className="mc-field">
             <label className="mc-label">About Me</label>
             <textarea
-              className="mc-textarea"
+              className={
+                "mc-textarea" + (!isEditing ? " mc-input--disabled" : "")
+              }
               rows={5}
               value={about}
+              disabled={!isEditing}
               onChange={(e) => setAbout(e.target.value)}
               placeholder="Tell us about yourself..."
             />
           </div>
 
           <div className="mc-actions">
-            <button
-              className="mc-btn mc-btn--save"
-              type="submit"
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-            <button
-              className="mc-btn mc-btn--cancel"
-              type="button"
-              onClick={onCancel}
-              disabled={saving}
-            >
-              Cancel
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  className="mc-btn mc-btn--save"
+                  type="button"
+                  disabled={saving}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSaveClick();
+                  }}
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+                <button
+                  className="mc-btn mc-btn--cancel"
+                  type="button"
+                  onClick={onCancel}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                className="mc-btn mc-btn--save mc-btn--edit"
+                type="button"
+                onClick={onStartEdit}
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
         </form>
       </section>
@@ -247,10 +439,29 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
 
-  // NEW: logout modal state
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    yearLevel: "",
+    course: "",
+  });
+
   const navigate = useNavigate();
+
+  const clearErrors = () => {
+    setErrors({
+      firstName: "",
+      lastName: "",
+      yearLevel: "",
+      course: "",
+    });
+  };
 
   /* ---------- load student + profile ---------- */
   const resetToLoadedValues = async () => {
@@ -303,6 +514,7 @@ export default function SettingsPage() {
         setYearLevel(initialYearLevel);
         setAbout(initialAbout);
         setProfilePic(initialProfilePic);
+        clearErrors();
         return;
       }
 
@@ -335,6 +547,8 @@ export default function SettingsPage() {
         setAbout(initialAbout);
         setProfilePic(initialProfilePic);
       }
+
+      clearErrors();
     } catch (err) {
       console.error("Failed to reload student/profile:", err);
       const storedEmail2 = localStorage.getItem("outlookEmail") || "";
@@ -347,6 +561,7 @@ export default function SettingsPage() {
       setYearLevel("");
       setAbout("");
       setProfilePic("");
+      clearErrors();
     }
   };
 
@@ -361,9 +576,7 @@ export default function SettingsPage() {
     const studentId = localStorage.getItem("studentId");
     if (!studentId) return;
 
-    fetch(
-      `${API_BASE}/api/messages/blocked/${encodeURIComponent(studentId)}`
-    )
+    fetch(`${API_BASE}/api/messages/blocked/${encodeURIComponent(studentId)}`)
       .then((res) => res.json())
       .then((data) => {
         setBlockedUsers(Array.isArray(data) ? data : []);
@@ -385,35 +598,86 @@ export default function SettingsPage() {
         body: formData,
       });
 
-      if (!res.ok) {
-        throw new Error("Upload failed");
-      }
+      if (!res.ok) throw new Error("Upload failed");
 
       const urls = await res.json();
-      if (urls.length > 0) {
-        setProfilePic(urls[0]);
-      }
+      if (urls.length > 0) setProfilePic(urls[0]);
     } catch (err) {
       console.error(err);
-      alert("Failed to upload photo");
     }
+  };
+
+  // validate before opening confirm modal
+  const handleRequestSave = () => {
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+
+    const isJuniorHigh = ["Grade 7", "Grade 8", "Grade 9", "Grade 10"].includes(
+      yearLevel
+    );
+    const isSeniorHigh = ["Grade 11", "Grade 12"].includes(yearLevel);
+
+    let effectiveCourse = course;
+    if (isJuniorHigh) {
+      effectiveCourse = "Junior High School Department";
+    } else if (isSeniorHigh) {
+      effectiveCourse = "Senior High School Department";
+    }
+
+    const newErrors = {
+      firstName: "",
+      lastName: "",
+      yearLevel: "",
+      course: "",
+    };
+    let hasError = false;
+
+    if (!fn) {
+      newErrors.firstName = "First name is required.";
+      hasError = true;
+    }
+    if (!ln) {
+      newErrors.lastName = "Last name is required.";
+      hasError = true;
+    }
+    if (!yearLevel || !YEAR_LEVEL_OPTIONS.includes(yearLevel)) {
+      newErrors.yearLevel = "Please select a valid year level.";
+      hasError = true;
+    }
+
+    if (!effectiveCourse || !effectiveCourse.trim()) {
+      newErrors.course = "Course / Department is required.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
+    if (effectiveCourse !== course) {
+      setCourse(effectiveCourse);
+    }
+
+    clearErrors();
+    setShowSaveConfirm(true);
   };
 
   const handleSaveProfile = async () => {
     if (saving) return;
 
     const studentNumber = userData?.studentNumber;
-    if (!studentNumber) {
-      alert("No student ID found for this user.");
-      return;
-    }
+    if (!studentNumber) return;
 
     const payload = {
       studentId: studentNumber,
-      fullName: `${firstName} ${lastName}`.trim(),
+      fullName:
+        `${firstName}`.trim() +
+        (lastName.trim() ? ` ${lastName.trim()}` : ""),
       campus: course,
       bio: about,
       profilePic: profilePic,
+      yearLevel: yearLevel,
     };
 
     try {
@@ -436,20 +700,32 @@ export default function SettingsPage() {
 
       if (!res.ok) {
         const text = await res.text();
-        alert(text || "Failed to save profile.");
+        console.error("Failed to save profile:", text);
+        setShowSaveConfirm(false);
         return;
       }
 
       const saved = await res.json();
       setProfileId(saved.id);
-      alert("Profile saved!");
       window.dispatchEvent(new Event("profileUpdated"));
+
+      setIsEditing(false);
+      setShowSaveConfirm(false);
+      setShowSaveSuccess(true);
     } catch (err) {
       console.error(err);
-      alert("Failed to save profile.");
+      setShowSaveConfirm(false);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setShowSaveConfirm(false);
+    setShowSaveSuccess(false);
+    setIsEditing(false);
+    clearErrors();
+    resetToLoadedValues();
   };
 
   const handleLogout = () => {
@@ -457,7 +733,6 @@ export default function SettingsPage() {
     navigate("/login");
   };
 
-  /* ---------- unblock from settings ---------- */
   const handleUnblockFromSettings = async (blockedId) => {
     const myId = localStorage.getItem("studentId");
     if (!myId) return;
@@ -472,18 +747,27 @@ export default function SettingsPage() {
         { method: "POST" }
       );
 
-      if (!res.ok) {
-        alert("Failed to unblock user.");
-        return;
-      }
+      if (!res.ok) return;
 
-      setBlockedUsers((prev) =>
-        prev.filter((u) => u.userId !== blockedId)
-      );
+      setBlockedUsers((prev) => prev.filter((u) => u.userId !== blockedId));
     } catch (err) {
       console.error("Failed to unblock:", err);
-      alert("Failed to unblock user.");
     }
+  };
+
+  /* ---------- tab switching: cancel edit if needed ---------- */
+  const handleTabChange = (tab) => {
+    if (tab === activeTab) return;
+
+    if (isEditing) {
+      setShowSaveConfirm(false);
+      setShowSaveSuccess(false);
+      setIsEditing(false);
+      clearErrors();
+      resetToLoadedValues();
+    }
+
+    setActiveTab(tab);
   };
 
   return (
@@ -496,7 +780,7 @@ export default function SettingsPage() {
             className={`mc-settings__navItem ${
               activeTab === "personal" ? "is-active" : ""
             }`}
-            onClick={() => setActiveTab("personal")}
+            onClick={() => handleTabChange("personal")}
             type="button"
           >
             <span className="mc-settings__navIcon">
@@ -509,7 +793,7 @@ export default function SettingsPage() {
             className={`mc-settings__navItem ${
               activeTab === "blocked" ? "is-active" : ""
             }`}
-            onClick={() => setActiveTab("blocked")}
+            onClick={() => handleTabChange("blocked")}
             type="button"
           >
             <span className="mc-settings__navIcon">
@@ -547,11 +831,20 @@ export default function SettingsPage() {
             setFirstName={setFirstName}
             setLastName={setLastName}
             setCourse={setCourse}
+            setYearLevel={setYearLevel}
             setAbout={setAbout}
-            onSave={handleSaveProfile}
-            onCancel={resetToLoadedValues}
+            onSaveClick={handleRequestSave}
+            onCancel={handleCancelEdit}
             onUploadPhoto={handleUploadPhoto}
             saving={saving}
+            isEditing={isEditing}
+            onStartEdit={() => {
+              clearErrors();
+              setShowSaveConfirm(false);
+              setShowSaveSuccess(false);
+              setIsEditing(true);
+            }}
+            errors={errors}
           />
         )}
 
@@ -563,6 +856,7 @@ export default function SettingsPage() {
         )}
       </main>
 
+      {/* Logout confirm modal */}
       {showLogoutConfirm && (
         <div className="mc-modalBackdrop">
           <div className="mc-modal">
@@ -584,6 +878,57 @@ export default function SettingsPage() {
                 onClick={handleLogout}
               >
                 Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save profile confirm modal */}
+      {showSaveConfirm && (
+        <div className="mc-modalBackdrop">
+          <div className="mc-modal">
+            <h3 className="mc-modal__title">Save changes?</h3>
+            <p className="mc-modal__text">
+              Are you sure you want to update your profile information?
+            </p>
+            <div className="mc-modal__actions">
+              <button
+                type="button"
+                className="mc-btn mc-btn--cancel"
+                onClick={() => setShowSaveConfirm(false)}
+                disabled={saving}
+              >
+                No, go back
+              </button>
+              <button
+                type="button"
+                className="mc-btn mc-btn--save"
+                onClick={handleSaveProfile}
+                disabled={saving}
+              >
+                Yes, save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save success modal */}
+      {showSaveSuccess && (
+        <div className="mc-modalBackdrop">
+          <div className="mc-modal">
+            <h3 className="mc-modal__title">Edit successful</h3>
+            <p className="mc-modal__text">
+              Your profile information has been updated.
+            </p>
+            <div className="mc-modal__actions">
+              <button
+                type="button"
+                className="mc-btn mc-btn--save"
+                onClick={() => setShowSaveSuccess(false)}
+              >
+                Okay
               </button>
             </div>
           </div>
