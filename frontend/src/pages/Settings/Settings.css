@@ -1,6 +1,6 @@
 :root {
   --mc-maroon: #6b0f1a;
-  --mc-maroon-2: #8a1c27;
+  --mc-maroon-2: #8a1e27;
   --mc-accent: #facc15;
   --mc-card: #f6ecee;
   --mc-text: #1b1b1b;
@@ -32,15 +32,15 @@ body {
   margin-right: calc(50% - 50vw);
   min-height: calc(100vh - 70px); /* navbar is 70px high */
   display: flex;
-  background: #9a1e2a;           /* maroon background */
-  overflow-x: hidden;            /* prevent tiny horizontal scroll / gap */
+  background: #9a1e2a;
+  overflow-x: hidden;
 }
 
 /* Sidebar */
 .mc-settings__sidebar {
   width: 280px;
   flex: 0 0 280px;
-  background: #8a1c27;
+  background: #8a1e27;
   padding: 28px 22px;
   display: flex;
   flex-direction: column;
@@ -154,7 +154,7 @@ body {
   display: flex;
   flex-direction: column;
   padding: clamp(18px, 3vw, 34px);
-  background: #9a1e2a; /* same maroon as page */
+  background: #9a1e2a;
 }
 
 .mc-settings__header {
@@ -219,37 +219,41 @@ body {
   opacity: 1;
 }
 
-/* Student ID plain text under Change Photo */
+/* Student ID pill */
 .mc-studentIdText {
-  margin-top: 10px;
-  display: flex;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(154, 30, 42, 0.07);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
   flex-direction: column;
-  align-items: center;     /* center the whole block under the button */
-  justify-content: right;
-  text-align: right;      /* center the text itself */
-  width: auto;             /* shrink to content so it centers perfectly */
+  align-items: center;
+  text-align: center;
 }
 
 .mc-studentIdLabel,
 .mc-studentIdValue {
-  margin: 0;               /* kill any default margins */
+  margin: 0;
   padding: 0;
   line-height: 1.2;
   display: block;
 }
 
 .mc-studentIdLabel {
-  font-size: 12px;
-  font-weight: 800;
-  color: #2b2b2b;
-  opacity: .85;
-  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.65);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
 }
 
 .mc-studentIdValue {
   font-size: 13px;
   font-weight: 900;
   color: var(--mc-maroon);
+  letter-spacing: 0.6px;
 }
 
 /* Form */
@@ -292,6 +296,7 @@ body {
 .mc-input--disabled {
   background: #f2f2f2;
   color: #666;
+  cursor: default;
 }
 
 .mc-textarea {
@@ -305,8 +310,8 @@ body {
   font-size: 14px;
 }
 
-.mc-input:focus,
-.mc-textarea:focus {
+.mc-input:focus:not(.mc-input--disabled),
+.mc-textarea:focus:not(.mc-input--disabled) {
   border-color: rgba(123, 15, 36, .55);
   box-shadow: 0 0 0 3px rgba(123, 15, 36, .12);
 }
@@ -329,7 +334,7 @@ body {
   font-size: 14px;
 }
 
-/* 🔧 PRIMARY BUTTON – used for "Change Photo" */
+/* PRIMARY BUTTON – "Change Photo" */
 .mc-btn--primary {
   display: inline-flex;
   align-items: center;
@@ -338,13 +343,14 @@ body {
   background: var(--mc-maroon-2);
   color: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
-  white-space: nowrap;      /* keep "Change Photo" on one line */
-  min-width: 150px;         /* optional: gives nice pill size */
-  width: auto;              /* let content decide final width */
+  white-space: nowrap;
+  min-width: 150px;
+  width: auto;
 }
 
-/* Save / Cancel buttons */
-.mc-btn--save {
+/* Save / Edit / Cancel buttons */
+.mc-btn--save,
+.mc-btn--edit {
   min-width: 150px;
   background: var(--mc-maroon-2);
   color: white;
@@ -392,27 +398,8 @@ body {
     flex: 0 0 auto;
   }
 
-  .mc-studentIdBlock {
-    width: 100%;
-    margin-top: 14px;
-    text-align: center;
-  }
-
-  .mc-studentIdLabel {
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(0, 0, 0, .65);
-    margin-bottom: 6px;
-  }
-
-  .mc-studentIdValue {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, .06);
-    font-weight: 900;
-    letter-spacing: .5px;
-    color: #7a1020;
+  .mc-studentIdText {
+    margin-top: 10px;
   }
 }
 
@@ -486,7 +473,7 @@ body {
   border-radius: 999px;
 }
 
-/* Block/unblock modals */
+/* Generic modal (logout, save confirm, success) */
 .mc-modalBackdrop {
   position: fixed;
   inset: 0;
@@ -522,4 +509,15 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.mc-input--error {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.18);
+}
+
+.mc-error-field {
+  font-size: 12px;
+  color: #dc2626;
+  margin: 3px 2px 0;
 }
