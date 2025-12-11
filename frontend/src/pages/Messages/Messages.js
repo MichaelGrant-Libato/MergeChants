@@ -115,7 +115,7 @@ export default function Messages() {
             setMessages(data.messages);
 
             const serverBlockedBy = data.blockedBy || null;
-            // IMPORTANT: treat as blocked whenever there is a blockedBy,
+            // treat as blocked whenever there is a blockedBy,
             // even if data.isBlocked is missing
             const serverIsBlocked =
               typeof data.isBlocked === 'boolean'
@@ -214,8 +214,6 @@ export default function Messages() {
     if (!newMessage.trim() || !activeChatUser) return;
 
     if (isBlocked) {
-      // UI already hides the textarea when blocked,
-      // this is just a safety guard.
       return;
     }
 
@@ -480,7 +478,6 @@ export default function Messages() {
   const activeChatDisplayName = activeHeaderName || defaultHeader;
 
   const iAmBlocker = isBlocked && blockedBy === myId;
-  const iAmBlocked = isBlocked && blockedBy && blockedBy !== myId;
 
   return (
     <>
