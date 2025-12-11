@@ -1,11 +1,3 @@
-/* Force Settings page to FULL-BLEED even inside a centered/max-width layout */
-.mc-settings {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  min-height: calc(100vh - 80px);
-}
-
 :root {
   --mc-maroon: #6b0f1a;
   --mc-maroon-2: #8a1c27;
@@ -28,18 +20,20 @@ body {
   padding: 0;
 }
 
+/* make everything inside settings not force extra width */
 .mc-settings * {
   min-width: 0;
 }
 
-/* prevents zoom overflow break */
-
-/* Full page (below navbar) */
+/* FULL-BLEED SETTINGS LAYOUT (fills width, no white strip) */
 .mc-settings {
   width: 100%;
-  min-height: calc(100vh - 80px);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  min-height: calc(100vh - 70px); /* navbar is 70px high */
   display: flex;
-  background: #9a1e2a;
+  background: #9a1e2a;           /* maroon background */
+  overflow-x: hidden;            /* prevent tiny horizontal scroll / gap */
 }
 
 /* Sidebar */
@@ -59,10 +53,8 @@ body {
   margin: 0 0 16px;
 }
 
-/* Hiding the sidebar profile section */
+/* Sidebar profile section (kept but visually hidden) */
 .mc-sidebarProfile {
-  /* display: none; */
-  /* Keeping this commented out in case you re-enable it on small screens */
   align-items: center;
   gap: 12px;
   padding: 12px;
@@ -70,7 +62,6 @@ body {
   background: rgba(255, 255, 255, .06);
   margin-bottom: 14px;
   height: 0;
-  /* Effectively hiding the element while keeping its space if needed for future use */
   overflow: hidden;
   padding: 0;
   margin-bottom: 0;
@@ -163,7 +154,7 @@ body {
   display: flex;
   flex-direction: column;
   padding: clamp(18px, 3vw, 34px);
-  background: #9a1e2a;
+  background: #9a1e2a; /* same maroon as page */
 }
 
 .mc-settings__header {
@@ -217,7 +208,6 @@ body {
   place-items: center;
   background: #efe6e8;
   overflow: hidden;
-  /* Added to clip the image */
 }
 
 .mc-avatar__img {
@@ -227,14 +217,25 @@ body {
   display: grid;
   place-items: center;
   opacity: 1;
-  /* Changed from .85 to 1 for clear image */
 }
 
-/* ✅ Student ID plain text under Change Photo */
+/* Student ID plain text under Change Photo */
 .mc-studentIdText {
-  width: 100%;
-  text-align: center;
-  margin-top: 6px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* center the whole block under the button */
+  justify-content: right;
+  text-align: right;      /* center the text itself */
+  width: auto;             /* shrink to content so it centers perfectly */
+}
+
+.mc-studentIdLabel,
+.mc-studentIdValue {
+  margin: 0;               /* kill any default margins */
+  padding: 0;
+  line-height: 1.2;
+  display: block;
 }
 
 .mc-studentIdLabel {
@@ -258,7 +259,6 @@ body {
   gap: 14px;
   padding-top: 4px;
   align-items: stretch;
-  /* keeps actions aligned with textarea edge */
 }
 
 .mc-grid2 {
@@ -320,8 +320,6 @@ body {
   margin-top: 12px;
 }
 
-/* Removed mc-actions--right as it's not needed for the only remaining card */
-
 .mc-btn {
   border: 0;
   border-radius: 10px;
@@ -331,13 +329,21 @@ body {
   font-size: 14px;
 }
 
+/* 🔧 PRIMARY BUTTON – used for "Change Photo" */
 .mc-btn--primary {
-  width: 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: var(--mc-maroon-2);
   color: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
+  white-space: nowrap;      /* keep "Change Photo" on one line */
+  min-width: 150px;         /* optional: gives nice pill size */
+  width: auto;              /* let content decide final width */
 }
 
+/* Save / Cancel buttons */
 .mc-btn--save {
   min-width: 150px;
   background: var(--mc-maroon-2);
@@ -349,8 +355,6 @@ body {
   background: #d9d9d9;
   color: #222;
 }
-
-/* Removed genericCard, cardSection, cardSubheader, toggle-item, toggle-switch styles */
 
 /* Responsive */
 @media (max-width: 920px) {
@@ -410,9 +414,9 @@ body {
     letter-spacing: .5px;
     color: #7a1020;
   }
-
 }
 
+/* Blocked users card */
 .mc-blockedCard {
   margin-top: 1.5rem;
   background: #fff5f7;
@@ -482,6 +486,7 @@ body {
   border-radius: 999px;
 }
 
+/* Block/unblock modals */
 .mc-modalBackdrop {
   position: fixed;
   inset: 0;
@@ -518,4 +523,3 @@ body {
   justify-content: flex-end;
   gap: 8px;
 }
-
