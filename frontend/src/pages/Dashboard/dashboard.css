@@ -2,7 +2,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap");
 
-
 :root {
     --primary-color: #5d172e;
     /* Dark Maroon/Red for Logo text and active nav */
@@ -228,12 +227,11 @@
     color: white !important;
 }
 
-/* Price Range */
+/* Price – Min to Max */
 .price-inputs {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 0.9rem;
     color: var(--sidebar-text);
     font-weight: 600;
@@ -243,10 +241,16 @@
     padding: 5px 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: 80px;
-    text-align: center;
+    width: 90px;
+    text-align: left;
 }
 
+.price-to-label {
+    font-weight: 500;
+    color: #666;
+}
+
+/* (leftover if you ever add a slider again) */
 .range-slider-placeholder {
     height: 10px;
     margin-top: 15px;
@@ -700,6 +704,7 @@
     color: white;
 }
 
+/* image wrapper */
 .card-header {
     position: relative;
     overflow: hidden;
