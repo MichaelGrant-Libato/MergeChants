@@ -178,7 +178,6 @@ const ProductCard = ({ product }) => {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const currentStudentId = localStorage.getItem("studentId");
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
