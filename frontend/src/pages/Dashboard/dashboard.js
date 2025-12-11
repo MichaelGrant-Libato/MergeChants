@@ -186,8 +186,10 @@ export default function Dashboard() {
 
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedCondition, setSelectedCondition] = useState("All Conditions");
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(100000);
+
+  // 🔹 Min/Max as empty strings to show placeholders Min/Max
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   // 🔹 Sort state
   const [sortOption, setSortOption] = useState("Newest First");
@@ -313,8 +315,8 @@ export default function Dashboard() {
   const clearFilters = () => {
     setSelectedCategory("All Categories");
     setSelectedCondition("All Conditions");
-    setMinPrice(0);
-    setMaxPrice(100000);
+    setMinPrice("");
+    setMaxPrice("");
   };
 
   const handleContactSeller = (listingId, isOwner) => {
@@ -354,22 +356,25 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Price Range */}
+          {/* Price – Min → Max */}
           <div className="filter-section">
-            <h3>Price Range</h3>
+            <h3>Price</h3>
             <div className="price-inputs">
               <input
                 type="number"
                 className="price-label"
                 value={minPrice}
                 min="0"
+                placeholder="Min"
                 onChange={(e) => setMinPrice(e.target.value)}
               />
+              <span className="price-to-label">to</span>
               <input
                 type="number"
                 className="price-label"
                 value={maxPrice}
                 min="0"
+                placeholder="Max"
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
