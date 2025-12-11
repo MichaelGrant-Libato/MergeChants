@@ -14,18 +14,21 @@
   flex-direction: column;
 }
 
+/* Sidebar header: title on the left, search below it */
 .chat-sidebar .sidebar-header {
   padding: 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .chat-sidebar .sidebar-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: #333;
+  text-align: left;
 }
 
 .conversation-list {
@@ -138,13 +141,33 @@
   background: white;
 }
 
+/* ===== CHAT HEADER ===== */
 .chat-header {
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
-  background: white;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.chat-header > div {
+  min-width: 0;
+}
+
+.chat-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.chat-subtitle {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #6b7280;
 }
 
 .chat-messages {
@@ -157,10 +180,9 @@
   gap: 10px;
 }
 
-/* Message Bubbles - Modernized */
+/* Message Bubbles */
 .message-bubble {
   max-width: 60%;
-  /* smaller width for nicer bubbles, ralph maot */
   padding: 14px 18px;
   border-radius: 18px;
   font-size: 0.95rem;
@@ -168,11 +190,8 @@
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   overflow-wrap: break-word;
-  /* wrap long words, ralph maot */
   word-wrap: break-word;
-  /* legacy support, ralph maot */
   word-break: break-word;
-  /* force breaking super long strings, ralph maot */
 }
 
 .message-bubble.me {
@@ -198,7 +217,7 @@
   text-align: right;
 }
 
-/* Adaptable Input Field Design */
+/* Input Area */
 .chat-input-area {
   padding: 20px;
   border-top: 1px solid #e5e5e5;
@@ -348,7 +367,6 @@
 /* ===== SIDEBAR SEARCH ===== */
 .search-wrapper {
   margin-top: 4px;
-  margin-left: 0;
   width: 100%;
 }
 
@@ -359,35 +377,6 @@
   border-radius: 8px;
   background: #f9f9f9;
   box-sizing: border-box;
-}
-
-/* ===== CHAT HEADER ===== */
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #ffffff;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-.chat-header>div {
-  min-width: 0;
-}
-
-.chat-header h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.chat-subtitle {
-  margin-top: 4px;
-  font-size: 0.85rem;
-  color: #6b7280;
 }
 
 /* ===== MARK AS SOLD BUTTON ===== */
@@ -403,7 +392,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
   white-space: nowrap;
-  margin-right: 500px;
 }
 
 .mark-sold-btn:hover:not(:disabled) {
@@ -442,6 +430,7 @@
   }
 }
 
+/* Dropdown menu in header */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -481,6 +470,7 @@
   background-color: #fee2e2;
 }
 
+/* System message when blocked */
 .system-message {
   margin: 12px auto;
   padding: 10px 14px;
@@ -503,6 +493,7 @@
   color: #fff;
 }
 
+/* Modal styles */
 .mc-modal-backdrop {
   position: fixed;
   inset: 0;

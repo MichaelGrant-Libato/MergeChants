@@ -231,17 +231,17 @@
 .price-inputs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 5px;
     font-size: 0.9rem;
     color: var(--sidebar-text);
     font-weight: 600;
 }
 
 .price-inputs .price-label {
-    padding: 5px 8px;
-    border: 1px solid #ddd;
+    padding: 8px 8px;
+    border: 2px solid #ddd;
     border-radius: 4px;
-    width: 90px;
+    width: 80px;
     text-align: left;
 }
 

@@ -1,5 +1,13 @@
+/* Make sure page never scrolls horizontally */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 /* FULL PAGE LAYOUT */
-.main-layout{
+.main-layout {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -7,17 +15,20 @@
 }
 
 /* CONTENT RIGHT BELOW NAVBAR */
-.main-content{
+.main-content {
   flex: 1;
-  width: 100%;
-  min-height: calc(100vh - 80px); /* match navbar height */
-  margin: 0;
+
+  /* FULL-BLEED: break out of any centered/max-width parent */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  min-height: calc(100vh - 70px); /* match navbar height (70px) */
   padding: 0;
 
-  /* IMPORTANT: don't force a light background globally
-     because Settings needs maroon full-bleed */
+  /* Let each page choose its own background (Settings uses maroon) */
   background: transparent;
 
-  /* prevents sideways stretching / weird overflow on zoom */
+  /* prevent sideways stretching / tiny overflow on zoom */
   overflow-x: hidden;
 }
