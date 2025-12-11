@@ -2,7 +2,11 @@
    NAVBAR CONTAINER
 ========================================= */
 .navbar {
-  width: 100%;
+  /* full-bleed across viewport even if parent is centered */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
   height: 70px;
   background: white;
   border-bottom: 1px solid #e5e7eb;
@@ -12,6 +16,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
+/* inner content can stay constrained by padding */
 .navbar-container {
   max-width: none;
   margin: 0;
