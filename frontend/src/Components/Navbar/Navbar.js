@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { User, Bell, Settings } from "lucide-react";
+import { User, Settings, Search } from "lucide-react";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -17,7 +17,9 @@ const Navbar = () => {
           .then((data) => {
             setUserData(data);
             if (data.studentNumber) {
-              return fetch(`http://localhost:8080/api/profiles/student/${data.studentNumber}`);
+              return fetch(
+                `http://localhost:8080/api/profiles/student/${data.studentNumber}`
+              );
             }
           })
           .then((res) => {
@@ -25,10 +27,15 @@ const Navbar = () => {
           })
           .then((profileData) => {
             if (profileData) {
-              setUserData(prev => ({ ...prev, profilePic: profileData.profilePic }));
+              setUserData((prev) => ({
+                ...prev,
+                profilePic: profileData.profilePic,
+              }));
             }
           })
-          .catch((err) => console.error("Failed to load navbar profile:", err));
+          .catch((err) =>
+            console.error("Failed to load navbar profile:", err)
+          );
       }
     };
 
@@ -42,18 +49,17 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-
         {/* LEFT: Logo */}
         <div className="navbar-logo" onClick={() => navigate("/dashboard")}>
-          <img 
-            src="/images/LOGO MERGE.png" 
-            alt="MergeChants Logo" 
+          <img
+            src="/images/LOGO MERGE.png"
+            alt="MergeChants Logo"
             className="logo-image"
             style={{
-              height: '80px',
-              width: '80px',
-              objectFit: 'contain',
-              borderRadius: '50%'
+              height: "80px",
+              width: "80px",
+              objectFit: "contain",
+              borderRadius: "50%",
             }}
           />
           <span className="logo-text">MergeChants</span>
@@ -64,10 +70,11 @@ const Navbar = () => {
           className="navbar-search"
           style={{ visibility: isDashboard ? "visible" : "hidden" }}
         >
+          <Search size={16} className="navbar-search-icon" />
           <input type="text" placeholder="Search for items..." />
         </div>
 
-        {/* RIGHT: Links + Profile (Grouped for Layout) */}
+        {/* RIGHT: Links + Profile */}
         <div className="navbar-right-section">
           <div className="navbar-links">
             <Link to="/dashboard">Marketplace</Link>
@@ -78,12 +85,11 @@ const Navbar = () => {
           </div>
 
           <div className="navbar-profile-section">
-            <button className="icon-btn">
-              <Bell size={20} color="#f1c40f" />
-            </button>
-
             {userData ? (
-              <div className="user-profile-chip" onClick={() => navigate("/settings")}>
+              <div
+                className="user-profile-chip"
+                onClick={() => navigate("/settings")}
+              >
                 <div className="chip-info">
                   <span className="chip-name">{userData.firstName}</span>
                   <span className="chip-id">{userData.studentNumber}</span>
@@ -93,7 +99,12 @@ const Navbar = () => {
                     <img
                       src={`http://localhost:8080${userData.profilePic}`}
                       alt="Profile"
-                      style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
                     />
                   ) : (
                     <User size={20} color="#555" />
@@ -101,13 +112,15 @@ const Navbar = () => {
                 </div>
               </div>
             ) : (
-              <button className="icon-btn" onClick={() => navigate("/settings")}>
+              <button
+                className="icon-btn"
+                onClick={() => navigate("/settings")}
+              >
                 <Settings size={20} color="#999" />
               </button>
             )}
           </div>
         </div>
-
       </div>
     </nav>
   );
