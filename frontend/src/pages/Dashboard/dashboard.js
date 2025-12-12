@@ -417,9 +417,9 @@ export default function Dashboard() {
             </span>
 
             <div className="sort-controls">
-              <button className="display-toggle">
+              {/* <button className="display-toggle">
                 <span className="icon-placeholder">::</span>
-              </button>
+              </button> */}
 
               <select
                 className="sort-dropdown"

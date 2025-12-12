@@ -325,14 +325,14 @@
     gap: 5px;
 }
 
-.display-toggle {
+/* .display-toggle {
     padding: 8px 12px;
     border: 1px solid #ccc;
     background-color: var(--grid-bg);
     cursor: pointer;
     font-size: 1rem;
     border-radius: 4px;
-}
+} */
 
 .sort-dropdown {
     padding: 8px 12px;
